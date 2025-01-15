@@ -4,6 +4,7 @@ let
   python3Packages = python311Packages;
 
   openstackPkgs = rec {
+    oslo-config = callPackage ./oslo-config.nix { inherit python3Packages oslo-i18n; };
     oslo-i18n = callPackage ./oslo-i18n.nix { inherit python3Packages; };
   };
 in
