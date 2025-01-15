@@ -6,9 +6,30 @@
 
 A set of Nix packages and NixOS modules allowing the usage of OpenStack in NixOS.
 
-## Requirements and Setup
+## Style Checks
 
-*Insert a short description what is required to get your project running...*
+In our repo, we use [pre-commit](https://pre-commit.com/) via
+[pre-commit-hooks.nix](https://github.com/cachix/pre-commit-hooks.nix)
+to enforce a consistent style.
+
+If you use the `nix develop` environment, pre-commit will be
+automatically configured for you and fix or flag any style issues when you
+commit.
+
+When style changes are necessary on files that were not touched in the
+commit, you can re-run the checks on all files using:
+
+```console
+$ pre-commit run --all-files
+```
+
+This happens for example when the version of the style checking tool
+is updated or its configuration was changed.
+
+Single checks can be skipped using the
+[`SKIP`](https://pre-commit.com/#temporarily-disabling-hooks)
+environment variable, if they are problematic. As an escape hatch, use
+`git commit --no-verify` to avoid running _any_ checks.
 
 ## Support, Feedback, Contributing
 
