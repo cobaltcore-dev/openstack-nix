@@ -1,0 +1,13 @@
+stages:
+  - check
+
+check:style:
+  stage: check
+  interruptible: true
+  tags:
+    - native-nix
+  before_script:
+    - git config --global --add url.${CI_SERVER_PROTOCOL}://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/.insteadOf "git@${CI_SERVER_HOST}:"
+    - git config --global --add url.${CI_SERVER_PROTOCOL}://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/.insteadOf "ssh://git@${CI_SERVER_HOST}/"
+  script:
+    - nix flake check
