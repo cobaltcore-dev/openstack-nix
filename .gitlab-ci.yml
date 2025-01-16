@@ -1,5 +1,7 @@
 stages:
   - check
+  - generate
+  - run
 
 check:style:
   stage: check
@@ -11,3 +13,24 @@ check:style:
     - git config --global --add url.${CI_SERVER_PROTOCOL}://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/.insteadOf "ssh://git@${CI_SERVER_HOST}/"
   script:
     - nix flake check
+
+generate_ci:
+  stage: generate
+  tags:
+    - native-nix
+  script:
+    - nix build .#ci
+    - nix-shell -p yq --command "cat result | yq -y" > generated_ci.yaml
+  artifacts:
+    paths:
+      - generated_ci.yaml
+
+trigger_ci:
+  stage: run
+  needs:
+    - generate_ci
+  trigger:
+    include:
+      - artifact: generated_ci.yaml
+        job: generate_ci
+    strategy: depend
