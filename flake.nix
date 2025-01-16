@@ -34,5 +34,8 @@
 
         checks = import ./checks { inherit pkgs pre-commit-hooks-run; };
       }
-    );
+    )
+    // {
+      ci = import ./lib/gitlab-ci.nix { input = { inherit (self) packages; }; };
+    };
 }
