@@ -44,6 +44,9 @@ let
     };
     oslotest = callPackage ./oslotest.nix { inherit oslo-config pre-commit python3Packages; };
     pre-commit = callPackage ./pre-commit.nix { inherit python3Packages; };
+    sphinxcontrib-svg2pdfconverter = callPackage ./sphinxcontrib-svg2pdfconverter.nix {
+      inherit python3Packages;
+    };
   };
 in
 {
