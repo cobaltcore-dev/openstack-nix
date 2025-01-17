@@ -4,6 +4,19 @@ let
   python3Packages = python311Packages;
 
   openstackPkgs = rec {
+    castellan = callPackage ./castellan.nix {
+      inherit
+        keystoneauth1
+        oslo-config
+        oslo-context
+        oslo-i18n
+        oslo-log
+        oslo-utils
+        oslotest
+        python-barbicanclient
+        python3Packages
+        ;
+    };
     keystoneauth1 = callPackage ./keystoneauth1.nix {
       inherit
         oslo-config
