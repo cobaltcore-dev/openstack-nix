@@ -4,6 +4,14 @@ let
   python3Packages = python311Packages;
 
   openstackPkgs = rec {
+    keystoneauth1 = callPackage ./keystoneauth1.nix {
+      inherit
+        oslo-config
+        oslo-utils
+        oslotest
+        python3Packages
+        ;
+    };
     oslo-config = callPackage ./oslo-config.nix { inherit python3Packages oslo-i18n; };
     oslo-context = callPackage ./oslo-context.nix { inherit oslotest pre-commit python3Packages; };
     oslo-i18n = callPackage ./oslo-i18n.nix { inherit python3Packages; };
