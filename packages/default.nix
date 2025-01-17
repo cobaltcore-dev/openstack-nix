@@ -15,6 +15,17 @@ let
     oslo-config = callPackage ./oslo-config.nix { inherit python3Packages oslo-i18n; };
     oslo-context = callPackage ./oslo-context.nix { inherit oslotest pre-commit python3Packages; };
     oslo-i18n = callPackage ./oslo-i18n.nix { inherit python3Packages; };
+    oslo-log = callPackage ./oslo-log.nix {
+      inherit
+        oslo-config
+        oslo-context
+        oslo-i18n
+        oslo-serialization
+        oslo-utils
+        oslotest
+        python3Packages
+        ;
+    };
     oslo-serialization = callPackage ./oslo-serialization.nix {
       inherit
         oslo-i18n
