@@ -44,6 +44,18 @@ let
     };
     oslotest = callPackage ./oslotest.nix { inherit oslo-config pre-commit python3Packages; };
     pre-commit = callPackage ./pre-commit.nix { inherit python3Packages; };
+    python-barbicanclient = callPackage ./python-barbicanclient.nix {
+      inherit
+        keystoneauth1
+        oslo-config
+        oslo-i18n
+        oslo-serialization
+        oslo-utils
+        oslotest
+        python3Packages
+        sphinxcontrib-svg2pdfconverter
+        ;
+    };
     sphinxcontrib-svg2pdfconverter = callPackage ./sphinxcontrib-svg2pdfconverter.nix {
       inherit python3Packages;
     };
