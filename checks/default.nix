@@ -4,7 +4,7 @@
     src = pkgs.nix-gitignore.gitignoreSource [ ] ../.;
     tools = pkgs;
     hooks = {
-      nixpkgs-fmt.enable = true;
+      nixfmt-rfc-style.enable = true;
       deadnix.enable = true;
       typos.enable = true;
     };
