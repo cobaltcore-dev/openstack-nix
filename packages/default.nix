@@ -46,6 +46,15 @@ let
         python3Packages
         ;
     };
+    oslo-metrics = callPackage ./oslo-metrics.nix {
+      inherit
+        oslo-config
+        oslo-log
+        oslo-utils
+        oslotest
+        python3Packages
+        ;
+    };
     oslo-serialization = callPackage ./oslo-serialization.nix {
       inherit
         oslo-i18n
