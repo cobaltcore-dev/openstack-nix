@@ -17,6 +17,9 @@ let
         python3Packages
         ;
     };
+    futurist = callPackage ./futurist.nix {
+      inherit oslotest python3Packages;
+    };
     keystoneauth1 = callPackage ./keystoneauth1.nix {
       inherit
         oslo-config
