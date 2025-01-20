@@ -72,6 +72,17 @@ let
         python3Packages
         ;
     };
+    oslo-service = callPackage ./oslo-service.nix {
+      inherit
+        oslo-concurrency
+        oslo-config
+        oslo-i18n
+        oslo-log
+        oslo-utils
+        oslotest
+        python3Packages
+        ;
+    };
     oslo-utils = callPackage ./oslo-utils.nix {
       inherit
         oslo-config
