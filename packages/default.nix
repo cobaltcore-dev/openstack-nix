@@ -20,6 +20,9 @@ let
     futurist = callPackage ./futurist.nix {
       inherit oslotest python3Packages;
     };
+    gabbi = callPackage ./gabbi.nix {
+      inherit jsonpath-rw-ext python3Packages;
+    };
     jsonpath-rw-ext = callPackage ./jsonpath-rw-ext.nix { inherit python3Packages; };
     keystoneauth1 = callPackage ./keystoneauth1.nix {
       inherit
