@@ -32,6 +32,15 @@ let
         python3Packages
         ;
     };
+    oslo-concurrency = callPackage ./oslo-concurrency.nix {
+      inherit
+        oslo-config
+        oslo-i18n
+        oslo-utils
+        oslotest
+        python3Packages
+        ;
+    };
     oslo-config = callPackage ./oslo-config.nix { inherit python3Packages oslo-i18n; };
     oslo-context = callPackage ./oslo-context.nix { inherit oslotest pre-commit python3Packages; };
     oslo-i18n = callPackage ./oslo-i18n.nix { inherit python3Packages; };
