@@ -64,6 +64,17 @@ let
         python3Packages
         ;
     };
+    oslo-middleware = callPackage ./oslo-middleware.nix {
+      inherit
+        oslo-config
+        oslo-context
+        oslo-i18n
+        oslo-serialization
+        oslo-utils
+        oslotest
+        python3Packages
+        ;
+    };
     oslo-serialization = callPackage ./oslo-serialization.nix {
       inherit
         oslo-i18n
