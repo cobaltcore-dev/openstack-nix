@@ -128,6 +128,9 @@ let
         sphinxcontrib-svg2pdfconverter
         ;
     };
+    python-binary-memcached = callPackage ./python-binary-memcached.nix {
+      inherit python3Packages uhashring;
+    };
     sphinxcontrib-svg2pdfconverter = callPackage ./sphinxcontrib-svg2pdfconverter.nix {
       inherit python3Packages;
     };
