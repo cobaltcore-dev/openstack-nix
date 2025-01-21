@@ -30,7 +30,7 @@
           buildInputs = self.checks.${system}.pre-commit-check.enabledPackages;
         };
 
-        packages = import ./packages { inherit (pkgs) callPackage python311Packages; };
+        packages = import ./packages { inherit (pkgs) callPackage python3Packages; };
 
         checks = import ./checks { inherit pkgs pre-commit-hooks-run; };
       }

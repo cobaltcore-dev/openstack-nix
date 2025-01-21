@@ -1,8 +1,5 @@
-{ callPackage, python311Packages }:
+{ callPackage, python3Packages }:
 let
-  # OpenStack supports python3.11 in the release 2024.2
-  python3Packages = python311Packages;
-
   openstackPkgs = rec {
     castellan = callPackage ./castellan.nix {
       inherit
