@@ -52,6 +52,21 @@ let
         python3Packages
         ;
     };
+    oslo-messaging = callPackage ./oslo-messaging.nix {
+      inherit
+        futurist
+        oslo-config
+        oslo-context
+        oslo-log
+        oslo-metrics
+        oslo-middleware
+        oslo-serialization
+        oslo-service
+        oslo-utils
+        oslotest
+        python3Packages
+        ;
+    };
     oslo-metrics = callPackage ./oslo-metrics.nix {
       inherit
         oslo-config
