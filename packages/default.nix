@@ -131,6 +131,7 @@ let
     sphinxcontrib-svg2pdfconverter = callPackage ./sphinxcontrib-svg2pdfconverter.nix {
       inherit python3Packages;
     };
+    uhashring = callPackage ./uhashring.nix { inherit python3Packages; };
   };
 in
 {
