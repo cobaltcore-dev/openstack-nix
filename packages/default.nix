@@ -90,6 +90,22 @@ let
         python3Packages
         ;
     };
+    os-vif = callPackage ./os-vif.nix {
+      inherit
+        oslo-concurrency
+        oslo-config
+        oslo-i18n
+        oslo-log
+        oslo-privsep
+        oslo-serialization
+        oslo-utils
+        oslo-versionedobjects
+        oslotest
+        ovs
+        ovsdbapp
+        python3Packages
+        ;
+    };
     os-win = callPackage ./os-win.nix {
       inherit
         oslo-concurrency
