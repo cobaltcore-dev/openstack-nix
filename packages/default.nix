@@ -443,6 +443,18 @@ let
     python-binary-memcached = callPackage ./python-binary-memcached.nix {
       inherit python3Packages uhashring;
     };
+    python-designateclient = callPackage ./python-designateclient.nix {
+      inherit
+        keystoneauth1
+        osc-lib
+        oslo-config
+        oslo-serialization
+        oslo-utils
+        oslotest
+        python3Packages
+        reno
+        ;
+    };
     python-cinderclient = python3Packages.python-cinderclient.override {
       inherit
         keystoneauth1
