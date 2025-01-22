@@ -73,6 +73,28 @@ let
     openstacksdk = python3Packages.openstacksdk.override {
       inherit keystoneauth1;
     };
+    neutron-lib = callPackage ./neutron-lib.nix {
+      inherit
+        keystoneauth1
+        os-ken
+        os-traits
+        oslo-concurrency
+        oslo-config
+        oslo-context
+        oslo-db
+        oslo-i18n
+        oslo-log
+        oslo-messaging
+        oslo-policy
+        oslo-serialization
+        oslo-service
+        oslo-utils
+        oslo-versionedobjects
+        oslotest
+        osprofiler
+        python3Packages
+        ;
+    };
     nova = callPackage ./nova.nix {
       inherit
         castellan
