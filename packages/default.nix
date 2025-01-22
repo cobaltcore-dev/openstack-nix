@@ -235,6 +235,7 @@ let
     };
     oslotest = callPackage ./oslotest.nix { inherit oslo-config pre-commit python3Packages; };
     ovs = callPackage ./ovs.nix { inherit python3Packages; };
+    ovsdbapp = callPackage ./ovsdbapp.nix { inherit oslotest ovs python3Packages; };
     pycadf = callPackage ./pycadf.nix { inherit oslo-config oslo-serialization python3Packages; };
     pre-commit = callPackage ./pre-commit.nix { inherit python3Packages; };
     python-barbicanclient = callPackage ./python-barbicanclient.nix {
