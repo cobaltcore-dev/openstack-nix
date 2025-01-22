@@ -474,6 +474,6 @@ let
   };
 in
 {
-  default = openstackPkgs.oslo-i18n;
+  default = openstackPkgs.nova;
 }
 // openstackPkgs
