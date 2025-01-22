@@ -58,6 +58,9 @@ let
         python3Packages
         ;
     };
+    openstacksdk = python3Packages.openstacksdk.override {
+      inherit keystoneauth1;
+    };
     os-brick = callPackage ./os-brick.nix {
       inherit
         castellan
