@@ -314,6 +314,16 @@ let
         ;
     };
     oslotest = callPackage ./oslotest.nix { inherit oslo-config pre-commit python3Packages; };
+    osprofiler = callPackage ./osprofiler.nix {
+      inherit
+        oslo-concurrency
+        oslo-config
+        oslo-serialization
+        oslo-utils
+        pre-commit
+        python3Packages
+        ;
+    };
     ovs = callPackage ./ovs.nix { inherit python3Packages; };
     ovsdbapp = callPackage ./ovsdbapp.nix { inherit oslotest ovs python3Packages; };
     pycadf = callPackage ./pycadf.nix { inherit oslo-config oslo-serialization python3Packages; };
