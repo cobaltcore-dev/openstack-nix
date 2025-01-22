@@ -32,6 +32,23 @@ let
         python3Packages
         ;
     };
+    keystonemiddleware = callPackage ./keystonemiddleware.nix {
+      inherit
+        keystoneauth1
+        oslo-cache
+        oslo-config
+        oslo-context
+        oslo-i18n
+        oslo-log
+        oslo-messaging
+        oslo-serialization
+        oslo-utils
+        oslotest
+        pycadf
+        python-keystoneclient
+        python3Packages
+        ;
+    };
     oslo-cache = callPackage ./oslo-cache.nix {
       inherit
         oslo-config
