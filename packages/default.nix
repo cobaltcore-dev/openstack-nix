@@ -57,6 +57,17 @@ let
         python3Packages
         ;
     };
+    os-win = callPackage ./os-win.nix {
+      inherit
+        oslo-concurrency
+        oslo-config
+        oslo-log
+        oslo-utils
+        oslo-i18n
+        oslotest
+        python3Packages
+        ;
+    };
     oslo-cache = callPackage ./oslo-cache.nix {
       inherit
         oslo-config
