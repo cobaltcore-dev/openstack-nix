@@ -84,6 +84,12 @@ let
         python3Packages
         ;
     };
+    os-traits = callPackage ./os-traits.nix {
+      inherit
+        oslotest
+        python3Packages
+        ;
+    };
     os-win = callPackage ./os-win.nix {
       inherit
         oslo-concurrency
