@@ -208,6 +208,20 @@ let
         python3Packages
         ;
     };
+    oslo-versionedobjects = callPackage ./oslo-versionedobjects.nix {
+      inherit
+        oslo-concurrency
+        oslo-config
+        oslo-context
+        oslo-i18n
+        oslo-log
+        oslo-messaging
+        oslo-serialization
+        oslo-utils
+        oslotest
+        python3Packages
+        ;
+    };
     oslo-vmware = callPackage ./oslo-vmware.nix {
       inherit
         oslo-concurrency
