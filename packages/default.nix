@@ -370,6 +370,14 @@ let
     python-binary-memcached = callPackage ./python-binary-memcached.nix {
       inherit python3Packages uhashring;
     };
+    python-cinderclient = python3Packages.python-cinderclient.override {
+      inherit
+        keystoneauth1
+        oslo-i18n
+        oslo-serialization
+        oslo-utils
+        ;
+    };
     python-glanceclient = python3Packages.python-glanceclient.override {
       inherit
         keystoneauth1
