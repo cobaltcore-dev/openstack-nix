@@ -29,6 +29,17 @@ let
         python3Packages
         ;
     };
+    oslo-cache = callPackage ./oslo-cache.nix {
+      inherit
+        oslo-config
+        oslo-i18n
+        oslo-log
+        oslo-utils
+        oslotest
+        python-binary-memcached
+        python3Packages
+        ;
+    };
     oslo-concurrency = callPackage ./oslo-concurrency.nix {
       inherit
         oslo-config
