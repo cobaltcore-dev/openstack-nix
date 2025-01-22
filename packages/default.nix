@@ -243,6 +243,12 @@ let
         python3Packages
         ;
     };
+    oslo-rootwrap = callPackage ./oslo-rootwrap.nix {
+      inherit
+        oslotest
+        python3Packages
+        ;
+    };
     oslo-serialization = callPackage ./oslo-serialization.nix {
       inherit
         oslo-i18n
