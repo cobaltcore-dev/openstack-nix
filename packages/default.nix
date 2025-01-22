@@ -211,6 +211,17 @@ let
         python3Packages
         ;
     };
+    oslo-policy = callPackage ./oslo-policy.nix {
+      inherit
+        oslo-config
+        oslo-context
+        oslo-i18n
+        oslo-serialization
+        oslo-utils
+        oslotest
+        python3Packages
+        ;
+    };
     oslo-privsep = callPackage ./oslo-privsep.nix {
       inherit
         oslo-concurrency
