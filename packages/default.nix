@@ -125,6 +125,17 @@ let
         python3Packages
         ;
     };
+    oslo-privsep = callPackage ./oslo-privsep.nix {
+      inherit
+        oslo-concurrency
+        oslo-config
+        oslo-i18n
+        oslo-log
+        oslo-utils
+        oslotest
+        python3Packages
+        ;
+    };
     oslo-serialization = callPackage ./oslo-serialization.nix {
       inherit
         oslo-i18n
