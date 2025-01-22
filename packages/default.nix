@@ -146,6 +146,17 @@ let
     python-binary-memcached = callPackage ./python-binary-memcached.nix {
       inherit python3Packages uhashring;
     };
+    python-keystoneclient = callPackage ./python-keystoneclient.nix {
+      inherit
+        keystoneauth1
+        oslo-config
+        oslo-i18n
+        oslo-serialization
+        oslo-utils
+        oslotest
+        python3Packages
+        ;
+    };
     sphinxcontrib-svg2pdfconverter = callPackage ./sphinxcontrib-svg2pdfconverter.nix {
       inherit python3Packages;
     };
