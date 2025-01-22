@@ -144,6 +144,14 @@ let
         python3Packages
         ;
     };
+    os-ken = callPackage ./os-ken.nix {
+      inherit
+        oslo-config
+        oslotest
+        ovs
+        python3Packages
+        ;
+    };
     os-resource-classes = callPackage ./os-resource-classes.nix {
       inherit
         oslotest
