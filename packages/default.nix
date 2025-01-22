@@ -58,6 +58,26 @@ let
         python3Packages
         ;
     };
+    os-brick = callPackage ./os-brick.nix {
+      inherit
+        castellan
+        doc8
+        flake8-logging-format
+        os-win
+        oslo-concurrency
+        oslo-config
+        oslo-context
+        oslo-i18n
+        oslo-log
+        oslo-privsep
+        oslo-serialization
+        oslo-service
+        oslo-utils
+        oslo-vmware
+        oslotest
+        python3Packages
+        ;
+    };
     os-win = callPackage ./os-win.nix {
       inherit
         oslo-concurrency
