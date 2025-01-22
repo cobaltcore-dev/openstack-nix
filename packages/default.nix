@@ -398,6 +398,7 @@ let
     };
     suds-community = callPackage ./suds-community.nix { inherit python3Packages; };
     uhashring = callPackage ./uhashring.nix { inherit python3Packages; };
+    zake = callPackage ./zake.nix { inherit python3Packages; };
   };
 in
 {
