@@ -49,6 +49,13 @@ let
         python3Packages
         ;
     };
+    microversion-parse = callPackage ./microversion-parse.nix {
+      inherit
+        gabbi
+        pre-commit
+        python3Packages
+        ;
+    };
     oslo-cache = callPackage ./oslo-cache.nix {
       inherit
         oslo-config
