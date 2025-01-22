@@ -17,6 +17,7 @@ let
         python3Packages
         ;
     };
+    doc8 = callPackage ./doc8.nix { inherit python3Packages; };
     flake8-logging-format = callPackage ./flake8-logging-format.nix { inherit python3Packages; };
     futurist = callPackage ./futurist.nix {
       inherit oslotest python3Packages;
