@@ -95,6 +95,46 @@ let
         python3Packages
         ;
     };
+    neutron = callPackage ./neutron.nix {
+      inherit
+        doc8
+        futurist
+        keystoneauth1
+        keystonemiddleware
+        neutron-lib
+        openstacksdk
+        os-ken
+        os-resource-classes
+        os-vif
+        oslo-cache
+        oslo-concurrency
+        oslo-config
+        oslo-context
+        oslo-db
+        oslo-i18n
+        oslo-log
+        oslo-messaging
+        oslo-middleware
+        oslo-policy
+        oslo-privsep
+        oslo-reports
+        oslo-rootwrap
+        oslo-serialization
+        oslo-service
+        oslo-upgradecheck
+        oslo-utils
+        oslo-versionedobjects
+        oslotest
+        osprofiler
+        ovs
+        ovsdbapp
+        python-designateclient
+        python-neutronclient
+        python-novaclient
+        python3Packages
+        tooz
+        ;
+    };
     nova = callPackage ./nova.nix {
       inherit
         castellan
