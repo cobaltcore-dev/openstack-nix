@@ -81,6 +81,14 @@ let
         python3Packages
         ;
     };
+    os-client-config = callPackage ./os-client-config.nix {
+      inherit
+        openstacksdk
+        oslotest
+        python-glanceclient
+        python3Packages
+        ;
+    };
     os-resource-classes = callPackage ./os-resource-classes.nix {
       inherit
         oslotest
@@ -345,9 +353,9 @@ let
     };
     python-glanceclient = python3Packages.python-glanceclient.override {
       inherit
+        keystoneauth1
         oslo-i18n
         oslo-utils
-        keystoneauth1
         ;
     };
     python-keystoneclient = callPackage ./python-keystoneclient.nix {
