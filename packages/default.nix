@@ -497,6 +497,13 @@ let
         python3Packages
         ;
     };
+    python-novaclient = python3Packages.python-novaclient.override {
+      inherit
+        keystoneauth1
+        oslo-i18n
+        oslo-serialization
+        ;
+    };
     reno = callPackage ./reno.nix { inherit python3Packages; };
     sphinxcontrib-svg2pdfconverter = callPackage ./sphinxcontrib-svg2pdfconverter.nix {
       inherit python3Packages;
