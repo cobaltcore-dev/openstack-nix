@@ -128,6 +128,13 @@ let
         python3Packages
         ;
     };
+    osc-lib = python3Packages.osc-lib.override {
+      inherit
+        openstacksdk
+        oslo-i18n
+        oslo-utils
+        ;
+    };
     oslo-cache = callPackage ./oslo-cache.nix {
       inherit
         oslo-config
