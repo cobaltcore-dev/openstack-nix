@@ -78,6 +78,12 @@ let
         python3Packages
         ;
     };
+    os-resource-classes = callPackage ./os-resource-classes.nix {
+      inherit
+        oslotest
+        python3Packages
+        ;
+    };
     os-win = callPackage ./os-win.nix {
       inherit
         oslo-concurrency
