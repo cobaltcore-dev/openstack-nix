@@ -376,6 +376,22 @@ let
         python3Packages
         ;
     };
+    python-neutronclient = callPackage ./python-neutronclient.nix {
+      inherit
+        keystoneauth1
+        openstacksdk
+        os-client-config
+        osc-lib
+        oslo-i18n
+        oslo-log
+        oslo-serialization
+        oslo-utils
+        oslotest
+        osprofiler
+        python-keystoneclient
+        python3Packages
+        ;
+    };
     sphinxcontrib-svg2pdfconverter = callPackage ./sphinxcontrib-svg2pdfconverter.nix {
       inherit python3Packages;
     };
