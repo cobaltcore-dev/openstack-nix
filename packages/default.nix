@@ -163,6 +163,17 @@ let
         python3Packages
         ;
     };
+    oslo-vmware = callPackage ./oslo-vmware.nix {
+      inherit
+        oslo-concurrency
+        oslo-context
+        oslo-i18n
+        oslo-utils
+        pre-commit
+        python3Packages
+        suds-community
+        ;
+    };
     oslotest = callPackage ./oslotest.nix { inherit oslo-config pre-commit python3Packages; };
     pycadf = callPackage ./pycadf.nix { inherit oslo-config oslo-serialization python3Packages; };
     pre-commit = callPackage ./pre-commit.nix { inherit python3Packages; };
