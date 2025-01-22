@@ -73,6 +73,49 @@ let
     openstacksdk = python3Packages.openstacksdk.override {
       inherit keystoneauth1;
     };
+    nova = callPackage ./nova.nix {
+      inherit
+        castellan
+        cursive
+        futurist
+        gabbi
+        keystoneauth1
+        keystonemiddleware
+        microversion-parse
+        openstacksdk
+        os-brick
+        os-resource-classes
+        os-traits
+        os-vif
+        oslo-cache
+        oslo-concurrency
+        oslo-config
+        oslo-context
+        oslo-db
+        oslo-i18n
+        oslo-limit
+        oslo-log
+        oslo-messaging
+        oslo-middleware
+        oslo-policy
+        oslo-privsep
+        oslo-reports
+        oslo-rootwrap
+        oslo-serialization
+        oslo-service
+        oslo-upgradecheck
+        oslo-utils
+        oslo-versionedobjects
+        oslotest
+        osprofiler
+        python-barbicanclient
+        python-cinderclient
+        python-glanceclient
+        python-neutronclient
+        python3Packages
+        tooz
+        ;
+    };
     os-brick = callPackage ./os-brick.nix {
       inherit
         castellan
