@@ -268,6 +268,18 @@ let
         python3Packages
         ;
     };
+    oslo-upgradecheck = callPackage ./oslo-upgradecheck.nix {
+      inherit
+        oslo-config
+        oslo-i18n
+        oslo-policy
+        oslo-serialization
+        oslo-utils
+        oslotest
+        pre-commit
+        python3Packages
+        ;
+    };
     oslo-utils = callPackage ./oslo-utils.nix {
       inherit
         oslo-config
