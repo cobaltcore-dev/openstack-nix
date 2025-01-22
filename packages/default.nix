@@ -154,6 +154,17 @@ let
         ;
     };
     oslo-i18n = callPackage ./oslo-i18n.nix { inherit python3Packages; };
+    oslo-limit = callPackage ./oslo-limit.nix {
+      inherit
+        keystoneauth1
+        openstacksdk
+        oslo-config
+        oslo-i18n
+        oslo-log
+        oslotest
+        python3Packages
+        ;
+    };
     oslo-log = callPackage ./oslo-log.nix {
       inherit
         oslo-config
