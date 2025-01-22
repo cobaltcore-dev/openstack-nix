@@ -195,6 +195,7 @@ let
     sphinxcontrib-svg2pdfconverter = callPackage ./sphinxcontrib-svg2pdfconverter.nix {
       inherit python3Packages;
     };
+    suds-community = callPackage ./suds-community.nix { inherit python3Packages; };
     uhashring = callPackage ./uhashring.nix { inherit python3Packages; };
   };
 in
