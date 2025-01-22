@@ -397,6 +397,16 @@ let
       inherit python3Packages;
     };
     suds-community = callPackage ./suds-community.nix { inherit python3Packages; };
+    tooz = callPackage ./tooz.nix {
+      inherit
+        etcd3gw
+        futurist
+        oslo-serialization
+        oslo-utils
+        python3Packages
+        zake
+        ;
+    };
     uhashring = callPackage ./uhashring.nix { inherit python3Packages; };
     zake = callPackage ./zake.nix { inherit python3Packages; };
   };
