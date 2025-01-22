@@ -343,6 +343,13 @@ let
     python-binary-memcached = callPackage ./python-binary-memcached.nix {
       inherit python3Packages uhashring;
     };
+    python-glanceclient = python3Packages.python-glanceclient.override {
+      inherit
+        oslo-i18n
+        oslo-utils
+        keystoneauth1
+        ;
+    };
     python-keystoneclient = callPackage ./python-keystoneclient.nix {
       inherit
         keystoneauth1
