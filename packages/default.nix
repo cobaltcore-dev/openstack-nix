@@ -350,6 +350,16 @@ let
         oslo-utils
         ;
     };
+    osc-placement = callPackage ./osc-placement.nix {
+      inherit
+        keystoneauth1
+        osc-lib
+        oslo-utils
+        oslo-serialization
+        oslotest
+        python3Packages
+        ;
+    };
     oslo-cache = callPackage ./oslo-cache.nix {
       inherit
         oslo-config
