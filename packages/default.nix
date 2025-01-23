@@ -690,6 +690,7 @@ let
     xstatic-bootstrap-datepicker = callPackage ./xstatic-bootstrap-datepicker.nix {
       inherit python3Packages;
     };
+    xstatic-bootstrap-scss = callPackage ./xstatic-bootstrap-scss.nix { inherit python3Packages; };
     zake = callPackage ./zake.nix { inherit python3Packages; };
   };
 in
