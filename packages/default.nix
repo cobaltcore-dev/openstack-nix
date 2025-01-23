@@ -692,6 +692,7 @@ let
     };
     xstatic-bootstrap-scss = callPackage ./xstatic-bootstrap-scss.nix { inherit python3Packages; };
     xstatic-bootswatch = callPackage ./xstatic-bootswatch.nix { inherit python3Packages; };
+    xstatic-d3 = callPackage ./xstatic-d3.nix { inherit python3Packages; };
     xstatic-hogan = callPackage ./xstatic-hogan.nix { inherit python3Packages; };
     xstatic-jasmine = callPackage ./xstatic-jasmine.nix { inherit python3Packages; };
     xstatic-jsencrypt = callPackage ./xstatic-jsencrypt.nix { inherit python3Packages; };
