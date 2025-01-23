@@ -567,6 +567,19 @@ let
       inherit python3Packages;
     };
     suds-community = callPackage ./suds-community.nix { inherit python3Packages; };
+    taskflow = callPackage ./taskflow.nix {
+      inherit
+        automaton
+        etcd3gw
+        futurist
+        oslo-serialization
+        oslo-utils
+        oslotest
+        pre-commit
+        python3Packages
+        zake
+        ;
+    };
     tooz = callPackage ./tooz.nix {
       inherit
         etcd3gw
