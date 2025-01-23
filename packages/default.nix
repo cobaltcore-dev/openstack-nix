@@ -4,6 +4,7 @@ let
   # Since every package is required to use the same python interpreter, we set
   # the interpreter in the toplevel, to avoid a change for every single package
   openstackPkgs = rec {
+    automaton = callPackage ./automaton.nix { inherit python3Packages; };
     castellan = callPackage ./castellan.nix {
       inherit
         keystoneauth1
