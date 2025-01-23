@@ -245,6 +245,25 @@ let
         tooz
         ;
     };
+    openstack-placement = callPackage ./openstack-placement.nix {
+      inherit
+        keystonemiddleware
+        microversion-parse
+        os-resource-classes
+        os-traits
+        oslo-concurrency
+        oslo-config
+        oslo-context
+        oslo-db
+        oslo-log
+        oslo-middleware
+        oslo-serialization
+        oslo-upgradecheck
+        oslo-utils
+        oslotest
+        python3Packages
+        ;
+    };
     os-brick = callPackage ./os-brick.nix {
       inherit
         castellan
