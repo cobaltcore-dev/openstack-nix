@@ -699,6 +699,9 @@ let
     xstatic-jquery-quicksearch = callPackage ./xstatic-jquery-quicksearch.nix {
       inherit python3Packages;
     };
+    xstatic-jquery-tablesorter = callPackage ./xstatic-jquery-tablesorter.nix {
+      inherit python3Packages;
+    };
     xstatic-jsencrypt = callPackage ./xstatic-jsencrypt.nix { inherit python3Packages; };
     zake = callPackage ./zake.nix { inherit python3Packages; };
   };
