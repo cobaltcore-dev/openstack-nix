@@ -62,6 +62,31 @@ let
         python3Packages
         ;
     };
+    glance = callPackage ./glance.nix {
+      inherit
+        castellan
+        cursive
+        glance-store
+        keystoneauth1
+        keystonemiddleware
+        os-brick
+        os-win
+        oslo-db
+        oslo-i18n
+        oslo-limit
+        oslo-log
+        oslo-messaging
+        oslo-middleware
+        oslo-policy
+        oslo-reports
+        oslo-upgradecheck
+        osprofiler
+        python-cinderclient
+        python3Packages
+        taskflow
+        wsme
+        ;
+    };
     jsonpath-rw-ext = callPackage ./jsonpath-rw-ext.nix { inherit python3Packages; };
     keystone = callPackage ./keystone.nix {
       inherit
