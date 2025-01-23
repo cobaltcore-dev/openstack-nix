@@ -30,6 +30,7 @@ let
         ;
     };
     django-debreach = callPackage ./django-debreach.nix { inherit python3Packages; };
+    django-discover-runner = callPackage ./django-discover-runner.nix { inherit python3Packages; };
     doc8 = callPackage ./doc8.nix { inherit python3Packages; };
     enmerkar = callPackage ./enmerkar.nix { inherit python3Packages; };
     etcd3gw = callPackage ./etcd3gw.nix { inherit futurist python3Packages; };
