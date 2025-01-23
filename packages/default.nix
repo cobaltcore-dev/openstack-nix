@@ -687,6 +687,9 @@ let
       inherit python3Packages;
     };
     xstatic-angular = callPackage ./xstatic-angular.nix { inherit python3Packages; };
+    xstatic-bootstrap-datepicker = callPackage ./xstatic-bootstrap-datepicker.nix {
+      inherit python3Packages;
+    };
     zake = callPackage ./zake.nix { inherit python3Packages; };
   };
 in
