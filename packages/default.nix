@@ -679,6 +679,7 @@ let
     xstatic-angular-fileupload = callPackage ./xstatic-angular-fileupload.nix {
       inherit python3Packages;
     };
+    xstatic-angular-gettext = callPackage ./xstatic-angular-gettext.nix { inherit python3Packages; };
     xstatic-angular = callPackage ./xstatic-angular.nix { inherit python3Packages; };
     zake = callPackage ./zake.nix { inherit python3Packages; };
   };
