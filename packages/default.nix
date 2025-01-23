@@ -91,6 +91,54 @@ let
         wsme
         ;
     };
+    horizon = callPackage ./horizon.nix {
+      inherit
+        django-debreach
+        django-pyscss
+        enmerkar
+        futurist
+        keystoneauth1
+        oslo-concurrency
+        oslo-config
+        oslo-i18n
+        oslo-policy
+        oslo-serialization
+        oslo-upgradecheck
+        oslo-utils
+        osprofiler
+        python-cinderclient
+        python-glanceclient
+        python-keystoneclient
+        python-neutronclient
+        python-novaclient
+        python-swiftclient
+        python3Packages
+        xstatic-angular
+        xstatic-angular-bootstrap
+        xstatic-angular-fileupload
+        xstatic-angular-gettext
+        xstatic-angular-lrdragndrop
+        xstatic-angular-schema-form
+        xstatic-bootstrap-datepicker
+        xstatic-bootstrap-scss
+        xstatic-bootswatch
+        xstatic-d3
+        xstatic-hogan
+        xstatic-jasmine
+        xstatic-jquery-migrate
+        xstatic-jquery-quicksearch
+        xstatic-jquery-tablesorter
+        xstatic-jsencrypt
+        xstatic-mdi
+        xstatic-objectpath
+        xstatic-rickshaw
+        xstatic-roboto-fontface
+        xstatic-smart-table
+        xstatic-spin
+        xstatic-term-js
+        xstatic-tv4
+        ;
+    };
     jsonpath-rw-ext = callPackage ./jsonpath-rw-ext.nix { inherit python3Packages; };
     keystone = callPackage ./keystone.nix {
       inherit
