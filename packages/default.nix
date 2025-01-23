@@ -30,6 +30,7 @@ let
         ;
     };
     doc8 = callPackage ./doc8.nix { inherit python3Packages; };
+    enmerkar = callPackage ./enmerkar.nix { inherit python3Packages; };
     etcd3gw = callPackage ./etcd3gw.nix { inherit futurist python3Packages; };
     flake8-logging-format = callPackage ./flake8-logging-format.nix { inherit python3Packages; };
     futurist = callPackage ./futurist.nix {
