@@ -29,6 +29,7 @@ let
         python3Packages
         ;
     };
+    django-debreach = callPackage ./django-debreach.nix { inherit python3Packages; };
     doc8 = callPackage ./doc8.nix { inherit python3Packages; };
     enmerkar = callPackage ./enmerkar.nix { inherit python3Packages; };
     etcd3gw = callPackage ./etcd3gw.nix { inherit futurist python3Packages; };
