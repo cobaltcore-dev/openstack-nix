@@ -632,6 +632,14 @@ let
         oslo-serialization
         ;
     };
+    python-swiftclient = callPackage ./python-swiftclient.nix {
+      inherit
+        python-keystoneclient
+        keystoneauth1
+        openstacksdk
+        python3Packages
+        ;
+    };
     reno = callPackage ./reno.nix { inherit python3Packages; };
     sphinxcontrib-svg2pdfconverter = callPackage ./sphinxcontrib-svg2pdfconverter.nix {
       inherit python3Packages;
