@@ -704,6 +704,7 @@ let
     };
     xstatic-jsencrypt = callPackage ./xstatic-jsencrypt.nix { inherit python3Packages; };
     xstatic-mdi = callPackage ./xstatic-mdi.nix { inherit python3Packages; };
+    xstatic-objectpath = callPackage ./xstatic-objectpath.nix { inherit python3Packages; };
     zake = callPackage ./zake.nix { inherit python3Packages; };
   };
 in
