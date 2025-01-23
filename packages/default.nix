@@ -673,6 +673,9 @@ let
       disabled = false;
       propagatedBuildInputs = old.propagatedBuildInputs ++ [ python3Packages.importlib-metadata ];
     });
+    xstatic-angular-bootstrap = callPackage ./xstatic-angular-bootstrap.nix {
+      inherit python3Packages;
+    };
     xstatic-angular = callPackage ./xstatic-angular.nix { inherit python3Packages; };
     zake = callPackage ./zake.nix { inherit python3Packages; };
   };
