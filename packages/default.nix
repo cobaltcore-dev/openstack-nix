@@ -710,6 +710,7 @@ let
     xstatic-smart-table = callPackage ./xstatic-smart-table.nix { inherit python3Packages; };
     xstatic-spin = callPackage ./xstatic-spin.nix { inherit python3Packages; };
     xstatic-term-js = callPackage ./xstatic-term-js.nix { inherit python3Packages; };
+    xstatic-tv4 = callPackage ./xstatic-tv4.nix { inherit python3Packages; };
     zake = callPackage ./zake.nix { inherit python3Packages; };
   };
 in
