@@ -615,6 +615,10 @@ let
         ;
     };
     uhashring = callPackage ./uhashring.nix { inherit python3Packages; };
+    wsme = python3Packages.wsme.overrideAttrs (old: {
+      disabled = false;
+      propagatedBuildInputs = old.propagatedBuildInputs ++ [ python3Packages.importlib-metadata ];
+    });
     zake = callPackage ./zake.nix { inherit python3Packages; };
   };
 in
