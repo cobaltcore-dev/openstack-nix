@@ -38,6 +38,30 @@ let
     gabbi = callPackage ./gabbi.nix {
       inherit jsonpath-rw-ext python3Packages;
     };
+    glance-store = callPackage ./glance-store.nix {
+      inherit
+        castellan
+        cursive
+        keystoneauth1
+        keystonemiddleware
+        os-brick
+        os-win
+        oslo-db
+        oslo-i18n
+        oslo-limit
+        oslo-log
+        oslo-messaging
+        oslo-middleware
+        oslo-reports
+        oslo-upgradecheck
+        oslo-vmware
+        oslotest
+        osprofiler
+        python-cinderclient
+        taskflow
+        python3Packages
+        ;
+    };
     jsonpath-rw-ext = callPackage ./jsonpath-rw-ext.nix { inherit python3Packages; };
     keystone = callPackage ./keystone.nix {
       inherit
