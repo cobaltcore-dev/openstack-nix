@@ -38,6 +38,23 @@ let
       inherit jsonpath-rw-ext python3Packages;
     };
     jsonpath-rw-ext = callPackage ./jsonpath-rw-ext.nix { inherit python3Packages; };
+    keystone = callPackage ./keystone.nix {
+      inherit
+        keystonemiddleware
+        oslo-cache
+        oslo-db
+        oslo-log
+        oslo-messaging
+        oslo-middleware
+        oslo-policy
+        oslo-serialization
+        oslo-upgradecheck
+        oslotest
+        osprofiler
+        python-keystoneclient
+        python3Packages
+        ;
+    };
     keystoneauth1 = callPackage ./keystoneauth1.nix {
       inherit
         oslo-config
