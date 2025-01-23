@@ -695,6 +695,7 @@ let
     xstatic-d3 = callPackage ./xstatic-d3.nix { inherit python3Packages; };
     xstatic-hogan = callPackage ./xstatic-hogan.nix { inherit python3Packages; };
     xstatic-jasmine = callPackage ./xstatic-jasmine.nix { inherit python3Packages; };
+    xstatic-jquery-migrate = callPackage ./xstatic-jquery-migrate.nix { inherit python3Packages; };
     xstatic-jsencrypt = callPackage ./xstatic-jsencrypt.nix { inherit python3Packages; };
     zake = callPackage ./zake.nix { inherit python3Packages; };
   };
