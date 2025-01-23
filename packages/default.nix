@@ -706,6 +706,7 @@ let
     xstatic-mdi = callPackage ./xstatic-mdi.nix { inherit python3Packages; };
     xstatic-objectpath = callPackage ./xstatic-objectpath.nix { inherit python3Packages; };
     xstatic-rickshaw = callPackage ./xstatic-rickshaw.nix { inherit python3Packages; };
+    xstatic-roboto-fontface = callPackage ./xstatic-roboto-fontface.nix { inherit python3Packages; };
     zake = callPackage ./zake.nix { inherit python3Packages; };
   };
 in
