@@ -30,6 +30,7 @@ let
     jsonschema
     pbr
     pymysql
+    python-memcached
     python-swiftclient
     pythonRelaxDepsHook
     retrying
@@ -71,6 +72,7 @@ python3Packages.buildPythonPackage (rec {
     oslo-upgradecheck
     osprofiler
     pymysql
+    python-memcached
     retrying
     taskflow
     wsme
