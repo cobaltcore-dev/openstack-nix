@@ -35,6 +35,8 @@
         checks = import ./checks { inherit pkgs pre-commit-hooks-run; };
 
         nixosModules = import ./modules { openstackPkgs = packages; };
+
+        tests = import ./tests/default.nix { inherit pkgs nixosModules; };
       }
     )
     // {
