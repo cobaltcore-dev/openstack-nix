@@ -23,7 +23,7 @@
         pkgs = import nixpkgs { inherit system; };
         pre-commit-hooks-run = pre-commit-hooks-nix.lib.${system}.run;
       in
-      {
+      rec {
         formatter = pkgs.nixfmt-rfc-style;
         devShells.default = pkgs.mkShellNoCC {
           inherit (self.checks.${system}.pre-commit-check) shellHook;
@@ -33,6 +33,8 @@
         packages = import ./packages { inherit (pkgs) callPackage python3Packages; };
 
         checks = import ./checks { inherit pkgs pre-commit-hooks-run; };
+
+        nixosModules = import ./modules { openstackPkgs = packages; };
       }
     )
     // {
