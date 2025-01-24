@@ -52,17 +52,37 @@ let
     ];
   };
 
+  nixIntegrationTestBuildJob = attrPath: {
+    "tags" = [ "native-nix" ];
+    "stage" = "test";
+    "script" = [
+      "NIX_PATH= nix build .#${attrPath}"
+    ];
+  };
+
+  hasMetaTag =
+    drv: tag: builtins.hasAttr "meta" drv && builtins.hasAttr "tag" (drv.meta) && drv.meta.tag == tag;
+
   generateJobDescs =
     attr:
     let
+      drv = attr.drv;
       attrPath = attr.path;
     in
-    [
-      {
-        name = "${attrPath}";
-        value = defaultBuildJob attrPath;
-      }
-    ];
+    if hasMetaTag drv "nix-integration-test" then
+      [
+        {
+          name = "${attrPath}";
+          value = nixIntegrationTestBuildJob attrPath;
+        }
+      ]
+    else
+      [
+        {
+          name = "${attrPath}";
+          value = defaultBuildJob attrPath;
+        }
+      ];
 
   # Build the job list: Each job is represented as one element with name
   # denoting the build job's name and value being the job's attributes.
