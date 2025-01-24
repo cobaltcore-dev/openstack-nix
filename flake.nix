@@ -40,6 +40,6 @@
       }
     )
     // {
-      ci = import ./lib/gitlab-ci.nix { input = { inherit (self) packages; }; };
+      ci = import ./lib/gitlab-ci.nix { input = { inherit (self) packages tests; }; };
     };
 }
