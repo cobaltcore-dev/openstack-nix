@@ -158,6 +158,14 @@ in
         The Neutron metadata agent config.
       '';
     };
+    providerInterface = mkOption {
+      default = "eth2";
+      type = types.str;
+      description = ''
+        The name of the physical network interface used for the provider
+        network.
+      '';
+    };
   };
   config = mkIf cfg.enable {
 
@@ -277,7 +285,7 @@ in
       serviceConfig = {
         ExecStartPre = pkgs.writeShellScript "pre.sh" ''
           ${pkgs.openvswitch}/bin/ovs-vsctl add-br br-provider || true
-          ${pkgs.openvswitch}/bin/ovs-vsctl add-port br-provider eth2 || true
+          ${pkgs.openvswitch}/bin/ovs-vsctl add-port br-provider ${cfg.providerInterface} || true
         '';
         ExecStart = pkgs.writeShellScript "neutron-openvswitch.sh" ''
           ${neutron}/bin/neutron-openvswitch-agent --config-file=${cfg.config} --config-file=${cfg.openvswitchConfig}
