@@ -65,7 +65,7 @@ pkgs.nixosTest {
         serviceConfig = {
           Type = "simple";
           ExecStart = pkgs.writeShellScript "exec.sh" ''
-            # nova-manage cell_v2 discover_hosts --verbose
+            nova-manage cell_v2 discover_hosts --verbose
 
             openstack network create  --share --external \
               --provider-physical-network provider \
