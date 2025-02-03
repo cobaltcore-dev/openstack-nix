@@ -110,7 +110,8 @@ in
         User = "keystone";
         Group = "keystone";
         Type = "oneshot";
-        ExecStart = pkgs.writeShellScript "exec.sh" ''
+        ExecStart = pkgs.writeShellScript "keystone-all.sh" ''
+          set -euxo pipefail
           keystone-manage --config-file ${config.keystone.config} bootstrap \
             --bootstrap-password admin\
             --bootstrap-region-id RegionOne
@@ -132,7 +133,8 @@ in
         Type = "oneshot";
         User = "glance";
         Group = "glance";
-        ExecStart = pkgs.writeShellScript "exec.sh" ''
+        ExecStart = pkgs.writeShellScript "glance.sh" ''
+          set -euxo pipefail
           openstack user create --domain default --password glance glance
           openstack role add --project service --user glance admin
           openstack role add --user glance --user-domain default --system all reader
@@ -157,7 +159,8 @@ in
         Type = "oneshot";
         User = "placement";
         Group = "placement";
-        ExecStart = pkgs.writeShellScript "exec.sh" ''
+        ExecStart = pkgs.writeShellScript "placement.sh" ''
+          set -euxo pipefail
           openstack user create --domain default --password placement placement
           openstack role add --project service --user placement admin
           placement-manage --config-file ${config.placement.config} db sync
@@ -178,7 +181,8 @@ in
         Type = "oneshot";
         User = "nova";
         Group = "nova";
-        ExecStart = pkgs.writeShellScript "exec.sh" ''
+        ExecStart = pkgs.writeShellScript "nova.sh" ''
+          set -euxo pipefail
           openstack user create --domain default --password nova nova
           openstack role add --project service --user nova admin
           nova-manage --config-file ${config.nova.config} api_db sync
@@ -202,7 +206,8 @@ in
         Type = "oneshot";
         User = "neutron";
         Group = "neutron";
-        ExecStart = pkgs.writeShellScript "exec.sh" ''
+        ExecStart = pkgs.writeShellScript "neutron.sh" ''
+          set -euxo pipefail
           openstack user create --domain default --password neutron neutron
           openstack role add --project service --user neutron admin
           neutron-db-manage --config-file ${config.neutron.config} --config-file ${config.neutron.ml2Config} upgrade head

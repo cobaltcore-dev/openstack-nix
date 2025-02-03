@@ -64,8 +64,8 @@ pkgs.nixosTest {
         environment = adminEnv;
         serviceConfig = {
           Type = "simple";
-          ExecStart = pkgs.writeShellScript "exec.sh" ''
-            nova-manage cell_v2 discover_hosts --verbose
+          ExecStart = pkgs.writeShellScript "openstack-create-vm.sh" ''
+            set -euxo pipefail
 
             openstack network create  --share --external \
               --provider-physical-network provider \
