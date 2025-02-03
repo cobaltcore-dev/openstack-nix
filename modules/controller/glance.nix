@@ -14,6 +14,7 @@ let
   glanceConf = pkgs.writeText "glance-api.conf" ''
     [DEFAULT]
     enabled_backends=fs:file
+    log_dir = /var/log/glance
 
     [database]
     connection = mysql+pymysql://glance:glance@controller/glance
@@ -75,6 +76,13 @@ in
     systemd.tmpfiles.settings = {
       "10-glance" = {
         "/var/lib/glance/" = {
+          D = {
+            user = "glance";
+            group = "glance";
+            mode = "0755";
+          };
+        };
+        "/var/log/glance/" = {
           D = {
             user = "glance";
             group = "glance";

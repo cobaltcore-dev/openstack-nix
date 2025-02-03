@@ -42,6 +42,8 @@ let
   '';
 
   keystoneConf = pkgs.writeText "keystone.conf" ''
+    [DEFAULT]
+    log_dir = /var/log/keystone
     [database]
     connection = mysql+pymysql://keystone:keystone@controller/keystone
 
@@ -80,6 +82,13 @@ in
     systemd.tmpfiles.settings = {
       "10-keystone" = {
         "/var/lib/keystone/" = {
+          D = {
+            user = "keystone";
+            group = "keystone";
+            mode = "0755";
+          };
+        };
+        "/var/log/keystone/" = {
           D = {
             user = "keystone";
             group = "keystone";

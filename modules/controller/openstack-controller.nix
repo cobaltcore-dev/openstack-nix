@@ -103,6 +103,7 @@ in
         keystone-manage --config-file ${config.keystone.config} fernet_setup --keystone-user keystone --keystone-group keystone
         keystone-manage --config-file ${config.keystone.config} credential_setup --keystone-user keystone --keystone-group keystone
         chown -R keystone:keystone /etc/keystone
+        chown -R keystone:keystone /var/log/keystone
       '';
       serviceConfig = {
         PermissionsStartOnly = true;
