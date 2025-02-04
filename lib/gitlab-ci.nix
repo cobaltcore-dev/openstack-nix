@@ -56,7 +56,8 @@ let
     "tags" = [ "native-nix" ];
     "stage" = "test";
     "script" = [
-      "NIX_PATH= nix build .#${attrPath}"
+      "NIX_PATH= nix build .#${attrPath}.driver"
+      "./result/bin/nixos-test-driver"
     ];
   };
 
