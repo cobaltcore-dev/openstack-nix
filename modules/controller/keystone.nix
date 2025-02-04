@@ -131,7 +131,7 @@ in
       instance.type = "emperor";
       instance.vassals.keystone = {
         type = "normal";
-        http-socket = "127.0.0.1:5001";
+        http11-socket = "127.0.0.1:5001";
         buffer-size = 65535;
         immediate-uid = "keystone";
         immediate-gid = "keystone";
@@ -140,6 +140,7 @@ in
         master = true;
         enable-threads = true;
         processes = 4;
+        threads = 4;
         thunder-lock = true;
         lazy-apps = true;
       };
