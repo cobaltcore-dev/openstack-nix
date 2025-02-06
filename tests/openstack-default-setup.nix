@@ -221,9 +221,16 @@ pkgs.nixosTest {
         return False
 
       start_all()
+      controllerVM.wait_for_unit("glance-api.service")
+      controllerVM.wait_for_unit("placement-api.service")
+      controllerVM.wait_for_unit("neutron-server.service")
+      controllerVM.wait_for_unit("nova-scheduler.service")
+      controllerVM.wait_for_unit("nova-conductor.service")
+
       assert wait_for_openstack()
 
       controllerVM.succeed("systemctl start openstack-create-vm.service")
+      controllerVM.wait_for_unit("openstack-create-vm.service")
       assert wait_for_openstack_vm()
 
       vm_state = json.loads(controllerVM.succeed("openstack server show test_vm -f json"))

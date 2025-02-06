@@ -179,7 +179,10 @@ in
     systemd.services.nova-conductor = {
       description = "OpenStack Compute Conductor";
       after = [
+        "neutron-server.service"
         "nova.service"
+        "glance-api.service"
+        "placement-api.service"
         "postgresql.service"
         "mysql.service"
         "keystone.service"
@@ -208,6 +211,9 @@ in
     systemd.services.nova-scheduler = {
       description = "OpenStack Compute Scheduler";
       after = [
+        "neutron-server.service"
+        "glance-api.service"
+        "placement-api.service"
         "nova.service"
         "postgresql.service"
         "mysql.service"
@@ -237,6 +243,9 @@ in
     systemd.services.nova-novncproxy = {
       description = "OpenStack Compute Scheduler";
       after = [
+        "neutron-server.service"
+        "glance-api.service"
+        "placement-api.service"
         "nova.service"
         "postgresql.service"
         "mysql.service"
