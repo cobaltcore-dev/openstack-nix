@@ -196,6 +196,11 @@ pkgs.nixosTest {
             return True
         return False
 
+      def print_logfile(machine, filepath):
+        _, out = controllerVM.execute(f"cat {filepath}")
+        print(f"Printing log of: {filepath}")
+        print(out)
+
       def wait_for_openstack():
         for i in range(120):
           print(f"Waiting for openstack network agents and compute nodes to be present ... {i + 1}/120 sec")
@@ -222,6 +227,16 @@ pkgs.nixosTest {
           vms = json.loads(out)
           if len(vms) == 1 and vms[0]["Status"] == "ACTIVE":
             return True
+          elif len(vms) == 1 and vms[0]["Status"] == "ERROR":
+            print(out)
+            print_logfile(controllerVM, "/var/log/nova/.nova-manage-wrapped.log")
+            print_logfile(controllerVM, "/var/log/nova/.nova-scheduler-wrapped.log")
+            print_logfile(controllerVM, "/var/log/nova/.nova-api-wrapped.log")
+            print_logfile(controllerVM, "/var/log/nova/.nova-conductor-wrapped.log")
+            print_logfile(controllerVM, "/var/log/neutron/.neutron-server-wrapped.log")
+            print_logfile(controllerVM, "/var/log/neutron/.neutron-openvswitch-agent-wrapped.log")
+            print_logfile(controllerVM, "/var/log/neutron/.neutron-dhcp-agent-wrapped.log")
+            return False
         return False
 
       start_all()
