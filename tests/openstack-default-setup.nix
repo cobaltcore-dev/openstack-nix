@@ -239,6 +239,16 @@ pkgs.nixosTest {
             return False
         return False
 
+      def wait_for_network_namespace():
+        for i in range(30):
+          print(f"Waiting for network namespace to appear ... {i +1}/30 sec")
+          time.sleep(1)
+          net_ns = controllerVM.succeed("ip netns list | awk '{ print $1 }'").strip()
+          if net_ns != "":
+            return net_ns
+        return ""
+
+
       start_all()
       controllerVM.wait_for_unit("glance-api.service")
       controllerVM.wait_for_unit("placement-api.service")
@@ -259,10 +269,11 @@ pkgs.nixosTest {
       vm_ip = vm_state["addresses"]["provider"][0]
       assert vm_ip.startswith("192.168.44")
 
-      net_ns = controllerVM.succeed("ip netns list | awk '{ print $1 }'").strip()
+      net_ns = wait_for_network_namespace()
+      assert net_ns != ""
 
       # Ping the OpenStack VM from the controller host. We use the network
       # namespace dedicated for the VM to ping it.
-      assert retry_until_succeed(controllerVM, f"ip netns exec {net_ns} ping -c 1 {vm_ip}")
+      assert retry_until_succeed(controllerVM, f"ip netns exec {net_ns} ping -c 1 {vm_ip}", 30)
     '';
 }
