@@ -240,6 +240,27 @@ in
       };
     };
 
+    systemd.services.nova-host-discovery = {
+      description = "OpenStack Nova Host DB Sync Service";
+      requires = [
+        "nova-scheduler.service"
+        "nova-conductor.service"
+        "nova-api.service"
+      ];
+      wants = [ "network-online.target" ];
+      wantedBy = [ ];
+      path = [ nova ];
+      serviceConfig = {
+        User = "nova";
+        Group = "nova";
+        Type = "exec";
+        ExecStart = pkgs.writeShellScript "nova-host-discovery.sh" ''
+          set -euxo pipefail
+          nova-manage cell_v2 discover_hosts --verbose
+        '';
+      };
+    };
+
     systemd.services.nova-novncproxy = {
       description = "OpenStack Compute Scheduler";
       after = [

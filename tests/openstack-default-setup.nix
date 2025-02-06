@@ -198,13 +198,17 @@ pkgs.nixosTest {
 
       def wait_for_openstack():
         for i in range(120):
-          print(f"Waiting for openstack network agents to be present ... {i + 1}/120 sec")
+          print(f"Waiting for openstack network agents and compute nodes to be present ... {i + 1}/120 sec")
           time.sleep(1)
           status, out = controllerVM.execute("openstack network agent list -f json")
           if status != 0:
             continue
           net_agents = json.loads(out)
-          if len(net_agents) == 4:
+          status, out = controllerVM.execute("openstack compute service list --service nova-compute -f json")
+          if status != 0:
+            continue
+          compute_nodes = json.loads(out)
+          if len(net_agents) == 4 and len(compute_nodes) == 1 and compute_nodes[0].get("Host","None") == "computeVM":
             return True
         return False
 
@@ -229,6 +233,8 @@ pkgs.nixosTest {
 
       assert wait_for_openstack()
 
+      controllerVM.succeed("systemctl start nova-host-discovery.service")
+      controllerVM.wait_for_unit("nova-host-discovery.service")
       controllerVM.succeed("systemctl start openstack-create-vm.service")
       controllerVM.wait_for_unit("openstack-create-vm.service")
       assert wait_for_openstack_vm()
