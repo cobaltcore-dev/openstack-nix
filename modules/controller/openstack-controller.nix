@@ -148,7 +148,7 @@ in
     # and receive some json with version info as result.
     systemd.services.placement = {
       description = "OpenStack Placement setup";
-      after = [ "keystone-all.service" ];
+      after = [ "glance.service" ];
       requiredBy = [ "multi-user.target" ];
       environment = adminEnv;
       path = [
@@ -170,7 +170,7 @@ in
 
     systemd.services.nova = {
       description = "OpenStack Nova setup";
-      after = [ "keystone-all.service" ];
+      after = [ "neutron.service" ];
       wantedBy = [ "multi-user.target" ];
       environment = adminEnv;
       path = [
@@ -195,7 +195,7 @@ in
 
     systemd.services.neutron = {
       description = "OpenStack Neutron setup";
-      after = [ "keystone-all.service" ];
+      after = [ "placement.service" ];
       wantedBy = [ "multi-user.target" ];
       environment = adminEnv;
       path = [
