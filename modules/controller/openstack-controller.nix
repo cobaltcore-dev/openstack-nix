@@ -44,7 +44,7 @@ in
       path = [ pkgs.mariadb ];
       serviceConfig = {
         Type = "oneshot";
-        ExecStart = pkgs.writeShellScript "exec.sh" ''
+        ExecStart = pkgs.writeShellScript "database-setup.sh" ''
           # Keystone
           mysql -N -e "drop database keystone;" || true
           mysql -N -e "create database keystone;" || true
