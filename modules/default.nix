@@ -11,4 +11,6 @@
   };
 
   computeModule = import ./compute/compute.nix { inherit (openstackPkgs) neutron nova; };
+
+  testModules = import ./testing { };
 }
