@@ -97,6 +97,13 @@ in
         The Nova config.
       '';
     };
+    novaPackage = mkOption {
+      default = nova;
+      type = types.package;
+      description = ''
+        The OpenStack Nova package to use.
+      '';
+    };
   };
   config = mkIf cfg.enable {
 
