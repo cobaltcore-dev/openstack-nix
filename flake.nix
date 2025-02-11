@@ -30,6 +30,19 @@
           buildInputs = self.checks.${system}.pre-commit-check.enabledPackages;
         };
 
+        lib = {
+          generateRootwrapConf =
+            {
+              package,
+              filterPath,
+              execDirs,
+            }:
+            pkgs.callPackage ./lib/rootwrap-conf.nix {
+              inherit package filterPath;
+              utils_env = execDirs;
+            };
+        };
+
         packages = import ./packages { inherit (pkgs) callPackage python3Packages; };
 
         checks = import ./checks { inherit pkgs pre-commit-hooks-run; };

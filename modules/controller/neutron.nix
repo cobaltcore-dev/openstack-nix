@@ -116,7 +116,7 @@ let
     ];
   };
 
-  rootwrapConf = pkgs.callPackage ../generic/rootwrap-conf.nix {
+  rootwrapConf = pkgs.callPackage ../../lib/rootwrap-conf.nix {
     package = neutron_env;
     filterPath = "/etc/neutron/rootwrap.d";
     inherit utils_env;

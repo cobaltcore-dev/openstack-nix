@@ -104,7 +104,7 @@ let
     openstack =
   '';
 
-  rootwrapConf = pkgs.callPackage ../generic/rootwrap-conf.nix {
+  rootwrapConf = pkgs.callPackage ../../lib/rootwrap-conf.nix {
     package = nova_env;
     filterPath = "/etc/nova/rootwrap.d";
     inherit utils_env;
