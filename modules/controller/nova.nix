@@ -125,7 +125,7 @@ in
         };
         "/etc/nova/api-paste.ini" = {
           L = {
-            argument = "${nova}/etc/nova/api-paste.ini";
+            argument = "${cfg.novaPackage}/etc/nova/api-paste.ini";
           };
         };
         "/var/log/nova" = {
@@ -172,7 +172,7 @@ in
       ];
       wants = [ "network-online.target" ];
       wantedBy = [ "multi-user.target" ];
-      path = [ nova ];
+      path = [ cfg.novaPackage ];
       serviceConfig = {
         User = "nova";
         Group = "nova";
@@ -201,7 +201,7 @@ in
       ];
       wants = [ "network-online.target" ];
       wantedBy = [ "multi-user.target" ];
-      path = [ nova ];
+      path = [ cfg.novaPackage ];
       serviceConfig = {
         User = "nova";
         Group = "nova";
@@ -233,7 +233,7 @@ in
       ];
       wants = [ "network-online.target" ];
       wantedBy = [ "multi-user.target" ];
-      path = [ nova ];
+      path = [ cfg.novaPackage ];
       serviceConfig = {
         User = "nova";
         Group = "nova";
@@ -256,7 +256,7 @@ in
       ];
       wants = [ "network-online.target" ];
       wantedBy = [ ];
-      path = [ nova ];
+      path = [ cfg.novaPackage ];
       serviceConfig = {
         User = "nova";
         Group = "nova";
@@ -286,7 +286,7 @@ in
       ];
       wants = [ "network-online.target" ];
       wantedBy = [ "multi-user.target" ];
-      path = [ nova ];
+      path = [ cfg.novaPackage ];
       serviceConfig = {
         User = "nova";
         Group = "nova";
