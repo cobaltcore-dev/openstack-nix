@@ -11,7 +11,7 @@ with lib;
 let
   cfg = config.nova;
   nova_env = pkgs.python3.buildEnv.override {
-    extraLibs = [ nova ];
+    extraLibs = [ cfg.novaPackage ];
   };
   utils_env = pkgs.buildEnv {
     name = "utils";
@@ -186,13 +186,12 @@ in
       path = with pkgs; [
         sudo
         nova_env
-        nova
         qemu
       ];
       environment.PYTHONPATH = "${nova_env}/${pkgs.python3.sitePackages}";
       serviceConfig = {
         ExecStart = pkgs.writeShellScript "nova-compute.sh" ''
-          ${nova}/bin/nova-compute --config-file=${cfg.config}
+          ${cfg.novaPackage}/bin/nova-compute --config-file=${cfg.config}
         '';
       };
     };
