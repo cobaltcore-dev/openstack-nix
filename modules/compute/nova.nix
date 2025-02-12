@@ -128,6 +128,14 @@ in
         The OpenStack Nova package to use.
       '';
     };
+    extraPkgs = mkOption {
+      default = [ ];
+      type = types.listOf types.package;
+      description = ''
+        Extra packages to be available in the PATH of the nova-compute service
+        e.g. an additional hypervisor.
+      '';
+    };
   };
 
   config = mkIf cfg.enable {
@@ -183,11 +191,14 @@ in
         "network.target"
       ];
       wantedBy = [ "multi-user.target" ];
-      path = with pkgs; [
-        sudo
-        nova_env
-        qemu
-      ];
+      path =
+        with pkgs;
+        [
+          sudo
+          nova_env
+          qemu
+        ]
+        ++ cfg.extraPkgs;
       environment.PYTHONPATH = "${nova_env}/${pkgs.python3.sitePackages}";
       serviceConfig = {
         ExecStart = pkgs.writeShellScript "nova-compute.sh" ''
