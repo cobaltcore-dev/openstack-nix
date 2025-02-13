@@ -1,0 +1,33 @@
+# SPDX-FileCopyrightText: Copyright 2024 SAP SE or an SAP affiliate company and cobaltcore-dev contributors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+name: Close inactive issues
+on:
+  schedule:
+    - cron: "35 1 * * *"
+
+jobs:
+  close-issues:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/stale@v9
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          days-before-issue-stale: 90
+          days-before-issue-close: 14
+          days-before-pr-stale: 45
+          days-before-pr-close: 14
+          stale-issue-label: "stale"
+          stale-issue-message: "This issue is stale because it has been open for 90 days with no activity."
+          close-issue-message: "This issue was closed because it has been inactive for 14 days since being marked as stale."
+          stale-pr-label: 'stale'
+          stale-pr-message: "This PR is stale because it has been open for 45 days with no activity."
+          close-pr-message: "This PR was closed because it has been inactive for 14 days since being marked as stale."
+          exempt-issue-labels: "pinned,security,backlog,bug"
+          exempt-pr-labels: "pinned,security,backlog,bug"
+          exempt-draft-pr: true
+
