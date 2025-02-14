@@ -6,6 +6,7 @@
   django-pyscss,
   enmerkar,
   futurist,
+  gettext,
   keystoneauth1,
   oslo-concurrency,
   oslo-config,
@@ -32,6 +33,7 @@
   xstatic-bootswatch,
   xstatic-jsencrypt,
   xstatic-d3,
+  xstatic-font-awesome,
   xstatic-hogan,
   xstatic-jasmine,
   xstatic-jquery-migrate,
@@ -73,9 +75,9 @@ let
     testtools
     tzdata
     xstatic
-    xstatic-font-awesome
     xstatic-jquery
     xstatic-jquery-ui
+    xvfbwrapper
     ;
 in
 python3Packages.buildPythonPackage rec {
@@ -84,6 +86,7 @@ python3Packages.buildPythonPackage rec {
 
   nativeBuildInputs = [
     pbr
+    gettext
     enmerkar
   ];
 
@@ -106,6 +109,7 @@ python3Packages.buildPythonPackage rec {
     oslo-upgradecheck
     oslo-utils
     osprofiler
+    pymemcache
     pyscss
     python-cinderclient
     python-glanceclient
@@ -147,6 +151,12 @@ python3Packages.buildPythonPackage rec {
     xstatic-tv4
   ];
 
+  preBuild = ''
+    python ./manage.py compilemessages
+    python ./manage.py collectstatic -c --noinput
+    python ./manage.py compress --force
+  '';
+
   nativeCheckInputs = [
     pytest
     xvfb-run
@@ -158,12 +168,12 @@ python3Packages.buildPythonPackage rec {
     hacking
     nodeenv
     pycodestyle
-    pymemcache
     pytest-django
     pytest-html
     selenium
     testscenarios
     testtools
+    xvfbwrapper
   ];
 
   # Tox is needed as test framework. Tox requires pip install inside the virtual env. Thus we test manually

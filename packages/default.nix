@@ -123,6 +123,7 @@ let
         xstatic-bootstrap-scss
         xstatic-bootswatch
         xstatic-d3
+        xstatic-font-awesome
         xstatic-hogan
         xstatic-jasmine
         xstatic-jquery-migrate
