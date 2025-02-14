@@ -117,5 +117,8 @@ pkgs.nixosTest {
       # Ping the OpenStack VM from the controller host. We use the network
       # namespace dedicated for the VM to ping it.
       assert retry_until_succeed(controllerVM, f"ip netns exec {net_ns} ping -c 1 {vm_ip}", 30)
+
+      # Check whether the frontend is available
+      controllerVM.succeed("[ $(curl -s http://localhost/auth/login/ -I -o /dev/null -w '%{http_code}\n') -eq 200 ]")
     '';
 }
