@@ -20,4 +20,28 @@
   };
 
   services.memcached.enable = true;
+
+  systemd.tmpfiles.settings = {
+    "10-uwsgi" = {
+      "/run/uwsgi" = {
+        D = {
+          user = "nginx";
+          group = "nginx";
+          mode = "0755";
+        };
+      };
+    };
+  };
+
+  services.uwsgi = {
+    enable = true;
+    plugins = [ "python3" ];
+    user = "nginx";
+    group = "nginx";
+    capabilities = [
+      "CAP_SETGID"
+      "CAP_SETUID"
+    ];
+    instance.type = "emperor";
+  };
 }

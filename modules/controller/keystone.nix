@@ -105,14 +105,14 @@ in
       };
     };
 
-    services.httpd = {
+    services.nginx = {
       enable = true;
       virtualHosts = {
         controller = {
           locations."/".proxyPass = "http://127.0.0.1:5001/";
           listen = [
             {
-              ip = "*";
+              addr = "*";
               port = 5000;
             }
           ];
