@@ -106,6 +106,12 @@ in
         wait-online.enable = false;
 
         networks = {
+          eth0 = {
+            matchConfig.Name = [ "eth0" ];
+            networkConfig = {
+              DHCP = "yes";
+            };
+          };
           eth1 = {
             matchConfig.Name = [ "eth1" ];
             networkConfig = {
