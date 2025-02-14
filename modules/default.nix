@@ -6,6 +6,7 @@
       neutron
       keystone
       glance
+      horizon
       ;
     placement = openstackPkgs.openstack-placement;
   };
