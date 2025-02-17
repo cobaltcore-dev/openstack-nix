@@ -77,8 +77,8 @@ in
         immediate-gid = group;
         master = true;
         wsgi-file = "/var/lib/openstack_dashboard/wsgi.py";
-        static-map = "/static=/var/lib/openstack_dashboard/static";
-        static-map2 = "/horizon/static=/var/lib/openstack_dashboard/static";
+        static-map = "/static=${cfg.package}/static-compressed";
+        static-map2 = "/horizon/static=${cfg.package}/static-compressed";
 
         enable-threads = true;
         pythonPackages = _: [

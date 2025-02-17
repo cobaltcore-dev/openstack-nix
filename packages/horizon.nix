@@ -176,6 +176,9 @@ python3Packages.buildPythonPackage rec {
     xvfbwrapper
   ];
 
+  postInstall = ''
+    cp -r static $out/static-compressed
+  '';
   # Tox is needed as test framework. Tox requires pip install inside the virtual env. Thus we test manually
   checkPhase = "
     ./tools/unit_tests.sh . horizon
