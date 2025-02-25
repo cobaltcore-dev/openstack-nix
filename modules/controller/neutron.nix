@@ -11,6 +11,17 @@ with lib;
 let
   cfg = config.neutron;
 
+  # For live migration to work, neutron-server must allow certain actions.
+  policyConf = pkgs.writeText "policy.yaml" ''
+    "create_port_binding": "@"
+    "delete_port_binding": "@"
+    "update_port": "@"
+    "delete_port": "@"
+    "activate": "@"
+    "deactivate": "@"
+    "update_port:binding:profile": "@"
+  '';
+
   neutronConf = pkgs.writeText "neutron.conf" ''
     [database]
     connection = mysql+pymysql://neutron:neutron@controller/neutron
@@ -57,6 +68,9 @@ let
 
     [agent]
     root_helper = "/run/wrappers/bin/sudo ${neutron}/bin/neutron-rootwrap ${rootwrapConf}"
+
+    [oslo_policy]
+    policy_file = ${policyConf}
   '';
 
   ml2Conf = pkgs.writeText "ml2conf.ini" ''

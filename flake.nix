@@ -49,7 +49,10 @@
 
         nixosModules = import ./modules { openstackPkgs = packages; };
 
-        tests = import ./tests/default.nix { inherit pkgs nixosModules; };
+        tests = import ./tests/default.nix {
+          inherit pkgs nixosModules;
+          inherit (lib) generateRootwrapConf;
+        };
       }
     )
     // {
