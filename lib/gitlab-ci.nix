@@ -55,6 +55,10 @@ let
   nixIntegrationTestBuildJob = attrPath: {
     "tags" = [ "native-nix" ];
     "stage" = "test";
+    # The resource groups leads to integration test not running in parallel
+    # (both intra and inter pipeline). It has turned out, that the nixos tests
+    # are too heavyweight and run in timeouts if executed in parallel.
+    "resource_group" = "nixos-test";
     "script" = [
       "NIX_PATH= nix build .#${attrPath}.driver"
       "./result/bin/nixos-test-driver"
