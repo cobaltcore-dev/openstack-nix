@@ -2,9 +2,16 @@
 
 # openstack-nix
 
+A set of Nix packages and NixOS modules allowing the usage of OpenStack in NixOS.
+
 ## About this project
 
-A set of Nix packages and NixOS modules allowing the usage of OpenStack in NixOS.
+The repository contains the following things:
+
+* Nix package descriptions for OpenStack libraries and executables
+* NixOS modules starting the basic OpenStack services (Keystone, Glance, Placement, Neutron, Nova, ...)
+* NixOS modules mimicking the configuration for a [minimal OpenStack setup](https://docs.openstack.org/install-guide/openstack-services.html#minimal-deployment-for-2024-2-dalmatian) (e.g. create users and databases)
+* NixOS tests checking basic OpenStack functions (e.g. server creation and live migration)
 
 ## Style Checks
 
@@ -30,6 +37,57 @@ Single checks can be skipped using the
 [`SKIP`](https://pre-commit.com/#temporarily-disabling-hooks)
 environment variable, if they are problematic. As an escape hatch, use
 `git commit --no-verify` to avoid running _any_ checks.
+
+## Usage
+
+The `openstack-nix` repository exports everything via a nix flake. You can
+specify it as a flake input in your project or directly build certain
+attributes.
+
+### OpenStack Nix packages
+
+The OpenStack services require a number of dependencies that are exported via:
+
+```nix
+openstack-nix.packages
+```
+
+### NixOS modules
+
+The NixOS modules are exported via
+
+```nix
+openstack-nix.nixosModules
+```
+
+There are modules to setup the OpenStack controller, an OpenStack compute node
+and modules simplifying the creation of new NixOS tests.
+
+### NixOS tests
+
+The NixOS tests are located under the `tests` attribute. To execute a NixOS test
+do the following:
+
+```shell
+nix build .#tests.x86_64-linux.<test-name>
+```
+
+If you want an interactive session:
+
+```shell
+nix build .#tests.x86_64-linux.<test-name>.driverInteractive
+./result/bin/nixos-test-driver
+```
+
+## Scope
+
+OpenStack is a very large and super actively maintained project. We are aware that we cannot keep track of all its development or offer every single configuration option via NixOS modules.
+
+Therefore, we restricted ourself to the following goals for this project:
+
+* Make it easy to use OpenStack in a sane and useful default configuration.
+* Allow the user to customize packages and configurations, but there are no
+  guarantees that things will work then.
 
 ## Support, Feedback, Contributing
 
