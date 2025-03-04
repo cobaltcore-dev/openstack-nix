@@ -88,6 +88,12 @@ python3Packages.buildPythonPackage (rec {
     python-swiftclient
   ];
 
+  # The schema-image.json is required for glance configuration but currently not
+  # exported by the python package.
+  postFixup = ''
+    cp etc/schema-image.json $out/etc/glance/
+  '';
+
   checkPhase = ''
     stestr run
   '';
