@@ -108,7 +108,7 @@ in
         };
         "/etc/glance/schema-image.json" = {
           L = {
-            argument = "${./schema-image.json}";
+            argument = "${glance}/etc/glance/schema-image.json";
           };
         };
       };
