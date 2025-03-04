@@ -86,6 +86,9 @@ python3Packages.buildPythonPackage rec {
     "test_r_inline"
   ];
 
+  # We need to fetch the sources directly from GitHub here, because the
+  # packaging and testing requires the .git folder to determine the correct tool
+  # version.
   src = fetchFromGitHub {
     owner = "pre-commit";
     repo = "pre-commit";

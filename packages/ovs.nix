@@ -26,7 +26,8 @@ python3Packages.buildPythonPackage rec {
     setuptools
   ];
 
-  # we need to remove windows files due to errors in the tests
+  # There are Windows based tests that cannot be executed in a Linux
+  # environment. We skip those.
   postPatch = ''
     rm ovs/winutils.py
     rm ovs/fcntl_win.py
