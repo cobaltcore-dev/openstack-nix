@@ -1,5 +1,5 @@
 name: QA
-on: [ merge_group, push, pull_request ]
+on: [ pull_request ]
 jobs:
   flake-check:
     name: Nix Flake Checks
@@ -7,6 +7,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: cachix/install-nix-action@v30
-      - uses: DeterminateSystems/flakehub-cache-action@main
       - name: Nix Flake Checks
         run: nix flake check --all-systems
+  nixos-tests:
+    runs-on: large_runner_16core_64gb
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v30
+      - name: Basic setup
+        run: |
+          nix build .#tests.x86_64-linux.openstack-default-setup.driver
+          ./result/bin/nixos-test-driver
+      - name: Live migration
+        run: |
+          nix build .#tests.x86_64-linux.openstack-live-migration.driver
+          ./result/bin/nixos-test-driver
