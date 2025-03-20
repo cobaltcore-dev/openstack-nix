@@ -1,0 +1,20 @@
+[general]
+extra-path=.config/gitlint/rules
+regex-style-search=true
+ignore=body-is-missing
+
+[ignore-by-author-name]
+regex=dependabot
+ignore=all
+
+# default 72
+[title-max-length]
+line-length=72
+
+# default 80
+[body-max-line-length]
+line-length=72
+
+# Empty bodies are fine
+[body-min-length]
+min-length=0
