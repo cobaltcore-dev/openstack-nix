@@ -1,3 +1,6 @@
 result*
 /.pre-commit-config.yaml
 /.nixos-test-history
+
+# Produced by gitlint
+__pycache__
