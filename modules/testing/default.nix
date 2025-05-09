@@ -81,8 +81,8 @@ in
               --dns-nameserver 8.8.4.4 --gateway 192.168.44.1 \
               --subnet-range 192.168.44.0/24 provider
 
-            openstack image create --disk-format qcow2 --container-format bare --public --file ${image} cirros
-            openstack flavor create --public m1.nano --id auto --ram 256 --disk 0 --vcpus 1
+            openstack image create --property hw_rng_model=virtio --disk-format qcow2 --container-format bare --public --file ${image} cirros
+            openstack flavor create --property hw_rng:allowed=True --public --id auto --ram 256 --disk 0 --vcpus 1 m1.nano
 
             openstack security group rule create --proto icmp default
             openstack security group rule create --proto tcp --dst-port 22 default
