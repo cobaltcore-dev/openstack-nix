@@ -39,10 +39,27 @@ in
   testController =
     { pkgs, ... }:
     let
-      image = pkgs.fetchurl {
+      ubuntuImage = pkgs.fetchurl {
+        url = "https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img";
+        hash = "sha256-o8pIgIZ5Vw7tLQD7e2VJlCVEq8jw3LouTWC29pLkalU=";
+      };
+      cirrosImage = pkgs.fetchurl {
         url = "https://download.cirros-cloud.net/0.6.2/cirros-0.6.2-x86_64-disk.img";
         hash = "sha256-B+RKc+VMlNmIAoUVQDwe12IFXgG4OnZ+3zwrOH94zgA=";
       };
+      # Generated with: mkpasswd --method=SHA-512 --rounds=4096
+      # Password is 'password'
+      cloud-init = pkgs.writeText "cloud-init.yaml" ''
+        #cloud-config
+        users:
+          - name: ubuntu
+            groups: sudo
+            shell: /bin/bash
+            lock_passwd: false
+            hashed_passwd: $6$rounds=4096$d7Oy1cSdgIdrdAP4$s/vzQ6jzO6e8dENkkepCK3WKjVeXaOCDVZI4UxBsqERMn8gARti6LxT5nryS4OgNx1.Mp3LUNm39NDoKV6McX/
+
+        ssh_pwauth: true
+      '';
     in
     {
       imports = [ common ];
@@ -93,8 +110,10 @@ in
               --dns-nameserver 8.8.4.4 --gateway 192.168.44.1 \
               --subnet-range 192.168.44.0/24 provider
 
-            openstack image create --property hw_rng_model=virtio --disk-format qcow2 --container-format bare --public --file ${image} cirros
-            openstack flavor create --property hw_rng:allowed=True --public --id auto --ram 256 --disk 0 --vcpus 1 m1.nano
+            openstack image create --property hw_rng_model=virtio --disk-format qcow2 --container-format bare --public --file ${cirrosImage} cirros
+            openstack image create --property hw_rng_model=virtio --disk-format qcow2 --container-format bare --public --file ${ubuntuImage} ubuntu
+
+            openstack flavor create --property hw_rng:allowed=True --public --id auto --ram 512 --disk 0 --vcpus 1 m1.nano
 
             openstack security group rule create --proto icmp default
             openstack security group rule create --proto tcp --dst-port 22 default
@@ -105,10 +124,13 @@ in
 
             openstack server create \
               --flavor m1.nano \
-              --image cirros \
+              --image ubuntu \
               --key-name mykey \
-              --security-group default test_vm \
-              --network provider
+              --user-data ${cloud-init} \
+              --config-drive true \
+              --security-group default \
+              --network provider \
+              test_vm
           '';
         };
       };
