@@ -183,6 +183,32 @@ in
       };
     };
 
+    systemd.services.nova-api-metadata = {
+      description = "OpenStack Compute API metadata";
+      after = [
+        "nova.service"
+        "postgresql.service"
+        "mysql.service"
+        "keystone.service"
+        "rabbitmq.service"
+        "ntp.service"
+        "network-online.target"
+        "local-fs.target"
+        "remote-fs.target"
+      ];
+      wants = [ "network-online.target" ];
+      wantedBy = [ "multi-user.target" ];
+      path = [ cfg.novaPackage ];
+      serviceConfig = {
+        User = "nova";
+        Group = "nova";
+        Type = "simple";
+        ExecStart = pkgs.writeShellScript "nova-api-metadata.sh" ''
+          nova-api-metadata --config-file ${cfg.config}
+        '';
+      };
+    };
+
     systemd.services.nova-conductor = {
       description = "OpenStack Compute Conductor";
       after = [
