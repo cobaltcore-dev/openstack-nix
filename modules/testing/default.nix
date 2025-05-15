@@ -47,6 +47,10 @@ in
     {
       imports = [ common ];
 
+      boot.initrd.postDeviceCommands = ''
+        ${pkgs.e2fsprogs}/bin/mkfs.ext4 -L data /dev/vdb
+      '';
+
       virtualisation = {
         cores = 4;
         memorySize = 6144;
@@ -56,6 +60,14 @@ in
           };
           eth2 = {
             vlan = 2;
+          };
+        };
+
+        emptyDiskImages = [ 6150 ];
+        fileSystems = {
+          "/var/lib/glance/images" = {
+            device = "/dev/disk/by-label/data";
+            fsType = "ext4";
           };
         };
       };
@@ -134,9 +146,13 @@ in
     };
 
   testCompute =
-    { ... }:
+    { pkgs, ... }:
     {
       imports = [ common ];
+
+      boot.initrd.postDeviceCommands = ''
+        ${pkgs.e2fsprogs}/bin/mkfs.ext4 -L data /dev/vdb
+      '';
 
       virtualisation = {
         memorySize = 4096;
@@ -147,6 +163,13 @@ in
           };
           eth2 = {
             vlan = 2;
+          };
+        };
+        emptyDiskImages = [ 6150 ];
+        fileSystems = {
+          "/var/lib/nova/instances" = {
+            device = "/dev/disk/by-label/data";
+            fsType = "ext4";
           };
         };
       };
