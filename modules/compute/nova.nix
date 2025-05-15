@@ -197,6 +197,7 @@ in
           sudo
           nova_env
           qemu
+          cdrkit # genisoimage
         ]
         ++ cfg.extraPkgs;
       environment.PYTHONPATH = "${nova_env}/${pkgs.python3.sitePackages}";
