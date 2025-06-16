@@ -1,5 +1,38 @@
 {
   "nodes": {
+    "cloud-hypervisor-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1750081650,
+        "narHash": "sha256-yiGVMqRXDfCNxpfFDEKO2u9EK/YoUyzReKKYDYBGsSk=",
+        "owner": "cyberus-technology",
+        "repo": "cloud-hypervisor",
+        "rev": "50c6d063083907fde425aa8736eaa8bda1ae6236",
+        "type": "github"
+      },
+      "original": {
+        "owner": "cyberus-technology",
+        "ref": "gardenlinux-dev",
+        "repo": "cloud-hypervisor",
+        "type": "github"
+      }
+    },
+    "crane": {
+      "locked": {
+        "lastModified": 1748970125,
+        "narHash": "sha256-UDyigbDGv8fvs9aS95yzFfOKkEjx1LO3PL3DsKopohA=",
+        "owner": "ipetkov",
+        "repo": "crane",
+        "rev": "323b5746d89e04b22554b061522dfce9e4c49b18",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ipetkov",
+        "ref": "master",
+        "repo": "crane",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -70,6 +103,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-25-05": {
+      "locked": {
+        "lastModified": 1750005367,
+        "narHash": "sha256-h/aac1dGLhS3qpaD2aZt25NdKY7b+JT0ZIP2WuGsJMU=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "6c64dabd3aa85e0c02ef1cdcb6e1213de64baee3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-25.05",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "pre-commit-hooks-nix": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -94,9 +143,33 @@
     },
     "root": {
       "inputs": {
+        "cloud-hypervisor-src": "cloud-hypervisor-src",
+        "crane": "crane",
         "flake-utils": "flake-utils",
         "nixpkgs": "nixpkgs",
-        "pre-commit-hooks-nix": "pre-commit-hooks-nix"
+        "nixpkgs-25-05": "nixpkgs-25-05",
+        "pre-commit-hooks-nix": "pre-commit-hooks-nix",
+        "rust-overlay": "rust-overlay"
+      }
+    },
+    "rust-overlay": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs-25-05"
+        ]
+      },
+      "locked": {
+        "lastModified": 1750127910,
+        "narHash": "sha256-FIgEIS0RAlOyXGqoj/OufTfcKItYq668yPYL4SXdU0M=",
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "rev": "45418795a73b77b7726c62ce265d68cf541ffb49",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "type": "github"
       }
     },
     "systems": {

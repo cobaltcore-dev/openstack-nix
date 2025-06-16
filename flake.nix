@@ -2,11 +2,18 @@
   description = "OpenStack Packages and Modules for NixOS";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-24.11";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
+    nixpkgs-25-05.url = "github:nixos/nixpkgs/nixos-25.05";
     pre-commit-hooks-nix = {
       url = "github:cachix/pre-commit-hooks.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Nix tooling to build cloud-hypervisor.
+    crane.url = "github:ipetkov/crane/master";
+    cloud-hypervisor-src.url = "github:cyberus-technology/cloud-hypervisor/gardenlinux-dev";
+    cloud-hypervisor-src.flake = false;
+    rust-overlay.url = "github:oxalica/rust-overlay";
+    rust-overlay.inputs.nixpkgs.follows = "nixpkgs-25-05";
   };
 
   outputs =
@@ -14,14 +21,13 @@
       self,
       nixpkgs,
       flake-utils,
-      pre-commit-hooks-nix,
       ...
-    }:
+    }@inputs:
     flake-utils.lib.eachSystem [ "x86_64-linux" ] (
       system:
       let
         pkgs = import nixpkgs { inherit system; };
-        pre-commit-hooks-run = pre-commit-hooks-nix.lib.${system}.run;
+        pre-commit-hooks-run = inputs.pre-commit-hooks-nix.lib.${system}.run;
       in
       rec {
         formatter = pkgs.nixfmt-rfc-style;
@@ -44,7 +50,19 @@
             };
         };
 
-        packages = import ./packages { inherit (pkgs) callPackage python3Packages; };
+        packages = (import ./packages { inherit (pkgs) callPackage python3Packages; }) // {
+          cloud-hypervisor =
+            let
+              pkgs-25-05 = import inputs.nixpkgs-25-05 { inherit (pkgs) system; };
+              rust-bin = (inputs.rust-overlay.lib.mkRustBin { }) pkgs-25-05;
+              artifacts = pkgs.callPackage ./chv.nix {
+                inherit (inputs) cloud-hypervisor-src;
+                craneLib = inputs.crane.mkLib pkgs-25-05;
+                rustToolchain = rust-bin.stable.latest.default;
+              };
+            in
+            artifacts.default;
+        };
 
         checks = import ./checks { inherit pkgs pre-commit-hooks-run; };
 
