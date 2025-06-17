@@ -14,6 +14,8 @@
     cloud-hypervisor-src.flake = false;
     rust-overlay.url = "github:oxalica/rust-overlay";
     rust-overlay.inputs.nixpkgs.follows = "nixpkgs-25-05";
+    libvirt-src.url = "git+https://github.com/cyberus-technology/libvirt?ref=gardenlinux&submodules=1";
+    libvirt-src.flake = false;
   };
 
   outputs =
@@ -62,6 +64,19 @@
               };
             in
             artifacts.default;
+          libvirt = pkgs.libvirt.overrideAttrs ({
+            src = inputs.libvirt-src;
+            patches =
+              let
+                patchSrc = ./patches/libvirt;
+              in
+              (pkgs.lib.pipe patchSrc [
+                builtins.readDir
+                builtins.attrNames
+                # To fully-qualified path.
+                (map (f: "${patchSrc}/${f}"))
+              ]);
+          });
         };
 
         checks = import ./checks { inherit pkgs pre-commit-hooks-run; };

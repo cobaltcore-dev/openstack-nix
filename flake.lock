@@ -87,6 +87,25 @@
         "type": "github"
       }
     },
+    "libvirt-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1748958520,
+        "narHash": "sha256-TttX5Xg8knE4V/pTwaOlcFTsZsCA7+U2a9LDb0HEHD8=",
+        "ref": "gardenlinux",
+        "rev": "595436ebf8f3a86480d2ad7463906f2cb2fabfa5",
+        "revCount": 52213,
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/cyberus-technology/libvirt"
+      },
+      "original": {
+        "ref": "gardenlinux",
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/cyberus-technology/libvirt"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1737299813,
@@ -146,6 +165,7 @@
         "cloud-hypervisor-src": "cloud-hypervisor-src",
         "crane": "crane",
         "flake-utils": "flake-utils",
+        "libvirt-src": "libvirt-src",
         "nixpkgs": "nixpkgs",
         "nixpkgs-25-05": "nixpkgs-25-05",
         "pre-commit-hooks-nix": "pre-commit-hooks-nix",
