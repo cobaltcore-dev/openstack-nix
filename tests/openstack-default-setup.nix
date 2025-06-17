@@ -20,6 +20,7 @@ pkgs.nixosTest {
       imports = [
         nixosModules.computeModule
         nixosModules.testModules.testCompute
+        nixosModules.chv-sap
       ];
     };
 

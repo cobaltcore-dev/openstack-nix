@@ -130,6 +130,7 @@ pkgs.nixosTest {
       imports = [
         nixosModules.computeModule
         nixosModules.testModules.testCompute
+        nixosModules.chv-sap
         (novaConfigForIp "10.0.0.39")
       ];
 
@@ -153,6 +154,7 @@ pkgs.nixosTest {
       imports = [
         nixosModules.computeModule
         nixosModules.testModules.testCompute
+        nixosModules.chv-sap
         (novaConfigForIp "10.0.0.40")
       ];
 
