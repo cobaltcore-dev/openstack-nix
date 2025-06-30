@@ -10,7 +10,7 @@
     };
     # Nix tooling to build cloud-hypervisor.
     crane.url = "github:ipetkov/crane/master";
-    cloud-hypervisor-src.url = "github:cyberus-technology/cloud-hypervisor/gardenlinux-dev";
+    cloud-hypervisor-src.url = "github:cyberus-technology/cloud-hypervisor/gardenlinux";
     cloud-hypervisor-src.flake = false;
     rust-overlay.url = "github:oxalica/rust-overlay";
     rust-overlay.inputs.nixpkgs.follows = "nixpkgs-25-05";

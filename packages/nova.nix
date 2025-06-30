@@ -205,8 +205,8 @@ python3Packages.buildPythonPackage (rec {
     stestr run --exclude-list ${excludeListFile}
   '';
 
-  src = fetchPypi {
-    inherit pname version;
-    sha256 = "sha256-CvxHrKGalX/9FMFVX14Bm47sjgqQNgfVX6Odf2IMgqQ=";
+  src = builtins.fetchGit {
+    url = "/home/pschuster/dev/openstack-nova";
+    sha256 = lib.fakeSha256;
   };
 })
