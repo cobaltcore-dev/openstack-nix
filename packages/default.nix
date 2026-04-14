@@ -218,6 +218,7 @@ let
         python3Packages
         ;
     };
+    kmip = callPackage ./kmip.nix { inherit python3Packages; };
     microversion-parse = callPackage ./microversion-parse.nix {
       inherit
         gabbi
