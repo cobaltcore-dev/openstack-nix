@@ -8,6 +8,7 @@
       glance
       horizon
       cinder
+      barbican
       ;
     placement = openstackPkgs.openstack-placement;
   };
