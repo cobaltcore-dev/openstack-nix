@@ -17,5 +17,5 @@
 
   storageModule = import ./storage/cinder-storage-node.nix { inherit (openstackPkgs) cinder; };
 
-  testModules = import ./testing { };
+  testModules = import ./testing { inherit openstackPkgs; };
 }
