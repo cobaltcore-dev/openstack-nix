@@ -138,7 +138,9 @@ pkgs.nixosTest {
       assert retry_until_succeed(controllerVM, f"ip netns exec {net_ns} ping -c 1 {vm_ip}", 30)
 
       # create volume with 4GB
-      controllerVM.execute("openstack volume create --size 4 test_vol")
+      controllerVM.execute("openstack volume type create --encryption-provider luks --encryption-cipher aes-xts-plain64 --encryption-key-size 256 --encryption-control-location front-end nfs-luks")
+      controllerVM.execute("openstack volume type set nfs-luks --property volume_backend_name=NFS")
+      controllerVM.execute("openstack volume create --size 1 --type nfs-luks test_vol")
       # attach volume to VM
       controllerVM.execute("openstack server add volume test_vm test_vol")
 
