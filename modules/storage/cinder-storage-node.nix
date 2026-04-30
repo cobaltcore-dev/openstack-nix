@@ -89,7 +89,9 @@ let
     rootwrap_config = ${rootwrapConf}
     glance_api_servers = http://controller:9292
     verify_glance_signatures = disabled
+    image_conversion_disable = false
     log_dir = /var/log/cinder
+    volume_format = raw
 
     [database]
     connection = mysql+pymysql://cinder:cinder@controller/cinder
@@ -104,6 +106,8 @@ let
     project_name = service
     username = cinder
     password = cinder
+    service_token_roles_required = true
+    service_token_roles = admin
 
     [oslo_concurrency]
     lock_path = /var/lib/cinder/tmp
@@ -112,6 +116,10 @@ let
     volume_driver = cinder.volume.drivers.nfs.NfsDriver
     nfs_shares_config = /etc/cinder/nfs_shares
     nfs_mount_options = vers=3
+    volume_backend_name = NFS
+    volume_format = raw
+    nfs_sparsed_volumes = false
+    nfs_qcow2_volumes = false
   '';
 
   cinderTgtConf = pkgs.writeText "cinder.conf" ''

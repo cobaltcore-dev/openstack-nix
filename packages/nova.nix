@@ -77,6 +77,7 @@ let
     pyyaml
     requests
     requests-mock
+    requests-unixsocket
     retrying
     rfc3986
     routes
@@ -125,6 +126,7 @@ python3Packages.buildPythonPackage (rec {
     lxml
     microversion-parse
     netaddr
+    requests-unixsocket
     netifaces
     openstacksdk
     os-brick

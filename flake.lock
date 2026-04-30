@@ -70,6 +70,21 @@
         "type": "github"
       }
     },
+    "nova-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1777456644,
+        "narHash": "sha256-Hy1qUG08jqcWB9tzHf4jeV2nsGzFZPx92GSluc6ywno=",
+        "rev": "689600c0d3f931f20ef6779954280de49df48956",
+        "revCount": 60959,
+        "type": "git",
+        "url": "file:/home/skober/repos/nova"
+      },
+      "original": {
+        "type": "git",
+        "url": "file:/home/skober/repos/nova"
+      }
+    },
     "pre-commit-hooks-nix": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -96,6 +111,7 @@
       "inputs": {
         "flake-utils": "flake-utils",
         "nixpkgs": "nixpkgs",
+        "nova-src": "nova-src",
         "pre-commit-hooks-nix": "pre-commit-hooks-nix"
       }
     },

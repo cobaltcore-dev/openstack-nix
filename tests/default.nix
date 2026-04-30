@@ -2,10 +2,13 @@
   pkgs,
   nixosModules,
   generateRootwrapConf,
+  novaPkg,
 }:
 let
   tests = {
-    openstack-default-setup = pkgs.callPackage ./openstack-default-setup.nix { inherit nixosModules; };
+    openstack-default-setup = pkgs.callPackage ./openstack-default-setup.nix {
+      inherit nixosModules novaPkg;
+    };
     openstack-live-migration = pkgs.callPackage ./openstack-live-migration.nix {
       inherit nixosModules generateRootwrapConf;
     };

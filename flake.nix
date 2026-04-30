@@ -7,6 +7,13 @@
       url = "github:cachix/pre-commit-hooks.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nova-src = {
+      url = "git+file:/home/skober/repos/nova";
+      # url = "git+ssh://git@gitlab.cyberus-technology.de/cyberus/cloud/openstack-nova.git";
+      # url = "git+https://github.com/sapcc/nova?ref=stable/2023.2-m3";
+      flake = false;
+    };
+
   };
 
   outputs =
@@ -15,6 +22,7 @@
       nixpkgs,
       flake-utils,
       pre-commit-hooks-nix,
+      nova-src,
       ...
     }:
     flake-utils.lib.eachSystem [ "x86_64-linux" ] (
@@ -22,6 +30,22 @@
       let
         pkgs = import nixpkgs { inherit system; };
         pre-commit-hooks-run = pre-commit-hooks-nix.lib.${system}.run;
+        # The PBR setup does not work on the plain source code because no
+        # package version can be determined.
+        # We add a PKG-INFO file with the missing information to make it work.
+        # We use the version info of the original Nova package from
+        # openstack-nix.
+        fixedNovaSrc = pkgs.runCommand "add-package-info" { } ''
+          mkdir -p $out
+
+          cp -r ${nova-src}/. $out
+
+          cat >$out/PKG-INFO <<EOL
+          Metadata-Version: 2.1
+          Name: nova
+          Version: 30.0.0
+          EOL
+        '';
       in
       rec {
         formatter = pkgs.nixfmt-rfc-style;
@@ -45,13 +69,21 @@
         };
 
         packages = import ./packages { inherit (pkgs) callPackage python3Packages; };
+        novaPkg = packages.nova.overrideAttrs (_: {
+          src = fixedNovaSrc;
+          doInstallCheck = false;
+        });
+
+        packages2 = packages // {
+          nova = novaPkg;
+        };
 
         checks = import ./checks { inherit pkgs pre-commit-hooks-run; };
 
         nixosModules = import ./modules { openstackPkgs = packages; };
 
         tests = import ./tests/default.nix {
-          inherit pkgs nixosModules;
+          inherit pkgs nixosModules novaPkg;
           inherit (lib) generateRootwrapConf;
         };
       }

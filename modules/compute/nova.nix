@@ -27,6 +27,7 @@ let
     compute_driver = libvirt.LibvirtDriver
     my_ip = 10.0.0.39
     transport_url = rabbit://openstack:openstack@controller
+    debug = true
 
     [api]
     auth_strategy = keystone
@@ -53,6 +54,9 @@ let
 
     [libvirt]
     virt_type = kvm
+    images_type = default
+    images_format = raw
+    force_raw_images = true
 
     [neutron]
     auth_url = http://controller:5000
@@ -201,6 +205,7 @@ in
     environment.systemPackages = with pkgs; [
       openiscsi
       nfs-utils
+      cryptsetup
     ];
 
     systemd.services.nova-compute = {
@@ -220,6 +225,7 @@ in
           lvm2
           openiscsi
           nfs-utils
+          cryptsetup
         ]
         ++ cfg.extraPkgs;
       environment.PYTHONPATH = "${nova_env}/${pkgs.python3.sitePackages}";

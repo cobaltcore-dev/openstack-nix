@@ -1,6 +1,7 @@
 {
   pkgs,
   nixosModules,
+  novaPkg,
 }:
 pkgs.nixosTest {
   name = "OpenStack default setup test";
@@ -11,6 +12,12 @@ pkgs.nixosTest {
       imports = [
         nixosModules.controllerModule
         nixosModules.testModules.testController
+        (
+          { ... }:
+          {
+            config.nova.novaPackage = novaPkg;
+          }
+        )
       ];
     };
 
@@ -20,6 +27,12 @@ pkgs.nixosTest {
       imports = [
         nixosModules.computeModule
         nixosModules.testModules.testCompute
+        (
+          { ... }:
+          {
+            config.nova.novaPackage = novaPkg;
+          }
+        )
       ];
     };
 

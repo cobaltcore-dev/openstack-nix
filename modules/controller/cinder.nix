@@ -17,6 +17,8 @@ let
     auth_strategy = keystone
     my_ip = controller
     verify_glance_signatures = disabled
+    image_conversion_disable = false
+    volume_format = raw
 
     [database]
     connection = mysql+pymysql://cinder:cinder@controller/cinder
@@ -31,9 +33,14 @@ let
     project_name = service
     username = cinder
     password = cinder
+    service_token_roles_required = true
+    service_token_roles = admin
 
     [oslo_concurrency]
     lock_path = /var/lib/cinder/tmp
+
+    [key_manager]
+    backend = barbican
   '';
 in
 {
@@ -92,6 +99,11 @@ in
         "/etc/cinder/api-paste.ini" = {
           L = {
             argument = "${cinder}/etc/cinder/api-paste.ini";
+          };
+        };
+        "/etc/cinder/resource_filters.json" = {
+          L = {
+            argument = "${cinder}/etc/cinder/resource_filters.json";
           };
         };
         "/etc/cinder/cinder.conf" = {
