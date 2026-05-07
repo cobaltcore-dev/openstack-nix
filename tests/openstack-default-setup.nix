@@ -2,6 +2,7 @@
   pkgs,
   nixosModules,
   novaPkg,
+  libvirt,
 }:
 pkgs.nixosTest {
   name = "OpenStack default setup test";
@@ -24,6 +25,7 @@ pkgs.nixosTest {
   nodes.computeVM =
     { ... }:
     {
+      virtualisation.libvirtd.package = libvirt;
       imports = [
         nixosModules.computeModule
         nixosModules.testModules.testCompute
@@ -154,8 +156,6 @@ pkgs.nixosTest {
       controllerVM.execute("openstack volume type create --encryption-provider luks --encryption-cipher aes-xts-plain64 --encryption-key-size 256 --encryption-control-location front-end nfs-luks")
       controllerVM.execute("openstack volume type set nfs-luks --property volume_backend_name=NFS")
       controllerVM.execute("openstack volume create --size 1 --type nfs-luks test_vol")
-      # attach volume to VM
-      controllerVM.execute("openstack server add volume test_vm test_vol")
 
       _status, output = controllerVM.execute("openstack volume show test_vol")
       print(f"openstack volume show test_vol: {output}")
@@ -163,11 +163,9 @@ pkgs.nixosTest {
       _status, output = controllerVM.execute("openstack volume show test_vol")
       print(f"openstack volume show test_vol: {output}")
       time.sleep(3)
-      _status, output = controllerVM.execute("openstack volume show test_vol")
-      print(f"openstack volume show test_vol: {output}")
-      time.sleep(3)
-      _status, output = controllerVM.execute("openstack volume show test_vol")
-      print(f"openstack volume show test_vol: {output}")
+
+      # attach volume to VM
+      controllerVM.execute("openstack server add volume test_vm test_vol")
 
       # wait until volume is attached
       assert retry_until_succeed(controllerVM, "openstack volume show test_vol -f value -c status | grep 'in-use'", 20)

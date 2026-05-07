@@ -14,6 +14,13 @@
       flake = false;
     };
 
+    libvirt = {
+      # A local path can be used for developing or testing local changes. Make
+      # sure the submodules in a local libvirt checkout are populated.
+      # url = "git+file:<path/to/libvirt>?submodules=1";
+      url = "git+https://github.com/cyberus-technology/libvirt?ref=gardenlinux&submodules=1";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -23,6 +30,7 @@
       flake-utils,
       pre-commit-hooks-nix,
       nova-src,
+      libvirt,
       ...
     }:
     flake-utils.lib.eachSystem [ "x86_64-linux" ] (
@@ -81,8 +89,10 @@
         checks = import ./checks { inherit pkgs pre-commit-hooks-run; };
 
         nixosModules = import ./modules { openstackPkgs = packages; };
+        inherit libvirt;
 
         tests = import ./tests/default.nix {
+          libvirt = libvirt.packages.x86_64-linux.libvirt;
           inherit pkgs nixosModules novaPkg;
           inherit (lib) generateRootwrapConf;
         };

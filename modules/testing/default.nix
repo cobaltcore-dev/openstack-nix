@@ -36,6 +36,7 @@ let
           pkgs.openiscsi
           pkgs.sshpass
           openstackPkgs.python-barbicanclient
+          openstackPkgs.python-novaclient
         ];
 
         environment.variables = adminEnv;

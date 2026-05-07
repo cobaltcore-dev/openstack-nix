@@ -1,5 +1,157 @@
 {
   "nodes": {
+    "cloud-hypervisor": {
+      "inputs": {
+        "crane": "crane",
+        "dried-nix-flakes": "dried-nix-flakes",
+        "nixpkgs": [
+          "libvirt",
+          "nixpkgs"
+        ],
+        "rust-overlay": "rust-overlay"
+      },
+      "locked": {
+        "lastModified": 1776410875,
+        "narHash": "sha256-xehdklm2pQB3D+uRTmRvmOc1JPHnDApT6uZjynOcSUc=",
+        "owner": "cyberus-technology",
+        "repo": "cloud-hypervisor",
+        "rev": "07231c7d0da6aaa35abeef907be98c4c6dd390fc",
+        "type": "github"
+      },
+      "original": {
+        "owner": "cyberus-technology",
+        "ref": "gardenlinux",
+        "repo": "cloud-hypervisor",
+        "type": "github"
+      }
+    },
+    "cloud-hypervisor-prev": {
+      "inputs": {
+        "crane": "crane_2",
+        "dried-nix-flakes": "dried-nix-flakes_2",
+        "nixpkgs": [
+          "libvirt",
+          "nixpkgs"
+        ],
+        "rust-overlay": "rust-overlay_2"
+      },
+      "locked": {
+        "lastModified": 1774955977,
+        "narHash": "sha256-O41HNDYh/HkmS4OutJi0euw+0HnaXXnSo5d1NBxLTeU=",
+        "owner": "cyberus-technology",
+        "repo": "cloud-hypervisor",
+        "rev": "48607f37f78f479b65780eba5801c943210fc38f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "cyberus-technology",
+        "ref": "gardenlinux-release-26-03-31",
+        "repo": "cloud-hypervisor",
+        "type": "github"
+      }
+    },
+    "crane": {
+      "locked": {
+        "lastModified": 1772560058,
+        "narHash": "sha256-NuVKdMBJldwUXgghYpzIWJdfeB7ccsu1CC7B+NfSoZ8=",
+        "owner": "ipetkov",
+        "repo": "crane",
+        "rev": "db590d9286ed5ce22017541e36132eab4e8b3045",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ipetkov",
+        "ref": "master",
+        "repo": "crane",
+        "type": "github"
+      }
+    },
+    "crane_2": {
+      "locked": {
+        "lastModified": 1772560058,
+        "narHash": "sha256-NuVKdMBJldwUXgghYpzIWJdfeB7ccsu1CC7B+NfSoZ8=",
+        "owner": "ipetkov",
+        "repo": "crane",
+        "rev": "db590d9286ed5ce22017541e36132eab4e8b3045",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ipetkov",
+        "ref": "master",
+        "repo": "crane",
+        "type": "github"
+      }
+    },
+    "dried-nix-flakes": {
+      "locked": {
+        "lastModified": 1756139350,
+        "narHash": "sha256-pObQv94NclXVXjJV8sTiKwFes4fGEWpkNzDsXw5DqnY=",
+        "owner": "cyberus-technology",
+        "repo": "dried-nix-flakes",
+        "rev": "1b2ba62710c6c1d9eba0e8e3adc029cc2e9291a4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "cyberus-technology",
+        "repo": "dried-nix-flakes",
+        "type": "github"
+      }
+    },
+    "dried-nix-flakes_2": {
+      "locked": {
+        "lastModified": 1756139350,
+        "narHash": "sha256-pObQv94NclXVXjJV8sTiKwFes4fGEWpkNzDsXw5DqnY=",
+        "owner": "cyberus-technology",
+        "repo": "dried-nix-flakes",
+        "rev": "1b2ba62710c6c1d9eba0e8e3adc029cc2e9291a4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "cyberus-technology",
+        "repo": "dried-nix-flakes",
+        "type": "github"
+      }
+    },
+    "edk2-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1772632652,
+        "narHash": "sha256-cuU4f9U4zAj03cDhirjru4XSVM5WjpW59wEiiR3Qa/Q=",
+        "ref": "gardenlinux",
+        "rev": "1d892a18e3c6b0e4ead9ab26c9a4f648bbf31476",
+        "revCount": 35525,
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/cyberus-technology/edk2"
+      },
+      "original": {
+        "ref": "gardenlinux",
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/cyberus-technology/edk2"
+      }
+    },
+    "fcntl-tool": {
+      "inputs": {
+        "nixpkgs": [
+          "libvirt",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1775080936,
+        "narHash": "sha256-Fq/d//tIRG7XPirsUX1fmHucorkx7fS3Uhk1RNTJxjI=",
+        "owner": "phip1611",
+        "repo": "fcntl-tool",
+        "rev": "55d6200678996060e58d152598d2583a2ef889a7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "phip1611",
+        "repo": "fcntl-tool",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -52,6 +204,70 @@
         "owner": "hercules-ci",
         "repo": "gitignore.nix",
         "type": "github"
+      }
+    },
+    "keycodemapdb": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1752156361,
+        "narHash": "sha256-gfrQPAwgShtgkDWZOkivDO1Aj7UUdaGTitirGy+RA70=",
+        "ref": "refs/heads/master",
+        "rev": "54788039c0b3486a8883090d6736c2500177af29",
+        "revCount": 89,
+        "type": "git",
+        "url": "https://gitlab.com/keycodemap/keycodemapdb.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://gitlab.com/keycodemap/keycodemapdb.git"
+      }
+    },
+    "libvirt": {
+      "inputs": {
+        "cloud-hypervisor": "cloud-hypervisor",
+        "cloud-hypervisor-prev": "cloud-hypervisor-prev",
+        "edk2-src": "edk2-src",
+        "fcntl-tool": "fcntl-tool",
+        "keycodemapdb": "keycodemapdb",
+        "libvirt-prev": "libvirt-prev",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1777966233,
+        "narHash": "sha256-o3piByAfsqAq6vTmlYWWlSn+s5/cTg5V5Q/7/bYPtys=",
+        "ref": "gardenlinux",
+        "rev": "f99354a26929bcf157c7a3a58097794c86c5fe9b",
+        "revCount": 54179,
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/cyberus-technology/libvirt"
+      },
+      "original": {
+        "ref": "gardenlinux",
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/cyberus-technology/libvirt"
+      }
+    },
+    "libvirt-prev": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1774940944,
+        "narHash": "sha256-z6+PU8+lTBE2HG4bsb15EY4AmywB+28j6dr6X7Ak36A=",
+        "ref": "refs/tags/gardenlinux-release-26-03-31",
+        "rev": "db2f30fce426ff3f61de01874b2ee8a9aca43a7b",
+        "revCount": 54144,
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/cyberus-technology/libvirt"
+      },
+      "original": {
+        "ref": "refs/tags/gardenlinux-release-26-03-31",
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/cyberus-technology/libvirt"
       }
     },
     "nixpkgs": {
@@ -110,9 +326,54 @@
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
+        "libvirt": "libvirt",
         "nixpkgs": "nixpkgs",
         "nova-src": "nova-src",
         "pre-commit-hooks-nix": "pre-commit-hooks-nix"
+      }
+    },
+    "rust-overlay": {
+      "inputs": {
+        "nixpkgs": [
+          "libvirt",
+          "cloud-hypervisor",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1772679930,
+        "narHash": "sha256-FxYmdacqrdDVeE9QqZKTIpNLjv2B8GSKssgwlZuTR98=",
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "rev": "9b741db17141331fdb26270a1b66b81be8be9edd",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "type": "github"
+      }
+    },
+    "rust-overlay_2": {
+      "inputs": {
+        "nixpkgs": [
+          "libvirt",
+          "cloud-hypervisor-prev",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1772679930,
+        "narHash": "sha256-FxYmdacqrdDVeE9QqZKTIpNLjv2B8GSKssgwlZuTR98=",
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "rev": "9b741db17141331fdb26270a1b66b81be8be9edd",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "type": "github"
       }
     },
     "systems": {
