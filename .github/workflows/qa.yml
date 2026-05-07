@@ -14,11 +14,12 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: cachix/install-nix-action@v31
-      - name: Basic setup
+      - name: Build
         run: |
           nix build -Lv .#tests.x86_64-linux.openstack-default-setup.driver
-          ./result/bin/nixos-test-driver
+      - name: Basic setup
+        run: |
+          nix run .#tests.x86_64-linux.openstack-default-setup.driver
       - name: Live migration
         run: |
-          nix build -Lv .#tests.x86_64-linux.openstack-live-migration.driver
-          ./result/bin/nixos-test-driver
+          nix run .#tests.x86_64-linux.openstack-live-migration.driver
