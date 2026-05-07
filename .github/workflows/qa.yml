@@ -16,9 +16,9 @@ jobs:
       - uses: cachix/install-nix-action@v31
       - name: Basic setup
         run: |
-          nix build .#tests.x86_64-linux.openstack-default-setup.driver
+          nix build -Lv .#tests.x86_64-linux.openstack-default-setup.driver
           ./result/bin/nixos-test-driver
       - name: Live migration
         run: |
-          nix build .#tests.x86_64-linux.openstack-live-migration.driver
+          nix build -Lv .#tests.x86_64-linux.openstack-live-migration.driver
           ./result/bin/nixos-test-driver
