@@ -184,6 +184,15 @@ in
             openstack security group rule create --proto icmp default
             openstack security group rule create --proto tcp --dst-port 22 default
 
+            # create a dedicated security group to avoid run time race conditions with name >default<
+            openstack security group create testsg
+            openstack security group rule create testsg \
+              --protocol tcp --dst-port 22 --ingress --remote-ip 0.0.0.0/0
+            openstack security group rule create testsg \
+              --protocol icmp --ingress --remote-ip 0.0.0.0/0
+            openstack security group rule create testsg \
+              --protocol tcp --egress --remote-ip 0.0.0.0/0
+
             mkdir -p /root/.ssh/
             ssh-keygen -q -N "" -t rsa -f /root/.ssh/id_rsa
             openstack keypair create --public-key ~/.ssh/id_rsa.pub mykey
