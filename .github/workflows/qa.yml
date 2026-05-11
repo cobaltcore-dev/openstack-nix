@@ -20,7 +20,21 @@ jobs:
           extra_nix_config: "system-features = nixos-test benchmark big-parallel kvm"
       - name: Build
         run: |
-          nix build -Lv --option max-jobs 2 --option cores 4 .#tests.x86_64-linux.openstack-default-setup.driver
+          set -euxo pipefail
+          nix build --show-trace \
+            --option max-jobs 1 \
+            --option cores 4 \
+            .#tests.x86_64-linux.openstack-default-setup.driver &
+          nix_pid=$!
+
+          while kill -0 "$nix_pid" 2>/dev/null; do
+            echo "=== $(date -Is) process snapshot ==="
+            ps -eo pid,ppid,stat,etime,pcpu,pmem,args \
+              | egrep 'nix|gcc|cc1|ld|make|uwsgi|python|systemd|bash' \
+              | grep -v egrep || true
+            sleep 60
+          done
+          wait "$nix_pid"
       - name: Basic setup
         run: |
           nix run .#tests.x86_64-linux.openstack-default-setup.driver
