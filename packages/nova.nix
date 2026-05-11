@@ -77,6 +77,7 @@ let
     pyyaml
     requests
     requests-mock
+    requests-unixsocket
     retrying
     rfc3986
     routes
@@ -165,6 +166,7 @@ python3Packages.buildPythonPackage (rec {
     python-neutronclient
     pyyaml
     requests
+    requests-unixsocket
     retrying
     rfc3986
     routes
