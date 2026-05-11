@@ -20,7 +20,7 @@ jobs:
           extra_nix_config: "system-features = nixos-test benchmark big-parallel kvm"
       - name: Build
         run: |
-          nix build -Lv .#tests.x86_64-linux.openstack-default-setup.driver
+          nix build -Lv --option max-jobs 2 --option cores 4 .#tests.x86_64-linux.openstack-default-setup.driver
       - name: Basic setup
         run: |
           nix run .#tests.x86_64-linux.openstack-default-setup.driver
