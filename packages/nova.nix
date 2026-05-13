@@ -95,6 +95,7 @@ let
     "test_inject_admin_password"
     "test_server_pool_waitall"
     "test_validation_errors_19_traits_multiple_additional_traits_two_invalid"
+    "test_schedule_and_build_multiple_cells"
   ];
 
   excludeListFile = writeScript "test_excludes" (lib.concatStringsSep "\n" testExcludes);

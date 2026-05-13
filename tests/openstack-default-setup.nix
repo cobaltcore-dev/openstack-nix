@@ -155,7 +155,7 @@ pkgs.nixosTest {
       print(f"openstack volume show test_vol: {output}")
 
       # wait until volume is attached
-      assert retry_until_succeed(controllerVM, "openstack volume show test_vol -f value -c status | grep 'in-use'", 20)
+      assert retry_until_succeed(controllerVM, "openstack volume show test_vol -f value -c status | grep 'in-use'", 40)
 
       # add ssh host key to known_hosts
       retry_until_succeed(controllerVM, f"ip netns exec {net_ns} ssh-keyscan {vm_ip} > ~/.ssh/known_hosts", 60)

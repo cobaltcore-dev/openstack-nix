@@ -14,11 +14,16 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: cachix/install-nix-action@v31
+      - name: Build
+        run: |
+          set -euxo pipefail
+          nix build --show-trace \
+            --option max-jobs 1 \
+            --option cores 4 \
+            .#tests.x86_64-linux.openstack-default-setup.driver
       - name: Basic setup
         run: |
-          nix build -Lv .#tests.x86_64-linux.openstack-default-setup.driver
-          ./result/bin/nixos-test-driver
+          nix run .#tests.x86_64-linux.openstack-default-setup.driver
       - name: Live migration
         run: |
-          nix build -Lv .#tests.x86_64-linux.openstack-live-migration.driver
-          ./result/bin/nixos-test-driver
+          nix run .#tests.x86_64-linux.openstack-live-migration.driver
