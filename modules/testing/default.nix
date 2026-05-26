@@ -54,43 +54,14 @@ let
       };
     };
 
-  portForwardingStorage =
+  portForwardingSSH =
     { config, lib, ... }:
     with lib;
     let
-      cfg = config.openstack-testing;
+      cfg = config.openstack-testing-ssh;
     in
     {
-      options.openstack-testing = {
-        enable = mkEnableOption "Enable port forwarding." // {
-          default = true;
-        };
-        sshHostPort = mkOption {
-          type = types.port;
-          description = ''
-            Host port to make the ssh server available.
-          '';
-        };
-      };
-      config = mkIf cfg.enable {
-        virtualisation.forwardPorts = [
-          {
-            from = "host";
-            host.port = cfg.sshHostPort;
-            guest.port = 22;
-          }
-        ];
-      };
-    };
-
-  portForwardingCompute =
-    { config, lib, ... }:
-    with lib;
-    let
-      cfg = config.openstack-testing;
-    in
-    {
-      options.openstack-testing = {
+      options.openstack-testing-ssh = {
         enable = mkEnableOption "Enable port forwarding." // {
           default = true;
         };
@@ -150,12 +121,6 @@ let
             the configuration of the dashboard.
           '';
         };
-        sshHostPort = mkOption {
-          type = types.port;
-          description = ''
-            Host port to make the ssh server available.
-          '';
-        };
       };
       config = mkIf cfg.enable {
         virtualisation.forwardPorts = [
@@ -173,11 +138,6 @@ let
             from = "host";
             host.port = cfg.vncProxyHostPort;
             guest.port = 6080;
-          }
-          {
-            from = "host";
-            host.port = cfg.sshHostPort;
-            guest.port = 22;
           }
         ];
       };
@@ -199,10 +159,10 @@ in
       imports = [
         common
         portForwardingController
+        portForwardingSSH
       ];
 
-      openstack-testing.enable = true; # enable / disable all port forwardings
-      openstack-testing.sshHostPort = 1122;
+      openstack-testing-ssh.sshHostPort = 1122;
 
       virtualisation = {
         cores = 4;
@@ -298,11 +258,10 @@ in
     {
       imports = [
         common
-        portForwardingCompute
+        portForwardingSSH
       ];
 
-      openstack-testing.enable = true; # enable / disable all port forwardings
-      openstack-testing.sshHostPort = 3022;
+      openstack-testing-ssh.sshHostPort = 3022;
 
       virtualisation = {
         memorySize = 4096;
@@ -349,11 +308,10 @@ in
 
       imports = [
         common
-        portForwardingStorage
+        portForwardingSSH
       ];
 
-      openstack-testing.enable = true; # enable / disable all port forwardings
-      openstack-testing.sshHostPort = 2022;
+      openstack-testing-ssh.sshHostPort = 2022;
 
       virtualisation = {
         memorySize = 4096;
