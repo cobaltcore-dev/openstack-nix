@@ -133,6 +133,9 @@ pkgs.nixosTest {
         (novaConfigForIp "10.0.0.39")
       ];
 
+      openstack-testing.enable = true; # enable / disable all port forwardings
+      openstack-testing.sshHostPort = 3022;
+
       networking.extraHosts = ''
         10.0.0.40 computeVM2 computeVM2.local
       '';
@@ -155,6 +158,9 @@ pkgs.nixosTest {
         nixosModules.testModules.testCompute
         (novaConfigForIp "10.0.0.40")
       ];
+
+      openstack-testing.enable = true; # enable / disable all port forwardings
+      openstack-testing.sshHostPort = 3122;
 
       networking.extraHosts = ''
         10.0.0.39 computeVM computeVM.local

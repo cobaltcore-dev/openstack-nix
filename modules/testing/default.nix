@@ -54,7 +54,68 @@ let
       };
     };
 
-  portForwarding =
+  portForwardingStorage =
+    { config, lib, ... }:
+    with lib;
+    let
+      cfg = config.openstack-testing;
+    in
+    {
+      options.openstack-testing = {
+        enable = mkEnableOption "Enable port forwarding." // {
+          default = true;
+        };
+        sshHostPort = mkOption {
+          default = 2122;
+          type = types.port;
+          description = ''
+            Host port to make the ssh server available.
+          '';
+        };
+      };
+      config = mkIf cfg.enable {
+        virtualisation.forwardPorts = [
+          {
+            from = "host";
+            host.port = cfg.sshHostPort;
+            guest.port = 22;
+          }
+        ];
+      };
+    };
+
+  portForwardingCompute =
+    { config, lib, ... }:
+    with lib;
+    let
+      cfg = config.openstack-testing;
+    in
+    {
+      options.openstack-testing = {
+        enable = mkEnableOption "Enable port forwarding." // {
+          # If multiple nodes are used, a separate port must be assigned to each node; otherwise, collisions will occur.
+          # We disable ssh port forwarding for compute nodes as default.
+          default = false;
+        };
+        sshHostPort = mkOption {
+          type = types.port;
+          description = ''
+            Host port to make the ssh server available.
+          '';
+        };
+      };
+      config = mkIf cfg.enable {
+        virtualisation.forwardPorts = [
+          {
+            from = "host";
+            host.port = cfg.sshHostPort;
+            guest.port = 22;
+          }
+        ];
+      };
+    };
+
+  portForwardingController =
     { config, lib, ... }:
     with lib;
     let
@@ -92,6 +153,13 @@ let
             the configuration of the dashboard.
           '';
         };
+        sshHostPort = mkOption {
+          default = 2022;
+          type = types.port;
+          description = ''
+            Host port to make the ssh server available.
+          '';
+        };
       };
       config = mkIf cfg.enable {
         virtualisation.forwardPorts = [
@@ -109,6 +177,11 @@ let
             from = "host";
             host.port = cfg.vncProxyHostPort;
             guest.port = 6080;
+          }
+          {
+            from = "host";
+            host.port = cfg.sshHostPort;
+            guest.port = 22;
           }
         ];
       };
@@ -129,8 +202,12 @@ in
     {
       imports = [
         common
-        portForwarding
+        portForwardingController
       ];
+
+      # this is an example how to  enable / disable all port forwardings or change port numbers
+      # openstack-testing.enable = true;
+      # openstack-testing.sshHostPort = 1122;
 
       virtualisation = {
         cores = 4;
@@ -144,14 +221,6 @@ in
             vlan = 2;
           };
         };
-        # enable ssh access
-        forwardPorts = [
-          {
-            from = "host";
-            host.port = 1122;
-            guest.port = 22;
-          }
-        ];
       };
 
       systemd.services.openstack-create-vm = {
@@ -232,7 +301,14 @@ in
   testCompute =
     { ... }:
     {
-      imports = [ common ];
+      imports = [
+        common
+        portForwardingCompute
+      ];
+
+      # this is an example how to  enable / disable all port forwardings or change port numbers
+      # openstack-testing.enable = true; # enable / disable all port forwardings
+      # openstack-testing.sshHostPort = 3022;
 
       virtualisation = {
         memorySize = 4096;
@@ -271,14 +347,20 @@ in
           };
         };
       };
-
     };
 
   testStorage =
     { ... }:
     {
 
-      imports = [ common ];
+      imports = [
+        common
+        portForwardingStorage
+      ];
+
+      # this is an example how to  enable / disable all port forwardings or change port numbers
+      # openstack-testing.enable = true; # enable / disable all port forwardings
+      # openstack-testing.sshHostPort = 2022;
 
       virtualisation = {
         memorySize = 4096;
@@ -296,14 +378,6 @@ in
             vlan = 2;
           };
         };
-        # enable ssh access
-        forwardPorts = [
-          {
-            from = "host";
-            host.port = 2022;
-            guest.port = 22;
-          }
-        ];
       };
 
       systemd.network = {

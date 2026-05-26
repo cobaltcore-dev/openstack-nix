@@ -103,3 +103,42 @@ drwxr-xr-x 2 cinder cinder 4.0K Feb 24 08:16 .
 drwxr-xr-x 6 cinder cinder 4.0K Feb 24 08:09 ..
 -rw------- 1 cinder cinder  268 Feb 24 08:16 volume-64159e0c-18bb-449f-b1e0-86f198b170e4
 ```
+
+## Port Forwarding
+
+* Port forwarding is enabled by default for `controllerVM` and `storageVM` and disabled for `computeVM`.
+* If multiple computeVMs are used, a separate port must be assigned to each node; otherwise, collisions will occur.
+
+### Default ssh port forwards
+
+* controllerVM: `2022`
+* storageVM: `2122`
+* computeVM: `n/a`
+
+### Change default ports
+
+```nix
+
+pkgs.nixosTest {
+
+  nodes.controllerVM =
+    { ... }:
+    {
+      openstack-testing.sshHostPort = 2044; # default was: 2022
+    };
+
+  nodes.computeVM =
+    { ... }:
+    {
+      openstack-testing.enable = true; # enable / disable all port forwardings
+      openstack-testing.sshHostPort = 3022;
+    };
+
+  nodes.computeVM2 =
+    { ... }:
+    {
+      openstack-testing.enable = true; # enable / disable all port forwardings
+      openstack-testing.sshHostPort = 3122;
+    };
+}
+```
