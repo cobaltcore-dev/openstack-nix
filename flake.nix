@@ -8,9 +8,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nova-src = {
-      url = "git+file:/home/skober/repos/nova";
+      # url = "git+file:/home/skober/repos/nova";
       # url = "git+ssh://git@gitlab.cyberus-technology.de/cyberus/cloud/openstack-nova.git";
-      # url = "git+https://github.com/sapcc/nova?ref=stable/2023.2-m3";
+      url = "git+https://github.com/hertrste/nova?ref=storage-encryption";
       flake = false;
     };
 
