@@ -2,12 +2,14 @@
   pkgs,
   nixosModules,
   generateRootwrapConf,
+  novaPkg,
 }:
 let
   novaConfigForIp =
     ip:
     { config, pkgs, ... }:
     {
+      nova.novaPackage = novaPkg;
       nova.config =
         let
           nova_env = pkgs.python3.buildEnv.override {
@@ -58,8 +60,9 @@ let
 
           [libvirt]
           virt_type = kvm
-          cpu_mode = custom
-          cpu_model = qemu64
+          images_type = default
+          images_format = raw
+          force_raw_images = true
 
           [neutron]
           auth_url = http://controller:5000
@@ -109,6 +112,9 @@ let
 
           [os_region_name]
           openstack =
+
+          [cinder]
+          os_region_name = RegionOne
         '';
     };
 in
@@ -172,6 +178,15 @@ pkgs.nixosTest {
       };
 
       systemd.network.networks.eth1.networkConfig.Address = pkgs.lib.mkForce "10.0.0.40/24";
+    };
+
+  nodes.storageVM =
+    { ... }:
+    {
+      imports = [
+        nixosModules.storageModule
+        nixosModules.testModules.testStorage
+      ];
     };
 
   testScript =
@@ -269,6 +284,18 @@ pkgs.nixosTest {
       assert net_ns != ""
 
       assert retry_until_succeed(controllerVM, f"ip netns exec {net_ns} ping -c 1 {vm_ip}", 30)
+
+      # create volume with 4GB
+      controllerVM.execute("openstack volume type create --encryption-provider luks --encryption-cipher aes-xts-plain64 --encryption-key-size 256 --encryption-control-location front-end nfs-luks")
+      controllerVM.execute("openstack volume type set nfs-luks --property volume_backend_name=NFS")
+      controllerVM.execute("openstack volume create --size 1 --type nfs-luks test_vol")
+
+      time.sleep(10)
+
+      # attach volume to VM
+      controllerVM.execute("openstack server add volume test_vm test_vol")
+
+      breakpoint()
 
       print(f"Start migration from src: {host} to destination {dst_host}")
       controllerVM.succeed(f"openstack server migrate --live-migration --host {dst_host} test_vm")

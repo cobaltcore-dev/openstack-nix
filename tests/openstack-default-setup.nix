@@ -2,7 +2,6 @@
   pkgs,
   nixosModules,
   novaPkg,
-  libvirt,
 }:
 pkgs.nixosTest {
   name = "OpenStack default setup test";
@@ -25,7 +24,7 @@ pkgs.nixosTest {
   nodes.computeVM =
     { ... }:
     {
-      virtualisation.libvirtd.package = libvirt;
+      #virtualisation.libvirtd.package = libvirt;
       imports = [
         nixosModules.computeModule
         nixosModules.testModules.testCompute

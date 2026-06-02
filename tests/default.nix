@@ -11,7 +11,7 @@ let
       inherit nixosModules novaPkg libvirt;
     };
     openstack-live-migration = pkgs.callPackage ./openstack-live-migration.nix {
-      inherit nixosModules generateRootwrapConf;
+      inherit nixosModules generateRootwrapConf novaPkg;
     };
   };
 in
