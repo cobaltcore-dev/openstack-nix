@@ -127,6 +127,12 @@ pkgs.nixosTest {
       imports = [
         nixosModules.controllerModule
         nixosModules.testModules.testController
+        (
+          { ... }:
+          {
+            nova.novaPackage = novaPkg;
+          }
+        )
       ];
     };
 
@@ -144,6 +150,7 @@ pkgs.nixosTest {
       '';
       virtualisation.libvirtd.extraConfig = ''
         listen_tls = 0
+        log_level = 3
         listen_tcp = 1
         auth_tcp = "none"
       '';
@@ -169,6 +176,7 @@ pkgs.nixosTest {
       virtualisation.libvirtd.extraConfig = ''
         listen_tls = 0
         listen_tcp = 1
+        log_level = 3
         auth_tcp = "none"
       '';
 
