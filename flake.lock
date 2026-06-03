@@ -289,11 +289,11 @@
     "nova-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1779800271,
-        "narHash": "sha256-maaM5C472miUhG99aN/lwHQo/0TyOKDmw3/1ahrO5IM=",
+        "lastModified": 1780470467,
+        "narHash": "sha256-9y6oSulS0bgXCcFAFsIM5+bW2Yc3gftSf0ZiaWbQRCc=",
         "ref": "storage-encryption",
-        "rev": "f7a93fa0b6d727b861725282305a817978985640",
-        "revCount": 60793,
+        "rev": "e482e256aca504f1521a6be62d937145b801f2b8",
+        "revCount": 60795,
         "type": "git",
         "url": "https://github.com/hertrste/nova"
       },
