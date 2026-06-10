@@ -18,7 +18,7 @@ let
     fixtures
     pbr
     python-dateutil
-    python-subunit
+    subunit
     requests
     requests-mock
     stestr
@@ -59,7 +59,7 @@ python3Packages.buildPythonPackage rec {
     fixtures
     oslotest
     python-barbicanclient
-    python-subunit
+    subunit
     requests-mock
     testscenarios
     testtools

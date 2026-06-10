@@ -32,7 +32,7 @@ let
     pbr
     pecan
     pylint
-    python-subunit
+    subunit
     setproctitle
     stestr
     stevedore
@@ -88,7 +88,7 @@ python3Packages.buildPythonPackage rec {
     isort
     oslotest
     pylint
-    python-subunit
+    subunit
     testresources
     testscenarios
     testtools

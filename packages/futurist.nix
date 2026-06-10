@@ -9,7 +9,7 @@ let
     eventlet
     pbr
     prettytable
-    python-subunit
+    subunit
     stestr
     testscenarios
     testtools
@@ -33,7 +33,7 @@ python3Packages.buildPythonPackage rec {
     eventlet
     oslotest
     prettytable
-    python-subunit
+    subunit
     testscenarios
     testtools
   ];

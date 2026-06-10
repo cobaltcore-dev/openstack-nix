@@ -9,7 +9,7 @@ let
     jsonpath-rw
     oslotest
     pbr
-    python-subunit
+    subunit
     sphinx
     testrepository
     testscenarios
@@ -33,7 +33,7 @@ python3Packages.buildPythonPackage rec {
     coverage
     hacking
     oslotest
-    python-subunit
+    subunit
     sphinx
     testrepository
     testscenarios

@@ -62,7 +62,7 @@ let
     python-memcached
     pyopenssl
     pyroute2
-    python-subunit
+    subunit
     requests
     routes
     stestr
@@ -201,7 +201,7 @@ python3Packages.buildPythonPackage rec {
     hacking
     oslotest
     pymysql
-    python-subunit
+    subunit
     testresources
     testscenarios
     testtools

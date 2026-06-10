@@ -11,7 +11,7 @@ let
     openstackdocstheme
     packaging
     pbr
-    python-subunit
+    subunit
     pyyaml
     stestr
     testscenarios
@@ -41,7 +41,7 @@ python3Packages.buildPythonPackage rec {
   checkInputs = [
     coverage
     openstackdocstheme
-    python-subunit
+    subunit
     testscenarios
     testtools
   ];

@@ -12,7 +12,7 @@ let
     netaddr
     pbr
     pythonRelaxDepsHook
-    python-subunit
+    subunit
     stestr
     testscenarios
     testtools
@@ -43,7 +43,7 @@ python3Packages.buildPythonPackage rec {
     coverage
     isort
     oslotest
-    python-subunit
+    subunit
     testscenarios
     testtools
   ];

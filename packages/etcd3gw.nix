@@ -10,7 +10,7 @@ let
     oslotest
     pbr
     pytest
-    python-subunit
+    subunit
     requests
     testrepository
     testscenarios
@@ -36,7 +36,7 @@ python3Packages.buildPythonPackage rec {
     oslotest
     pifpaf
     pytest
-    python-subunit
+    subunit
     testrepository
     testscenarios
     testtools

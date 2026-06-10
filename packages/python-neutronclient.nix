@@ -27,7 +27,7 @@ let
     pbr
     python-dateutil
     python-openstackclient
-    python-subunit
+    subunit
     requests
     requests-mock
     stestr
@@ -73,7 +73,7 @@ python3Packages.buildPythonPackage rec {
     oslotest
     osprofiler
     python-openstackclient
-    python-subunit
+    subunit
     requests-mock
     testtools
   ];

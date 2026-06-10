@@ -11,7 +11,7 @@ let
     flake8-import-order
     hacking
     pbr
-    python-subunit
+    subunit
     pytz
     stestr
     testtools
@@ -37,7 +37,7 @@ python3Packages.buildPythonPackage rec {
     fixtures
     flake8-import-order
     hacking
-    python-subunit
+    subunit
     testtools
   ];
 

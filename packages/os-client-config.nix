@@ -12,7 +12,7 @@ let
     coverage
     fixtures
     jsonschema
-    python-subunit
+    subunit
     testtools
     testscenarios
     ;
@@ -36,7 +36,7 @@ python3Packages.buildPythonPackage rec {
     jsonschema
     oslotest
     python-glanceclient
-    python-subunit
+    subunit
     testscenarios
     testtools
   ];

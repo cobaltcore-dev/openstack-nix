@@ -15,7 +15,7 @@ let
     hacking
     mock
     pbr
-    python-subunit
+    subunit
     stestr
     testrepository
     testresources
@@ -48,7 +48,7 @@ python3Packages.buildPythonPackage rec {
     hacking
     mock
     oslotest
-    python-subunit
+    subunit
     testrepository
     testresources
     testtools

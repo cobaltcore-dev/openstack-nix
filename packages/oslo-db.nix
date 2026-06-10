@@ -21,7 +21,7 @@ let
     hacking
     psycopg2
     pymysql
-    python-subunit
+    subunit
     stestr
     stevedore
     testresources
@@ -59,7 +59,7 @@ python3Packages.buildPythonPackage rec {
     pre-commit
     psycopg2
     pymysql
-    python-subunit
+    subunit
     testresources
     testscenarios
     testtools

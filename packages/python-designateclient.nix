@@ -16,7 +16,7 @@ let
     debtcollector
     hacking
     jsonschema
-    python-subunit
+    subunit
     requests
     requests-mock
     stestr
@@ -49,7 +49,7 @@ python3Packages.buildPythonPackage rec {
     hacking
     oslo-config
     oslotest
-    python-subunit
+    subunit
     reno
     requests-mock
     tempest

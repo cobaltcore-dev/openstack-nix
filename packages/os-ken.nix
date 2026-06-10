@@ -17,7 +17,7 @@ let
     pbr
     pycodestyle
     pylint
-    python-subunit
+    subunit
     routes
     stestr
     testscenarios
@@ -55,7 +55,7 @@ python3Packages.buildPythonPackage rec {
     oslotest
     pycodestyle
     pylint
-    python-subunit
+    subunit
     testscenarios
     testtools
   ];

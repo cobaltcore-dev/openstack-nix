@@ -9,7 +9,7 @@ let
     coverage
     fixtures
     hacking
-    python-subunit
+    subunit
     stestr
     testtools
     ;
@@ -27,7 +27,7 @@ python3Packages.buildPythonPackage rec {
 
   propagatedBuildInputs = [
     fixtures
-    python-subunit
+    subunit
     testtools
   ];
 
