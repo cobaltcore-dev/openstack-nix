@@ -7,7 +7,7 @@ let
     docutils
     pygments
     restructuredtext-lint
-    setuptools_scm
+    setuptools-scm
     stevedore
     tomli
     ;
@@ -18,7 +18,7 @@ python3Packages.buildPythonPackage rec {
   pyproject = true;
 
   nativeBuildInputs = [
-    setuptools_scm
+    setuptools-scm
   ];
 
   propagatedBuildInputs = [
