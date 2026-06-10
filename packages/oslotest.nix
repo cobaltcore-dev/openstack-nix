@@ -19,6 +19,8 @@ python3Packages.buildPythonPackage rec {
   pname = "oslotest";
   version = "5.0.0";
 
+  pyproject = true;
+
   nativeCheckInputs = [
     stestr
   ];

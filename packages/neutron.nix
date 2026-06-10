@@ -127,6 +127,8 @@ python3Packages.buildPythonPackage rec {
   pname = "neutron";
   version = "25.1.0";
 
+  pyproject = true;
+
   nativeBuildInputs = [
     pbr
   ];
