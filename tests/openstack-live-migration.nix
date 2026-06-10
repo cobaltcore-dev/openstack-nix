@@ -112,7 +112,7 @@ let
         '';
     };
 in
-pkgs.nixosTest {
+pkgs.testers.nixosTest {
   name = "OpenStack live migration test";
 
   nodes.controllerVM =
