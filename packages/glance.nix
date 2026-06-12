@@ -42,6 +42,10 @@ python3Packages.buildPythonPackage (rec {
   pname = "glance";
   version = "29.0.0";
   pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
 
   nativeBuildInputs = [
     pbr

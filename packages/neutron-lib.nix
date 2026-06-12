@@ -46,6 +46,12 @@ python3Packages.buildPythonPackage rec {
   pname = "neutron-lib";
   version = "3.16.0";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
   nativeBuildInputs = [
     pbr
   ];

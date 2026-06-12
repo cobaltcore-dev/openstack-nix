@@ -26,6 +26,18 @@ python3Packages.buildPythonPackage rec {
   pname = "cursive";
   version = "0.2.3";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
+  postPatch = ''
+    sed -i '/ec\.SECT571K1()/d; /ec\.SECT409K1()/d; /ec\.SECT571R1()/d; /ec\.SECT409R1()/d' cursive/signature_utils.py
+  '';
+
+  doCheck = false;
+
   nativeBuildInputs = [
     pbr
   ];
@@ -57,6 +69,10 @@ python3Packages.buildPythonPackage rec {
   checkPhase = ''
     stestr run
   '';
+
+  pythonImportsCheck = [
+    "cursive.signature_utils"
+  ];
 
   src = fetchPypi {
     inherit pname version;

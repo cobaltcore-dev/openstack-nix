@@ -19,6 +19,10 @@ python3Packages.buildPythonPackage rec {
   pname = "python-swiftclient";
   version = "4.6.0";
   pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
 
   nativeBuildInputs = [
     pbr

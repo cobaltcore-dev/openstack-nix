@@ -22,6 +22,12 @@ python3Packages.buildPythonPackage rec {
   pname = "oslo.metrics";
   version = "0.10.0";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
   nativeBuildInputs = [
     pbr
   ];

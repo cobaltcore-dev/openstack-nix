@@ -8,6 +8,8 @@ python3Packages.buildPythonPackage rec {
   pname = "django-discover-runner";
   version = "1.0";
 
+  pyproject = true;
+
   propagatedBuildInputs = [
     django
   ];

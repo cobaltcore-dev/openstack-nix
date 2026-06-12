@@ -17,6 +17,10 @@ python3Packages.buildPythonPackage (rec {
   pname = "osc-placement";
   version = "4.5.0";
   pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
 
   nativeBuildInputs = [
     pbr

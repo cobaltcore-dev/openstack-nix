@@ -16,6 +16,12 @@ python3Packages.buildPythonPackage rec {
   pname = "os-resource-classes";
   version = "1.1.0";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
   nativeBuildInputs = [
     pbr
   ];

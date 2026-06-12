@@ -3,6 +3,9 @@ python3Packages.buildPythonPackage rec {
   pname = "XStatic-Bootstrap-Datepicker";
   version = "1.4.0.0";
 
+  pyproject = true;
+  build-system = [ python3Packages.setuptools ];
+
   src = fetchPypi {
     inherit pname version;
     sha256 = "sha256-3zOt2fXnhfqISsSxgmAa9qrJ4e7vfP5i27ywZU0PLW4=";

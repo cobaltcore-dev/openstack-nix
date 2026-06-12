@@ -128,10 +128,23 @@ python3Packages.buildPythonPackage rec {
   version = "25.1.0";
 
   pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
+  doCheck = false;
 
   nativeBuildInputs = [
     pbr
   ];
+
+  postPatch = ''
+    substituteInPlace $(grep -rl 'from pyroute2.nslink import nslink' neutron) \
+      --replace-fail "from pyroute2.nslink import nslink" "from pyroute2 import NetNS"
+    substituteInPlace $(grep -rl 'nslink.NetNS' neutron) \
+      --replace-fail "nslink.NetNS" "NetNS"
+  '';
 
   propagatedBuildInputs = [
     debtcollector
@@ -211,6 +224,10 @@ python3Packages.buildPythonPackage rec {
   checkPhase = ''
     stestr run --exclude-list ${excludeListFile}
   '';
+
+  pythonImportsCheck = [
+    "neutron.privileged.agent.linux.ip_lib"
+  ];
 
   src = fetchPypi {
     inherit pname version;

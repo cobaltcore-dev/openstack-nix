@@ -22,6 +22,12 @@ python3Packages.buildPythonPackage rec {
   pname = "oslo.concurrency";
   version = "6.0.0";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
   postPatch = ''
     substituteInPlace oslo_concurrency/tests/unit/test_processutils.py --replace-fail "/usr/bin/env" "${coreutils}/bin/env"
     substituteInPlace oslo_concurrency/tests/unit/test_processutils.py --replace-fail "/bin/bash" "${bash}/bin/bash"

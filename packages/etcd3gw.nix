@@ -22,6 +22,12 @@ python3Packages.buildPythonPackage rec {
   pname = "etcd3gw";
   version = "2.4.2";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
   nativeBuildInputs = [
     pbr
   ];

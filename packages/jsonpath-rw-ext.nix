@@ -21,6 +21,12 @@ python3Packages.buildPythonPackage rec {
   pname = "jsonpath-rw-ext";
   version = "1.2.2";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
   nativeBuildInputs = [
     pbr
   ];

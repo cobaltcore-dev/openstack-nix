@@ -36,6 +36,12 @@ python3Packages.buildPythonPackage rec {
   pname = "python-keystoneclient";
   version = "5.5.0";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
   nativeBuildInputs = [
     openssl
     pbr

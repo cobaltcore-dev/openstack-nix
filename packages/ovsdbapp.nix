@@ -22,6 +22,12 @@ python3Packages.buildPythonPackage rec {
   pname = "ovsdbapp";
   version = "2.9.0";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
   nativeBuildInputs = [
     pbr
     pythonRelaxDepsHook

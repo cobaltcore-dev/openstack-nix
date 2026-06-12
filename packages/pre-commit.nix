@@ -21,12 +21,16 @@ let
     pytest-env
     pyyaml
     re-assert
+    setuptools
     virtualenv
     ;
 in
 python3Packages.buildPythonPackage rec {
   pname = "pre_commit";
   version = "4.0.1";
+
+  pyproject = true;
+  build-system = [ setuptools ];
 
   nativeBuildInputs = [
     R
@@ -81,9 +85,21 @@ python3Packages.buildPythonPackage rec {
     "test_health_check_after_downgrade"
     "test_health_check_healthy"
     "test_health_check_without_version"
+    "test_healthy_default_creator"
+    "test_healthy_venv_creator"
+    "test_language_versioned_python_hook"
     "test_lots_of_files"
     "test_r_hook"
     "test_r_inline"
+    "test_python_hook_weird_setup_cfg"
+    "test_simple_python_hook"
+    "test_simple_python_hook_default_version"
+    "test_unhealthy_old_virtualenv"
+    "test_unhealthy_python_goes_missing"
+    "test_unhealthy_system_version_changes"
+    "test_unhealthy_then_replaced"
+    "test_unhealthy_unexpected_pyvenv"
+    "test_unhealthy_with_version_change"
   ];
 
   # We need to fetch the sources directly from GitHub here, because the

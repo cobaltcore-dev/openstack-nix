@@ -26,6 +26,12 @@ python3Packages.buildPythonPackage rec {
   pname = "os-win";
   version = "5.9.0";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
   nativeBuildInputs = [
     pbr
     pythonRelaxDepsHook

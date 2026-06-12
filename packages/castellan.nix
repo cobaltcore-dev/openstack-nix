@@ -31,6 +31,12 @@ python3Packages.buildPythonPackage rec {
   pname = "castellan";
   version = "5.1.1";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
   nativeBuildInputs = [
     pbr
     pifpaf

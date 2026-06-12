@@ -23,6 +23,12 @@ python3Packages.buildPythonPackage rec {
   pname = "oslo.log";
   version = "6.2.0";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
   nativeBuildInputs = [
     pbr
     python-dateutil

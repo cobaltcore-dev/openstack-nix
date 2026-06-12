@@ -39,6 +39,12 @@ python3Packages.buildPythonPackage rec {
   pname = "keystonemiddleware";
   version = "10.8.0";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
   nativeBuildInputs = [
     pbr
   ];

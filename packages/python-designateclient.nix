@@ -28,6 +28,8 @@ python3Packages.buildPythonPackage rec {
   pname = "python-designateclient";
   version = "6.1.0";
 
+  pyproject = true;
+
   propagatedBuildInputs = [
     cliff
     debtcollector

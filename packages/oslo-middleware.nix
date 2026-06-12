@@ -27,6 +27,12 @@ python3Packages.buildPythonPackage rec {
   pname = "oslo.middleware";
   version = "6.3.0";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
   nativeBuildInputs = [
     pbr
   ];

@@ -48,7 +48,7 @@ let
     pycodestyle
     pymysql
     python-memcached
-    rtslib
+    rtslib-fb
     sqlalchemy-utils
     stestr
     tabulate
@@ -67,6 +67,12 @@ in
 python3Packages.buildPythonPackage rec {
   pname = "cinder";
   version = "25.0.0";
+
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
 
   nativeBuildInputs = [
     pbr
@@ -106,7 +112,7 @@ python3Packages.buildPythonPackage rec {
     python-novaclient
     python-swiftclient
     qemu-utils
-    rtslib
+    rtslib-fb
     tabulate
     taskflow
     tenacity

@@ -690,6 +690,7 @@ let
         oslo-i18n
         oslo-serialization
         oslo-utils
+        reno
         ;
     };
     python-glanceclient = python3Packages.python-glanceclient.override {
@@ -731,6 +732,7 @@ let
         keystoneauth1
         oslo-i18n
         oslo-serialization
+        oslo-utils
         ;
     };
     python-swiftclient = callPackage ./python-swiftclient.nix {

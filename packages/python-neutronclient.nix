@@ -38,6 +38,12 @@ python3Packages.buildPythonPackage rec {
   pname = "python-neutronclient";
   version = "11.3.1";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
   nativeBuildInputs = [
     pbr
   ];

@@ -6,6 +6,9 @@ python3Packages.buildPythonPackage rec {
   pname = "XStatic-Angular";
   version = "1.8.2.2";
 
+  pyproject = true;
+  build-system = [ python3Packages.setuptools ];
+
   src = fetchPypi {
     inherit pname version;
     sha256 = "sha256-TIFq1aH5krHWPNKXXjwSYvyghnL1mG4YOKu2TtdcgyM=";

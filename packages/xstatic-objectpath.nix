@@ -3,6 +3,9 @@ python3Packages.buildPythonPackage rec {
   pname = "XStatic-objectpath";
   version = "1.2.1.0";
 
+  pyproject = true;
+  build-system = [ python3Packages.setuptools ];
+
   src = fetchPypi {
     inherit pname version;
 

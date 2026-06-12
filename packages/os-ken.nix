@@ -29,6 +29,12 @@ python3Packages.buildPythonPackage rec {
   pname = "os-ken";
   version = "2.11.2";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
   nativeBuildInputs = [
     pbr
   ];

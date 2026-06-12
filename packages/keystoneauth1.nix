@@ -34,6 +34,12 @@ python3Packages.buildPythonPackage rec {
   pname = "keystoneauth1";
   version = "5.8.0";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
   nativeBuildInputs = [
     pbr
   ];

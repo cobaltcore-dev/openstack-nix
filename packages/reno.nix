@@ -22,6 +22,12 @@ python3Packages.buildPythonPackage rec {
   pname = "reno";
   version = "4.1.0";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
   nativeBuildInputs = [
     git
     gnupg

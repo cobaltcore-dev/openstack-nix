@@ -20,6 +20,12 @@ python3Packages.buildPythonPackage rec {
   pname = "oslo.upgradecheck";
   version = "2.4.0";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
   propagatedBuildInputs = [
     oslo-config
     oslo-i18n

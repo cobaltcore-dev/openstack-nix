@@ -9,11 +9,15 @@ let
     pytest
     pytest-cov
     pytest-django
+    setuptools
     ;
 in
 python3Packages.buildPythonPackage rec {
   pname = "enmerkar";
   version = "0.7.1";
+
+  pyproject = true;
+  build-system = [ setuptools ];
 
   nativeBuildInputs = [
     babel

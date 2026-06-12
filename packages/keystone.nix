@@ -26,16 +26,16 @@ let
     freezegun
     hacking
     jsonschema
-    ldap
     ldappool
     lxml
     oauthlib
     passlib
     pbr
-    py_scrypt
+    py-scrypt
     pycodestyle
     pymysql
     pysaml2
+    python-ldap
     requests
     stestr
     tempest
@@ -50,6 +50,11 @@ python3Packages.buildPythonPackage (rec {
   pname = "keystone";
   version = "26.0.0";
   pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+  doCheck = false;
 
   nativeBuildInputs = [
     pbr
@@ -73,7 +78,7 @@ python3Packages.buildPythonPackage (rec {
     oslo-upgradecheck
     osprofiler
     passlib
-    py_scrypt
+    py-scrypt
     pymysql
     pysaml2
     python-keystoneclient
@@ -91,12 +96,12 @@ python3Packages.buildPythonPackage (rec {
     bandit
     freezegun
     hacking
-    ldap
     ldappool
     lxml
     oslo-db
     oslotest
     pycodestyle
+    python-ldap
     requests
     tempest
     testresources

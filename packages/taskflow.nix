@@ -39,6 +39,10 @@ python3Packages.buildPythonPackage rec {
   pname = "taskflow";
   version = "5.10.0";
   pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
 
   nativeBuildInputs = [
     pbr

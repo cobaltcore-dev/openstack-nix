@@ -40,6 +40,12 @@ python3Packages.buildPythonPackage rec {
   pname = "os-brick";
   version = "6.9.0";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
   nativeBuildInputs = [
     pbr
   ];

@@ -17,6 +17,12 @@ python3Packages.buildPythonPackage rec {
   pname = "microversion_parse";
   version = "2.0.0";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
   nativeBuildInputs = [
     pre-commit
   ];

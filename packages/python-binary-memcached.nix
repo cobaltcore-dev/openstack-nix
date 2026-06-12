@@ -17,6 +17,9 @@ python3Packages.buildPythonPackage rec {
   pname = "python_binary_memcached";
   version = "0.31.3";
 
+  pyproject = true;
+  build-system = [ python3Packages.setuptools ];
+
   propagatedBuildInputs = [
     six
     uhashring

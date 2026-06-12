@@ -21,6 +21,8 @@ python3Packages.buildPythonPackage rec {
   pname = "ovs";
   version = "3.4.1";
 
+  pyproject = true;
+
   nativeBuildInputs = [
     openvswitch
     setuptools

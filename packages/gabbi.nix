@@ -25,6 +25,13 @@ python3Packages.buildPythonPackage rec {
   pname = "gabbi";
   version = "3.0.0";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+  pythonRelaxDeps = [ "urllib3" ];
+
   nativeBuildInputs = [
     pbr
   ];

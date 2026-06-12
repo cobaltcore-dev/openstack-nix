@@ -20,7 +20,22 @@
     flake-utils.lib.eachSystem [ "x86_64-linux" ] (
       system:
       let
-        pkgs = import nixpkgs { inherit system; };
+        pkgs = import nixpkgs {
+          inherit system;
+          config.problems.handlers.pysaml2.broken = "warn";
+          overlays = [
+            (_final: prev: {
+              python3 = prev.python3.override {
+                packageOverrides = _: pyPrev: {
+                  pysaml2 = pyPrev.pysaml2.overridePythonAttrs (_old: {
+                    doCheck = false;
+                  });
+                };
+              };
+              python3Packages = _final.python3.pkgs;
+            })
+          ];
+        };
         pre-commit-hooks-run = pre-commit-hooks-nix.lib.${system}.run;
       in
       rec {

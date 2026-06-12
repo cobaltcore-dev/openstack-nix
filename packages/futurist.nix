@@ -20,6 +20,12 @@ python3Packages.buildPythonPackage rec {
   pname = "futurist";
   version = "3.0.0";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
   nativeBuildInputs = [
     pbr
   ];
