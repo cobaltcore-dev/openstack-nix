@@ -62,6 +62,8 @@ let
     project_name = service
     username = cinder
     password = cinder
+    service_token_roles_required = true
+    service_token_roles = admin
 
     [oslo_concurrency]
     lock_path = /var/lib/cinder/tmp
@@ -104,6 +106,8 @@ let
     project_name = service
     username = cinder
     password = cinder
+    service_token_roles_required = true
+    service_token_roles = admin
 
     [oslo_concurrency]
     lock_path = /var/lib/cinder/tmp
