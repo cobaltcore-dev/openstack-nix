@@ -6,6 +6,7 @@
   placement,
   horizon,
   cinder,
+  barbican,
 }:
 {
   config,
@@ -34,6 +35,7 @@ in
     (import ./neutron.nix { inherit neutron; })
     (import ./horizon.nix { inherit horizon; })
     (import ./cinder.nix { inherit cinder; }) # only cinder management component
+    (import ./barbican.nix { inherit barbican; }) # only cinder management component
   ];
 
   config = {
@@ -67,6 +69,12 @@ in
           mysql -N -e "create database cinder;" || true
           mysql -N -e "GRANT ALL PRIVILEGES ON cinder.* TO 'cinder'@'localhost' IDENTIFIED BY 'cinder';"
           mysql -N -e "GRANT ALL PRIVILEGES ON cinder.* TO 'cinder'@'%' IDENTIFIED BY 'cinder';"
+
+          # barbican
+          mysql -N -e "drop database barbican;" || true
+          mysql -N -e "create database barbican;" || true
+          mysql -N -e "GRANT ALL PRIVILEGES ON barbican.* TO 'barbican'@'localhost' IDENTIFIED BY 'barbican';"
+          mysql -N -e "GRANT ALL PRIVILEGES ON barbican.* TO 'barbican'@'%' IDENTIFIED BY 'barbican';"
 
           # Placement
           mysql -N -e "drop database placement;" || true
@@ -150,6 +158,30 @@ in
           openstack role add --project service --user glance admin
           openstack role add --user glance --user-domain default --system all reader
           glance-manage --config-file ${config.glance.config} db_sync
+        '';
+      };
+    };
+
+    systemd.services.barbican = {
+      description = "OpenStack barbican setup";
+      after = [ "keystone-all.service" ];
+      wantedBy = [ "multi-user.target" ];
+      environment = adminEnv;
+      path = [
+        pkgs.openstackclient
+        barbican
+      ];
+      serviceConfig = {
+        Type = "oneshot";
+        User = "barbican";
+        Group = "barbican";
+        ExecStart = pkgs.writeShellScript "barbican.sh" ''
+          set -euxo pipefail
+          openstack user create --domain default --password barbican barbican
+          openstack role add --project service --user barbican admin
+          openstack role add --user barbican --user-domain default --system all reader
+          barbican-manage --config-file ${config.barbican.config} db upgrade
+          barbican-manage --config-file ${config.barbican.config} db sync_secret_stores
         '';
       };
     };

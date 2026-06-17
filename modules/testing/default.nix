@@ -1,4 +1,4 @@
-{ }:
+{ openstackPkgs }:
 let
   adminEnv = {
     OS_USERNAME = "admin";
@@ -35,6 +35,7 @@ let
           pkgs.openstackclient
           pkgs.openiscsi
           pkgs.sshpass
+          openstackPkgs.python-barbicanclient
         ];
 
         environment.variables = adminEnv;

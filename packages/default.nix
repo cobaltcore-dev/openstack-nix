@@ -5,6 +5,30 @@ let
   # the interpreter in the toplevel, to avoid a change for every single package
   openstackPkgs = rec {
     automaton = callPackage ./automaton.nix { inherit python3Packages; };
+    barbican = callPackage ./barbican.nix {
+      inherit
+        castellan
+        keystonemiddleware
+        kmip
+        microversion-parse
+        oslo-config
+        oslo-context
+        oslo-db
+        oslo-i18n
+        oslo-log
+        oslo-messaging
+        oslo-middleware
+        oslo-policy
+        oslo-serialization
+        oslo-service
+        oslo-upgradecheck
+        oslo-utils
+        oslo-versionedobjects
+        oslotest
+        python3Packages
+        sqlalchemy
+        ;
+    };
     castellan = callPackage ./castellan.nix {
       inherit
         keystoneauth1
@@ -218,6 +242,7 @@ let
         python3Packages
         ;
     };
+    kmip = callPackage ./kmip.nix { inherit python3Packages; };
     microversion-parse = callPackage ./microversion-parse.nix {
       inherit
         gabbi

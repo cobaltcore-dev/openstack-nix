@@ -8,6 +8,7 @@
       glance
       horizon
       cinder
+      barbican
       ;
     placement = openstackPkgs.openstack-placement;
   };
@@ -16,5 +17,5 @@
 
   storageModule = import ./storage/cinder-storage-node.nix { inherit (openstackPkgs) cinder; };
 
-  testModules = import ./testing { };
+  testModules = import ./testing { inherit openstackPkgs; };
 }
