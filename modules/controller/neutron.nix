@@ -250,7 +250,7 @@ in
       wantedBy = [ "multi-user.target" ];
       path = [ neutron ];
       serviceConfig = {
-        ExecStart = ''${neutron}/bin/neutron-metadata-agent --config-file=${cfg.config}'';
+        ExecStart = "${neutron}/bin/neutron-metadata-agent --config-file=${cfg.config}";
       };
     };
 
