@@ -54,6 +54,10 @@ python3Packages.buildPythonPackage rec {
     testtools
   ];
 
+  patches = [
+    ./patches/oslo-log-pipe-mutex-context-manager.patch
+  ];
+
   checkPhase = ''
     stestr run
   '';
