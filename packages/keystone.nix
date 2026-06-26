@@ -35,7 +35,7 @@ let
     pycodestyle
     pymysql
     pysaml2
-    python-ldap
+    ldap
     requests
     stestr
     tempest
@@ -101,7 +101,7 @@ python3Packages.buildPythonPackage (rec {
     oslo-db
     oslotest
     pycodestyle
-    python-ldap
+    ldap
     requests
     tempest
     testresources
