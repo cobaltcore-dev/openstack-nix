@@ -58,6 +58,7 @@ let
         python-glanceclient
         python-keystoneclient
         python-novaclient
+        python-openstackclient
         python-swiftclient
         taskflow
         tooz
@@ -287,6 +288,7 @@ let
         python-designateclient
         python-neutronclient
         python-novaclient
+        python-openstackclient
         python3Packages
         sqlalchemy
         tooz
@@ -331,6 +333,7 @@ let
         python-cinderclient
         python-glanceclient
         python-neutronclient
+        python-openstackclient
         python3Packages
         sqlalchemy
         tooz
@@ -727,12 +730,23 @@ let
         python3Packages
         ;
     };
-    python-novaclient = python3Packages.python-novaclient.override {
+    python-novaclient = callPackage ./python-novaclient.nix {
       inherit
         keystoneauth1
         oslo-i18n
         oslo-serialization
         oslo-utils
+        python3Packages
+        ;
+    };
+    python-openstackclient = callPackage ./python-openstackclient.nix {
+      inherit
+        openstacksdk
+        osc-lib
+        oslo-i18n
+        python-cinderclient
+        python-keystoneclient
+        python3Packages
         ;
     };
     python-swiftclient = callPackage ./python-swiftclient.nix {

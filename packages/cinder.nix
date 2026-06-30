@@ -28,6 +28,7 @@
   python-glanceclient,
   python-keystoneclient,
   python-novaclient,
+  python-openstackclient,
   python-swiftclient,
   python3Packages,
   qemu-utils,
@@ -110,6 +111,7 @@ python3Packages.buildPythonPackage rec {
     python-keystoneclient
     python-memcached
     python-novaclient
+    python-openstackclient
     python-swiftclient
     qemu-utils
     rtslib-fb

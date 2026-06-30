@@ -36,6 +36,7 @@
   python-designateclient,
   python-neutronclient,
   python-novaclient,
+  python-openstackclient,
   python3Packages,
   sqlalchemy,
   tooz,
@@ -193,6 +194,7 @@ python3Packages.buildPythonPackage rec {
     python-memcached
     python-neutronclient
     python-novaclient
+    python-openstackclient
     requests
     routes
     sqlalchemy

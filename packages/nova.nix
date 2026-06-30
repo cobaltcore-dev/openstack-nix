@@ -40,6 +40,7 @@
   python-cinderclient,
   python-glanceclient,
   python-neutronclient,
+  python-openstackclient,
   python3Packages,
   sqlalchemy,
   tooz,
@@ -186,6 +187,7 @@ python3Packages.buildPythonPackage (rec {
     python-glanceclient
     python-memcached
     python-neutronclient
+    python-openstackclient
     pyyaml
     requests
     requests-unixsocket
