@@ -796,6 +796,7 @@ let
         python3Packages
         ;
     };
+    rcssmin = callPackage ./rcssmin.nix { inherit python3Packages; };
     reno = callPackage ./reno.nix { inherit python3Packages; };
     sphinxcontrib-svg2pdfconverter = callPackage ./sphinxcontrib-svg2pdfconverter.nix {
       inherit python3Packages;
