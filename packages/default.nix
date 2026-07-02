@@ -64,6 +64,12 @@ let
         tooz
         ;
     };
+    django-appconf = callPackage ./django-appconf.nix {
+      inherit
+        django
+        python3Packages
+        ;
+    };
     django-compressor = callPackage ./django-compressor.nix {
       inherit
         rcssmin
@@ -135,6 +141,7 @@ let
     };
     horizon = callPackage ./horizon.nix {
       inherit
+        django-appconf
         django-compressor
         django-debreach
         django-pyscss

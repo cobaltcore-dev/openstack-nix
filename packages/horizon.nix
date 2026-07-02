@@ -2,6 +2,7 @@
   fetchPypi,
   python3Packages,
   xvfb-run,
+  django-appconf,
   django-compressor,
   django-debreach,
   django-pyscss,
@@ -101,6 +102,7 @@ python3Packages.buildPythonPackage rec {
   propagatedBuildInputs = [
     babel
     django
+    django-appconf
     django-compressor
     django-debreach
     django-pyscss
