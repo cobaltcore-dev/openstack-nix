@@ -64,6 +64,7 @@ let
         tooz
         ;
     };
+    django = callPackage ./django.nix { inherit python3Packages; };
     django-appconf = callPackage ./django-appconf.nix {
       inherit
         django
@@ -80,8 +81,30 @@ let
         ;
     };
     django-debreach = callPackage ./django-debreach.nix {
+      inherit
+        python3Packages
+        django
+        ;
+    };
+    django-discover-runner = callPackage ./django-discover-runner.nix {
+      inherit
+        python3Packages
+        django
+        ;
+    };
+    django-pyscss = callPackage ./django-pyscss.nix {
+      inherit
+        python3Packages
+        django
+        ;
+    };
     doc8 = callPackage ./doc8.nix { inherit python3Packages; };
-    enmerkar = callPackage ./enmerkar.nix { inherit python3Packages; };
+    enmerkar = callPackage ./enmerkar.nix {
+      inherit
+        python3Packages
+        django
+        ;
+    };
     etcd3gw = callPackage ./etcd3gw.nix { inherit futurist python3Packages; };
     flake8-logging-format = callPackage ./flake8-logging-format.nix { inherit python3Packages; };
     futurist = callPackage ./futurist.nix {
@@ -141,6 +164,7 @@ let
     };
     horizon = callPackage ./horizon.nix {
       inherit
+        django
         django-appconf
         django-compressor
         django-debreach

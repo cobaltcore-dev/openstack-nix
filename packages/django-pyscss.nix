@@ -1,10 +1,10 @@
 {
   fetchPypi,
   python3Packages,
+  django,
 }:
 let
   inherit (python3Packages)
-    django
     pyscss
     ;
 in

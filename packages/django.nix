@@ -1,28 +1,33 @@
 {
   fetchPypi,
   python3Packages,
-  django,
 }:
 let
   inherit (python3Packages)
+    asgiref
     pip
     setuptools
+    sqlparse
     ;
 in
 python3Packages.buildPythonPackage rec {
-  pname = "django-discover-runner";
-  version = "1.0";
+  pname = "django";
+  version = "4.2.30";
 
   pyproject = true;
 
   nativeBuildInputs = [
-    django
     pip
     setuptools
   ];
 
+  propagatedBuildInputs = [
+    asgiref
+    sqlparse
+  ];
+
   src = fetchPypi {
     inherit pname version;
-    sha256 = "sha256-C6kf5yLCVry/3rNvrH6sDyflv9pV2YxMHPmrYrWwhP4=";
+    sha256 = "sha256-Trx6Q044Gdts9LOZ+1s/U2MQow6EhvCLZohoQL6Es3w=";
   };
 }

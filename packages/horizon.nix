@@ -2,6 +2,7 @@
   fetchPypi,
   python3Packages,
   xvfb-run,
+  django,
   django-appconf,
   django-compressor,
   django-debreach,

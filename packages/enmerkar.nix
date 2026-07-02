@@ -1,11 +1,11 @@
 {
+  django,
   fetchPypi,
   python3Packages,
 }:
 let
   inherit (python3Packages)
     babel
-    django
     pytest
     pytest-cov
     pytest-django
