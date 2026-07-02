@@ -59,7 +59,14 @@
             };
         };
 
-        packages = import ./packages { inherit (pkgs) callPackage python3Packages; };
+        packages = import ./packages {
+          inherit (pkgs)
+            callPackage
+            python3Packages
+            writeText
+            lib
+            ;
+        };
 
         checks = import ./checks { inherit pkgs pre-commit-hooks-run; };
 

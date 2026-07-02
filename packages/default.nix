@@ -1,4 +1,9 @@
-{ callPackage, python3Packages }:
+{
+  callPackage,
+  python3Packages,
+  writeText,
+  lib,
+}:
 let
   # In the past, the packages was not ready for the latest python interpreter.
   # Since every package is required to use the same python interpreter, we set
@@ -736,11 +741,14 @@ let
         reno
         ;
     };
-    python-glanceclient = python3Packages.python-glanceclient.override {
+    python-glanceclient = callPackage ./python-glanceclient.nix {
       inherit
         keystoneauth1
+        openstacksdk
         oslo-i18n
         oslo-utils
+        writeText
+        lib
         ;
     };
     python-keystoneclient = callPackage ./python-keystoneclient.nix {
