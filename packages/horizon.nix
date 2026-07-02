@@ -54,10 +54,9 @@
 }:
 let
   inherit (python3Packages)
+    asgiref
     babel
     coverage
-    django
-    django-compressor
     freezegun
     hacking
     iso8601
@@ -75,6 +74,7 @@ let
     requests
     selenium
     semantic-version
+    sqlparse
     testscenarios
     testtools
     tzdata
@@ -102,6 +102,7 @@ python3Packages.buildPythonPackage rec {
   ];
 
   propagatedBuildInputs = [
+    asgiref
     babel
     django
     django-appconf
@@ -133,6 +134,7 @@ python3Packages.buildPythonPackage rec {
     requests
     rjsmin
     semantic-version
+    sqlparse
     tzdata
     xstatic
     xstatic-angular
