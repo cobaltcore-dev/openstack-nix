@@ -25,6 +25,7 @@
   python-neutronclient,
   python-novaclient,
   python-swiftclient,
+  rjsmin,
   xstatic-angular,
   xstatic-angular-bootstrap,
   xstatic-angular-fileupload,
@@ -130,6 +131,7 @@ python3Packages.buildPythonPackage rec {
     python-swiftclient
     pyyaml
     requests
+    rjsmin
     semantic-version
     tzdata
     xstatic

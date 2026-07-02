@@ -187,6 +187,7 @@ let
         python-novaclient
         python-swiftclient
         python3Packages
+        rjsmin
         xstatic-angular
         xstatic-angular-bootstrap
         xstatic-angular-fileupload
@@ -798,6 +799,8 @@ let
     };
     rcssmin = callPackage ./rcssmin.nix { inherit python3Packages; };
     reno = callPackage ./reno.nix { inherit python3Packages; };
+    rjsmin = callPackage ./rjsmin.nix { inherit python3Packages; };
+
     sphinxcontrib-svg2pdfconverter = callPackage ./sphinxcontrib-svg2pdfconverter.nix {
       inherit python3Packages;
     };
