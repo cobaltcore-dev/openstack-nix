@@ -30,6 +30,11 @@ python3Packages.buildPythonPackage rec {
 
   pyproject = true;
 
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
   propagatedBuildInputs = [
     cliff
     debtcollector
