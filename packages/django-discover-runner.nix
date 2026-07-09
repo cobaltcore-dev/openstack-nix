@@ -16,9 +16,12 @@ python3Packages.buildPythonPackage rec {
   pyproject = true;
 
   nativeBuildInputs = [
-    django
     pip
     setuptools
+  ];
+
+  propagatedBuildInputs = [
+    django
   ];
 
   src = fetchPypi {
