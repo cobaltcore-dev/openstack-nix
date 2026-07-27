@@ -1,5 +1,7 @@
 name: QA
 on: [ pull_request ]
+permissions:
+  contents: read
 jobs:
   flake-check:
     name: Nix Flake Checks
@@ -32,6 +34,8 @@ jobs:
     runs-on: large_runner_16core_64gb
     steps:
       - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - uses: cachix/install-nix-action@v31
       - uses: cachix/cachix-action@v17
         with:
