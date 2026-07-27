@@ -9,7 +9,7 @@ jobs:
       - uses: cachix/install-nix-action@v31
       - name: Nix Flake Checks
         run: nix flake check --all-systems
-  nixos-tests:
+  nixos-basic-test:
     runs-on: large_runner_16core_64gb
     steps:
       - uses: actions/checkout@v6
@@ -28,6 +28,22 @@ jobs:
       - name: Basic setup
         run: |
           nix run .#tests.x86_64-linux.openstack-default-setup.driver
+  nixos-live-migration-test:
+    runs-on: large_runner_16core_64gb
+    steps:
+      - uses: actions/checkout@v6
+      - uses: cachix/install-nix-action@v31
+      - uses: cachix/cachix-action@v17
+        with:
+          name: openstack-nix
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+      - name: Build
+        run: |
+          set -euxo pipefail
+          nix build --show-trace \
+            --option max-jobs 1 \
+            --option cores 4 \
+            .#tests.x86_64-linux.openstack-live-migration.driver
       - name: Live migration
         run: |
           nix run .#tests.x86_64-linux.openstack-live-migration.driver
