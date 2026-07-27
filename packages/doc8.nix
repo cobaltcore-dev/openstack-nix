@@ -7,7 +7,7 @@ let
     docutils
     pygments
     restructuredtext-lint
-    setuptools_scm
+    setuptools-scm
     stevedore
     tomli
     ;
@@ -16,9 +16,14 @@ python3Packages.buildPythonPackage rec {
   pname = "doc8";
   version = "1.1.2";
   pyproject = true;
+  build-system = [
+    python3Packages.setuptools
+    setuptools-scm
+  ];
+  pythonRelaxDeps = [ "docutils" ];
 
   nativeBuildInputs = [
-    setuptools_scm
+    setuptools-scm
   ];
 
   propagatedBuildInputs = [

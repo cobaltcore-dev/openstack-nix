@@ -27,7 +27,7 @@ let
     pbr
     python-dateutil
     python-openstackclient
-    python-subunit
+    subunit
     requests
     requests-mock
     stestr
@@ -37,6 +37,12 @@ in
 python3Packages.buildPythonPackage rec {
   pname = "python-neutronclient";
   version = "11.3.1";
+
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
 
   nativeBuildInputs = [
     pbr
@@ -73,7 +79,7 @@ python3Packages.buildPythonPackage rec {
     oslotest
     osprofiler
     python-openstackclient
-    python-subunit
+    subunit
     requests-mock
     testtools
   ];

@@ -26,6 +26,12 @@ python3Packages.buildPythonPackage rec {
   pname = "python-barbicanclient";
   version = "7.0.0";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
   nativeBuildInputs = [
     pbr
     stestr

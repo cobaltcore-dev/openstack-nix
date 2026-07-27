@@ -27,7 +27,7 @@ in
     };
     package = mkOption {
       default = horizon;
-      description = ''The Horizon Package to use'';
+      description = "The Horizon Package to use";
       type = types.package;
     };
   };

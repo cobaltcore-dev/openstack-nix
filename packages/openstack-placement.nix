@@ -30,6 +30,10 @@ python3Packages.buildPythonPackage (rec {
   pname = "openstack-placement";
   version = "12.0.0";
   pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
 
   nativeBuildInputs = [
     pbr

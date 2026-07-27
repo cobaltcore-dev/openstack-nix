@@ -21,6 +21,12 @@ python3Packages.buildPythonPackage rec {
   pname = "oslo.context";
   version = "5.7.0";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
   nativeBuildInputs = [
     pbr
   ];

@@ -1,12 +1,24 @@
-{ fetchPypi, python3Packages }:
+{
+  fetchPypi,
+  python3Packages,
+  django,
+}:
 let
   inherit (python3Packages)
-    django
+    pip
+    setuptools
     ;
 in
 python3Packages.buildPythonPackage rec {
   pname = "django-discover-runner";
   version = "1.0";
+
+  pyproject = true;
+
+  nativeBuildInputs = [
+    pip
+    setuptools
+  ];
 
   propagatedBuildInputs = [
     django

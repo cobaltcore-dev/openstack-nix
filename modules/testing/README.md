@@ -119,7 +119,7 @@ drwxr-xr-x 6 cinder cinder 4.0K Feb 24 08:09 ..
 
 ```nix
 
-pkgs.nixosTest {
+pkgs.testers.nixosTest {
 
   nodes.controllerVM =
     { ... }:

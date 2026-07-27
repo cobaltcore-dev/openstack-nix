@@ -11,7 +11,7 @@ let
     openstackdocstheme
     packaging
     pbr
-    python-subunit
+    subunit
     pyyaml
     stestr
     testscenarios
@@ -21,6 +21,12 @@ in
 python3Packages.buildPythonPackage rec {
   pname = "reno";
   version = "4.1.0";
+
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
 
   nativeBuildInputs = [
     git
@@ -41,7 +47,7 @@ python3Packages.buildPythonPackage rec {
   checkInputs = [
     coverage
     openstackdocstheme
-    python-subunit
+    subunit
     testscenarios
     testtools
   ];

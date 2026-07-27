@@ -21,7 +21,7 @@ let
     pymysql
     stestr
     stevedore
-    sysv_ipc
+    sysv-ipc
     tenacity
     testtools
     voluptuous
@@ -39,6 +39,8 @@ in
 python3Packages.buildPythonPackage rec {
   pname = "tooz";
   version = "6.3.0";
+
+  pyproject = true;
 
   propagatedBuildInputs = [
     fasteners
@@ -59,7 +61,7 @@ python3Packages.buildPythonPackage rec {
     pifpaf
     pymemcache
     pymysql
-    sysv_ipc
+    sysv-ipc
     testtools
     zake
   ];

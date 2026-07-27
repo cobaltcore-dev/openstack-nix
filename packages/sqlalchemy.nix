@@ -11,6 +11,12 @@ python3Packages.buildPythonPackage rec {
   pname = "sqlalchemy";
   version = "2.0.34";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.cython
+    python3Packages.setuptools
+  ];
+
   propagatedBuildInputs = [
     typing-extensions
   ];

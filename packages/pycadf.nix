@@ -11,7 +11,7 @@ let
     flake8-import-order
     hacking
     pbr
-    python-subunit
+    subunit
     pytz
     stestr
     testtools
@@ -20,6 +20,12 @@ in
 python3Packages.buildPythonPackage rec {
   pname = "pycadf";
   version = "4.0.0";
+
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
 
   nativeBuildInputs = [
     pbr
@@ -37,7 +43,7 @@ python3Packages.buildPythonPackage rec {
     fixtures
     flake8-import-order
     hacking
-    python-subunit
+    subunit
     testtools
   ];
 

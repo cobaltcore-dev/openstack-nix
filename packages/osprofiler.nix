@@ -32,6 +32,12 @@ python3Packages.buildPythonPackage rec {
   pname = "osprofiler";
   version = "4.2.0";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
   propagatedBuildInputs = [
     netaddr
     oslo-concurrency

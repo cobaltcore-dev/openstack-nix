@@ -1,4 +1,9 @@
-{ callPackage, python3Packages }:
+{
+  callPackage,
+  python3Packages,
+  writeText,
+  lib,
+}:
 let
   # In the past, the packages was not ready for the latest python interpreter.
   # Since every package is required to use the same python interpreter, we set
@@ -58,16 +63,53 @@ let
         python-glanceclient
         python-keystoneclient
         python-novaclient
+        python-openstackclient
         python-swiftclient
         taskflow
         tooz
         ;
     };
-    django-debreach = callPackage ./django-debreach.nix { inherit python3Packages; };
-    django-discover-runner = callPackage ./django-discover-runner.nix { inherit python3Packages; };
-    django-pyscss = callPackage ./django-pyscss.nix { inherit python3Packages; };
+    django = callPackage ./django.nix { inherit python3Packages; };
+    django-appconf = callPackage ./django-appconf.nix {
+      inherit
+        django
+        python3Packages
+        ;
+    };
+    django-compressor = callPackage ./django-compressor.nix {
+      inherit
+        rcssmin
+        rjsmin
+        django
+        django-appconf
+        python3Packages
+        ;
+    };
+    django-debreach = callPackage ./django-debreach.nix {
+      inherit
+        python3Packages
+        django
+        ;
+    };
+    django-discover-runner = callPackage ./django-discover-runner.nix {
+      inherit
+        python3Packages
+        django
+        ;
+    };
+    django-pyscss = callPackage ./django-pyscss.nix {
+      inherit
+        python3Packages
+        django
+        ;
+    };
     doc8 = callPackage ./doc8.nix { inherit python3Packages; };
-    enmerkar = callPackage ./enmerkar.nix { inherit python3Packages; };
+    enmerkar = callPackage ./enmerkar.nix {
+      inherit
+        python3Packages
+        django
+        ;
+    };
     etcd3gw = callPackage ./etcd3gw.nix { inherit futurist python3Packages; };
     flake8-logging-format = callPackage ./flake8-logging-format.nix { inherit python3Packages; };
     futurist = callPackage ./futurist.nix {
@@ -127,6 +169,9 @@ let
     };
     horizon = callPackage ./horizon.nix {
       inherit
+        django
+        django-appconf
+        django-compressor
         django-debreach
         django-pyscss
         enmerkar
@@ -147,6 +192,7 @@ let
         python-novaclient
         python-swiftclient
         python3Packages
+        rjsmin
         xstatic-angular
         xstatic-angular-bootstrap
         xstatic-angular-fileupload
@@ -287,6 +333,7 @@ let
         python-designateclient
         python-neutronclient
         python-novaclient
+        python-openstackclient
         python3Packages
         sqlalchemy
         tooz
@@ -331,6 +378,7 @@ let
         python-cinderclient
         python-glanceclient
         python-neutronclient
+        python-openstackclient
         python3Packages
         sqlalchemy
         tooz
@@ -690,13 +738,17 @@ let
         oslo-i18n
         oslo-serialization
         oslo-utils
+        reno
         ;
     };
-    python-glanceclient = python3Packages.python-glanceclient.override {
+    python-glanceclient = callPackage ./python-glanceclient.nix {
       inherit
         keystoneauth1
+        openstacksdk
         oslo-i18n
         oslo-utils
+        writeText
+        lib
         ;
     };
     python-keystoneclient = callPackage ./python-keystoneclient.nix {
@@ -726,11 +778,23 @@ let
         python3Packages
         ;
     };
-    python-novaclient = python3Packages.python-novaclient.override {
+    python-novaclient = callPackage ./python-novaclient.nix {
       inherit
         keystoneauth1
         oslo-i18n
         oslo-serialization
+        oslo-utils
+        python3Packages
+        ;
+    };
+    python-openstackclient = callPackage ./python-openstackclient.nix {
+      inherit
+        openstacksdk
+        osc-lib
+        oslo-i18n
+        python-cinderclient
+        python-keystoneclient
+        python3Packages
         ;
     };
     python-swiftclient = callPackage ./python-swiftclient.nix {
@@ -741,7 +805,10 @@ let
         python3Packages
         ;
     };
+    rcssmin = callPackage ./rcssmin.nix { inherit python3Packages; };
     reno = callPackage ./reno.nix { inherit python3Packages; };
+    rjsmin = callPackage ./rjsmin.nix { inherit python3Packages; };
+
     sphinxcontrib-svg2pdfconverter = callPackage ./sphinxcontrib-svg2pdfconverter.nix {
       inherit python3Packages;
     };

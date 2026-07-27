@@ -18,7 +18,7 @@ let
     fixtures
     pbr
     python-dateutil
-    python-subunit
+    subunit
     requests
     requests-mock
     stestr
@@ -30,6 +30,12 @@ in
 python3Packages.buildPythonPackage rec {
   pname = "castellan";
   version = "5.1.1";
+
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
 
   nativeBuildInputs = [
     pbr
@@ -59,7 +65,7 @@ python3Packages.buildPythonPackage rec {
     fixtures
     oslotest
     python-barbicanclient
-    python-subunit
+    subunit
     requests-mock
     testscenarios
     testtools

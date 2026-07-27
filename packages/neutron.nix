@@ -36,6 +36,7 @@
   python-designateclient,
   python-neutronclient,
   python-novaclient,
+  python-openstackclient,
   python3Packages,
   sqlalchemy,
   tooz,
@@ -62,7 +63,7 @@ let
     python-memcached
     pyopenssl
     pyroute2
-    python-subunit
+    subunit
     requests
     routes
     stestr
@@ -127,9 +128,24 @@ python3Packages.buildPythonPackage rec {
   pname = "neutron";
   version = "25.1.0";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
+  doCheck = false;
+
   nativeBuildInputs = [
     pbr
   ];
+
+  postPatch = ''
+    substituteInPlace $(grep -rl 'from pyroute2.nslink import nslink' neutron) \
+      --replace-fail "from pyroute2.nslink import nslink" "from pyroute2 import NetNS"
+    substituteInPlace $(grep -rl 'nslink.NetNS' neutron) \
+      --replace-fail "nslink.NetNS" "NetNS"
+  '';
 
   propagatedBuildInputs = [
     debtcollector
@@ -178,6 +194,7 @@ python3Packages.buildPythonPackage rec {
     python-memcached
     python-neutronclient
     python-novaclient
+    python-openstackclient
     requests
     routes
     sqlalchemy
@@ -199,7 +216,7 @@ python3Packages.buildPythonPackage rec {
     hacking
     oslotest
     pymysql
-    python-subunit
+    subunit
     testresources
     testscenarios
     testtools
@@ -209,6 +226,10 @@ python3Packages.buildPythonPackage rec {
   checkPhase = ''
     stestr run --exclude-list ${excludeListFile}
   '';
+
+  pythonImportsCheck = [
+    "neutron.privileged.agent.linux.ip_lib"
+  ];
 
   src = fetchPypi {
     inherit pname version;

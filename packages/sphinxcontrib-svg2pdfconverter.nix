@@ -9,6 +9,9 @@ python3Packages.buildPythonPackage rec {
   pname = "sphinxcontrib_svg2pdfconverter";
   version = "1.2.3";
 
+  pyproject = true;
+  build-system = [ python3Packages.setuptools ];
+
   nativeBuildInputs = [
     sphinx
   ];

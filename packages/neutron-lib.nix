@@ -32,7 +32,7 @@ let
     pbr
     pecan
     pylint
-    python-subunit
+    subunit
     setproctitle
     stestr
     stevedore
@@ -45,6 +45,12 @@ in
 python3Packages.buildPythonPackage rec {
   pname = "neutron-lib";
   version = "3.16.0";
+
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
 
   nativeBuildInputs = [
     pbr
@@ -88,7 +94,7 @@ python3Packages.buildPythonPackage rec {
     isort
     oslotest
     pylint
-    python-subunit
+    subunit
     testresources
     testscenarios
     testtools

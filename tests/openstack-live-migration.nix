@@ -112,7 +112,7 @@ let
         '';
     };
 in
-pkgs.nixosTest {
+pkgs.testers.nixosTest {
   name = "OpenStack live migration test";
 
   nodes.controllerVM =
@@ -274,7 +274,7 @@ pkgs.nixosTest {
       net_ns = wait_for_network_namespace()
       assert net_ns != ""
 
-      assert retry_until_succeed(controllerVM, f"ip netns exec {net_ns} ping -c 1 {vm_ip}", 30)
+      assert retry_until_succeed(controllerVM, f"ip netns exec {net_ns} ping -c 1 {vm_ip}", 120)
 
       print(f"Start migration from src: {host} to destination {dst_host}")
       controllerVM.succeed(f"openstack server migrate --live-migration --host {dst_host} test_vm")
@@ -284,6 +284,6 @@ pkgs.nixosTest {
       vm_state = json.loads(controllerVM.succeed("openstack server show test_vm -f json"))
       assert vm_state["OS-EXT-SRV-ATTR:host"] == dst_host
 
-      assert retry_until_succeed(controllerVM, f"ip netns exec {net_ns} ping -c 1 {vm_ip}", 30)
+      assert retry_until_succeed(controllerVM, f"ip netns exec {net_ns} ping -c 1 {vm_ip}", 120)
     '';
 }

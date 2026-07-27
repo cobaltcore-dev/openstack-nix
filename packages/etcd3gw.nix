@@ -10,7 +10,7 @@ let
     oslotest
     pbr
     pytest
-    python-subunit
+    subunit
     requests
     testrepository
     testscenarios
@@ -21,6 +21,12 @@ in
 python3Packages.buildPythonPackage rec {
   pname = "etcd3gw";
   version = "2.4.2";
+
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
 
   nativeBuildInputs = [
     pbr
@@ -36,7 +42,7 @@ python3Packages.buildPythonPackage rec {
     oslotest
     pifpaf
     pytest
-    python-subunit
+    subunit
     testrepository
     testscenarios
     testtools

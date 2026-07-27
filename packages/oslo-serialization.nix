@@ -19,6 +19,12 @@ python3Packages.buildPythonPackage rec {
   pname = "oslo.serialization";
   version = "5.6.0";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
   nativeBuildInputs = [
     pbr
   ];

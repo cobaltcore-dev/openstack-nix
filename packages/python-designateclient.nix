@@ -16,7 +16,7 @@ let
     debtcollector
     hacking
     jsonschema
-    python-subunit
+    subunit
     requests
     requests-mock
     stestr
@@ -27,6 +27,13 @@ in
 python3Packages.buildPythonPackage rec {
   pname = "python-designateclient";
   version = "6.1.0";
+
+  pyproject = true;
+
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
 
   propagatedBuildInputs = [
     cliff
@@ -49,7 +56,7 @@ python3Packages.buildPythonPackage rec {
     hacking
     oslo-config
     oslotest
-    python-subunit
+    subunit
     reno
     requests-mock
     tempest

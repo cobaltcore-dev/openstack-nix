@@ -11,6 +11,9 @@ python3Packages.buildPythonPackage rec {
   pname = "suds_community";
   version = "1.2.0";
 
+  pyproject = true;
+  build-system = [ python3Packages.setuptools ];
+
   checkInputs = [
     pytest
   ];

@@ -32,6 +32,12 @@ python3Packages.buildPythonPackage rec {
   pname = "oslo.rootwrap";
   version = "7.4.0";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
   postPatch = ''
     substituteInPlace ./oslo_rootwrap/tests/test_functional.py --replace-fail "/bin/cat" "${coreutils}/bin/cat"
     substituteInPlace ./oslo_rootwrap/tests/test_functional.py --replace-fail "/bin/echo" "${coreutils}/bin/echo"

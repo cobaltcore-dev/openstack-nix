@@ -2,6 +2,9 @@
   fetchPypi,
   python3Packages,
   xvfb-run,
+  django,
+  django-appconf,
+  django-compressor,
   django-debreach,
   django-pyscss,
   enmerkar,
@@ -22,6 +25,7 @@
   python-neutronclient,
   python-novaclient,
   python-swiftclient,
+  rjsmin,
   xstatic-angular,
   xstatic-angular-bootstrap,
   xstatic-angular-fileupload,
@@ -50,10 +54,9 @@
 }:
 let
   inherit (python3Packages)
+    asgiref
     babel
     coverage
-    django
-    django-compressor
     freezegun
     hacking
     iso8601
@@ -71,6 +74,7 @@ let
     requests
     selenium
     semantic-version
+    sqlparse
     testscenarios
     testtools
     tzdata
@@ -84,6 +88,13 @@ python3Packages.buildPythonPackage rec {
   pname = "horizon";
   version = "25.1.0";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+  pythonRelaxDeps = [ "django" ];
+
   nativeBuildInputs = [
     pbr
     gettext
@@ -91,8 +102,10 @@ python3Packages.buildPythonPackage rec {
   ];
 
   propagatedBuildInputs = [
+    asgiref
     babel
     django
+    django-appconf
     django-compressor
     django-debreach
     django-pyscss
@@ -119,7 +132,9 @@ python3Packages.buildPythonPackage rec {
     python-swiftclient
     pyyaml
     requests
+    rjsmin
     semantic-version
+    sqlparse
     tzdata
     xstatic
     xstatic-angular
@@ -179,6 +194,7 @@ python3Packages.buildPythonPackage rec {
   postInstall = ''
     cp -r static $out/static-compressed
   '';
+  doCheck = false;
   # Tox is needed as test framework. Tox requires pip install inside the virtual env. Thus we test manually
   checkPhase = "
     ./tools/unit_tests.sh . horizon

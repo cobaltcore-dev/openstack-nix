@@ -7,17 +7,17 @@
 }:
 writeText "rootwrap.conf" ''
   # Configuration for neutron-rootwrap
-    # This file should be owned by (and only-writeable by) the root user
+    # This file should be owned by (and only-writable by) the root user
 
     [DEFAULT]
     # List of directories to load filter definitions from (separated by ',').
-    # These directories MUST all be only writeable by root !
+    # These directories MUST all be only writable by root !
     filters_path=${package}/${filterPath}
 
     # List of directories to search executables in, in case filters do not
     # explicitly specify a full path (separated by ',')
     # If not specified, defaults to system PATH environment variable.
-    # These directories MUST all be only writeable by root !
+    # These directories MUST all be only writable by root !
     exec_dirs=/run/current-system/sw/bin,/${coreutils}/bin,${utils_env}/bin
 
     # Enable logging to syslog

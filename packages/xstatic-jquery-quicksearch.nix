@@ -3,6 +3,9 @@ python3Packages.buildPythonPackage rec {
   pname = "XStatic-JQuery.quicksearch";
   version = "2.0.3.2";
 
+  pyproject = true;
+  build-system = [ python3Packages.setuptools ];
+
   src = fetchPypi {
     inherit pname version;
     sha256 = "sha256-84dg/pO1BPKFXvJem/kd9lyKZgFnQWXkaF+yF7thb9E=";

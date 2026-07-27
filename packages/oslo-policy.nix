@@ -23,6 +23,12 @@ python3Packages.buildPythonPackage rec {
   pname = "oslo.policy";
   version = "4.4.0";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
   propagatedBuildInputs = [
     oslo-config
     oslo-context

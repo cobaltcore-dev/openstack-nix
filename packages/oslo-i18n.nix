@@ -10,6 +10,10 @@ python3Packages.buildPythonPackage rec {
   pname = "oslo.i18n";
   version = "6.5.0";
   pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
   nativeBuildInputs = [
     pbr
     setuptools

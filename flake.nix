@@ -2,7 +2,7 @@
   description = "OpenStack Packages and Modules for NixOS";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-25.05";
+    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-26.05";
     pre-commit-hooks-nix = {
       url = "github:cachix/pre-commit-hooks.nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -20,7 +20,22 @@
     flake-utils.lib.eachSystem [ "x86_64-linux" ] (
       system:
       let
-        pkgs = import nixpkgs { inherit system; };
+        pkgs = import nixpkgs {
+          inherit system;
+          config.problems.handlers.pysaml2.broken = "warn";
+          overlays = [
+            (_final: prev: {
+              python3 = prev.python3.override {
+                packageOverrides = _: pyPrev: {
+                  pysaml2 = pyPrev.pysaml2.overridePythonAttrs (_old: {
+                    doCheck = false;
+                  });
+                };
+              };
+              python3Packages = _final.python3.pkgs;
+            })
+          ];
+        };
         pre-commit-hooks-run = pre-commit-hooks-nix.lib.${system}.run;
       in
       rec {
@@ -44,7 +59,14 @@
             };
         };
 
-        packages = import ./packages { inherit (pkgs) callPackage python3Packages; };
+        packages = import ./packages {
+          inherit (pkgs)
+            callPackage
+            python3Packages
+            writeText
+            lib
+            ;
+        };
 
         checks = import ./checks { inherit pkgs pre-commit-hooks-run; };
 

@@ -9,7 +9,7 @@ let
     coverage
     fixtures
     hacking
-    python-subunit
+    subunit
     stestr
     testtools
     ;
@@ -19,13 +19,19 @@ python3Packages.buildPythonPackage rec {
   pname = "oslotest";
   version = "5.0.0";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
   nativeCheckInputs = [
     stestr
   ];
 
   propagatedBuildInputs = [
     fixtures
-    python-subunit
+    subunit
     testtools
   ];
 

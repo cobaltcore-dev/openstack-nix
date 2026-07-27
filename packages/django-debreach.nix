@@ -1,9 +1,12 @@
-{ fetchPypi, python3Packages }:
+{
+  django,
+  fetchPypi,
+  python3Packages,
+}:
 let
   inherit (python3Packages)
     setuptools
     pip
-    django
     ;
 in
 python3Packages.buildPythonPackage rec {

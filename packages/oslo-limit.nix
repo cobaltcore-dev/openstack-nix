@@ -20,6 +20,12 @@ python3Packages.buildPythonPackage rec {
   pname = "oslo.limit";
   version = "2.6.0";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
   propagatedBuildInputs = [
     keystoneauth1
     openstacksdk

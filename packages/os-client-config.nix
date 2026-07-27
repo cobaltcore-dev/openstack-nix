@@ -10,9 +10,10 @@ let
     stestr
     hacking
     coverage
+    extras
     fixtures
     jsonschema
-    python-subunit
+    subunit
     testtools
     testscenarios
     ;
@@ -20,6 +21,12 @@ in
 python3Packages.buildPythonPackage rec {
   pname = "os-client-config";
   version = "2.1.0";
+
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
 
   propagatedBuildInputs = [
     openstacksdk
@@ -31,12 +38,13 @@ python3Packages.buildPythonPackage rec {
 
   checkInputs = [
     coverage
+    extras
     fixtures
     hacking
     jsonschema
     oslotest
     python-glanceclient
-    python-subunit
+    subunit
     testscenarios
     testtools
   ];

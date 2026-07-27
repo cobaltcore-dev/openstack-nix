@@ -9,6 +9,12 @@ python3Packages.buildPythonPackage rec {
   pname = "automaton";
   version = "3.2.0";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
   nativeBuildInputs = [
     pbr
   ];

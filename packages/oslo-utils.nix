@@ -30,6 +30,12 @@ python3Packages.buildPythonPackage rec {
   pname = "oslo.utils";
   version = "7.4.0";
 
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
+
   nativeBuildInputs = [
     pbr
     qemu

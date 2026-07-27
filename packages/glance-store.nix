@@ -47,6 +47,10 @@ python3Packages.buildPythonPackage (rec {
   pname = "glance_store";
   version = "4.8.1";
   pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
 
   nativeBuildInputs = [
     pbr

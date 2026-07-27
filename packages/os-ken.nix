@@ -17,7 +17,7 @@ let
     pbr
     pycodestyle
     pylint
-    python-subunit
+    subunit
     routes
     stestr
     testscenarios
@@ -28,6 +28,12 @@ in
 python3Packages.buildPythonPackage rec {
   pname = "os-ken";
   version = "2.11.2";
+
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
 
   nativeBuildInputs = [
     pbr
@@ -55,7 +61,7 @@ python3Packages.buildPythonPackage rec {
     oslotest
     pycodestyle
     pylint
-    python-subunit
+    subunit
     testscenarios
     testtools
   ];

@@ -21,7 +21,7 @@ let
     hacking
     psycopg2
     pymysql
-    python-subunit
+    subunit
     stestr
     stevedore
     testresources
@@ -32,6 +32,12 @@ in
 python3Packages.buildPythonPackage rec {
   pname = "oslo.db";
   version = "17.0.0";
+
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
 
   propagatedBuildInputs = [
     (alembic.override { inherit sqlalchemy; })
@@ -59,7 +65,7 @@ python3Packages.buildPythonPackage rec {
     pre-commit
     psycopg2
     pymysql
-    python-subunit
+    subunit
     testresources
     testscenarios
     testtools

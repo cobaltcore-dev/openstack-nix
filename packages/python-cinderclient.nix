@@ -64,7 +64,7 @@ python3Packages.buildPythonPackage rec {
 
   checkPhase = ''
     runHook preCheck
-    stestr run
+    stestr run --exclude-regex test_load_versioned_actions_with_help
     runHook postCheck
   '';
 

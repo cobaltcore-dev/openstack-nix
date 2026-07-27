@@ -9,7 +9,7 @@ let
     jsonpath-rw
     oslotest
     pbr
-    python-subunit
+    subunit
     sphinx
     testrepository
     testscenarios
@@ -20,6 +20,12 @@ in
 python3Packages.buildPythonPackage rec {
   pname = "jsonpath-rw-ext";
   version = "1.2.2";
+
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
 
   nativeBuildInputs = [
     pbr
@@ -33,7 +39,7 @@ python3Packages.buildPythonPackage rec {
     coverage
     hacking
     oslotest
-    python-subunit
+    subunit
     sphinx
     testrepository
     testscenarios

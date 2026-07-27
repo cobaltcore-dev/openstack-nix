@@ -9,7 +9,7 @@ let
     eventlet
     pbr
     prettytable
-    python-subunit
+    subunit
     stestr
     testscenarios
     testtools
@@ -19,6 +19,12 @@ in
 python3Packages.buildPythonPackage rec {
   pname = "futurist";
   version = "3.0.0";
+
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
 
   nativeBuildInputs = [
     pbr
@@ -33,7 +39,7 @@ python3Packages.buildPythonPackage rec {
     eventlet
     oslotest
     prettytable
-    python-subunit
+    subunit
     testscenarios
     testtools
   ];

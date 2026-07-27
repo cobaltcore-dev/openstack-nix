@@ -12,7 +12,7 @@ let
     netaddr
     pbr
     pythonRelaxDepsHook
-    python-subunit
+    subunit
     stestr
     testscenarios
     testtools
@@ -21,6 +21,12 @@ in
 python3Packages.buildPythonPackage rec {
   pname = "ovsdbapp";
   version = "2.9.0";
+
+  pyproject = true;
+  build-system = [
+    python3Packages.pbr
+    python3Packages.setuptools
+  ];
 
   nativeBuildInputs = [
     pbr
@@ -43,7 +49,7 @@ python3Packages.buildPythonPackage rec {
     coverage
     isort
     oslotest
-    python-subunit
+    subunit
     testscenarios
     testtools
   ];

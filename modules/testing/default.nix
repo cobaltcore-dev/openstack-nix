@@ -1,4 +1,6 @@
-{ }:
+{
+  python-openstackclient,
+}:
 let
   adminEnv = {
     OS_USERNAME = "admin";
@@ -32,7 +34,7 @@ let
         };
 
         environment.systemPackages = [
-          pkgs.openstackclient
+          python-openstackclient
           pkgs.openiscsi
           pkgs.sshpass
         ];
@@ -226,7 +228,7 @@ in
       systemd.services.openstack-create-vm = {
         description = "OpenStack";
         path = [
-          pkgs.openstackclient
+          python-openstackclient
           pkgs.openssh
         ];
         environment = adminEnv;
