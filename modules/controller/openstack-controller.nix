@@ -9,6 +9,7 @@
 }:
 {
   config,
+  lib,
   pkgs,
   ...
 }:
@@ -36,9 +37,19 @@ in
     (import ./cinder.nix { inherit cinder; }) # only cinder management component
   ];
 
+  options.openstack.manual_setup = lib.mkOption {
+    type = lib.types.bool;
+    default = false;
+    description = ''
+      Whether to manage OpenStack setup manually. When enabled, automatic
+      database setup, OpenStack service bootstrapping, and Cinder storage
+      initialization are disabled. Setup must be performed separately.
+    '';
+  };
+
   config = {
 
-    systemd.services.database-setup = {
+    systemd.services.database-setup = lib.mkIf (!config.openstack.manual_setup) {
       description = "OpenStack Database setup";
       after = [
         "mysql.service"
