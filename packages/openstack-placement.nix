@@ -68,7 +68,6 @@ python3Packages.buildPythonPackage (rec {
   ];
 
   checkPhase = ''
-    substituteInPlace placement/tests/unit/cmd/test_manage.py --replace-fail "choose from 'db'" "choose from db"
     stestr run
   '';
 
