@@ -8,6 +8,7 @@
       glance
       horizon
       cinder
+      python-openstackclient
       ;
     placement = openstackPkgs.openstack-placement;
   };

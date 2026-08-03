@@ -6,6 +6,7 @@
   placement,
   horizon,
   cinder,
+  python-openstackclient,
 }:
 {
   config,
@@ -48,6 +49,10 @@ in
   };
 
   config = {
+
+    environment.systemPackages = [
+      python-openstackclient
+    ];
 
     systemd.services.database-setup = lib.mkIf (!config.openstack.manual_setup) {
       description = "OpenStack Database setup";
