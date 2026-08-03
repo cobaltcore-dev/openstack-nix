@@ -9,6 +9,7 @@
 }:
 {
   config,
+  lib,
   pkgs,
   ...
 }:
@@ -36,9 +37,18 @@ in
     (import ./cinder.nix { inherit cinder; }) # only cinder management component
   ];
 
+  options.openstack.production_setup = lib.mkOption {
+    type = lib.types.bool;
+    default = false;
+    description = ''
+      Whether the controller uses a production database setup. When enabled,
+      the destructive database setup service is disabled.
+    '';
+  };
+
   config = {
 
-    systemd.services.database-setup = {
+    systemd.services.database-setup = lib.mkIf (!config.openstack.production_setup) {
       description = "OpenStack Database setup";
       after = [
         "mysql.service"
