@@ -78,6 +78,8 @@ let
     mysql -N -e "create database neutron;" || true
     mysql -N -e "GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'localhost' IDENTIFIED BY 'neutron';"
     mysql -N -e "GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'%' IDENTIFIED BY 'neutron';"
+
+    mysql -N -e "FLUSH PRIVILEGES;"
   '';
 
   keystonePreStartScript = pkgs.writeShellScript "keystone-all-pre-start.sh" ''
@@ -106,12 +108,14 @@ let
       ]
     }:$PATH
 
+    source /root/os-setup/.env
+
     exec runuser --user keystone --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
     set -euxo pipefail
     keystone-manage --config-file ${config.keystone.config} bootstrap \
-      --bootstrap-password admin\
+      --bootstrap-password admin \
       --bootstrap-region-id RegionOne
-     openstack project create --domain default --description "Service Project" service
+    openstack project create --domain default --description "Service Project" service
     EOF
   '';
 
@@ -123,6 +127,8 @@ let
         pkgs.util-linux
       ]
     }:$PATH
+
+    source /root/os-setup/.env
 
     exec runuser --user glance --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
     set -euxo pipefail
@@ -142,6 +148,8 @@ let
       ]
     }:$PATH
 
+    source /root/os-setup/.env
+
     exec runuser --user cinder --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
     set -euxo pipefail
     openstack user create --domain default --password cinder cinder || true
@@ -160,6 +168,8 @@ let
       ]
     }:$PATH
 
+    source /root/os-setup/.env
+
     exec runuser --user placement --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
     set -euxo pipefail
     openstack user create --domain default --password placement placement
@@ -176,6 +186,8 @@ let
         pkgs.util-linux
       ]
     }:$PATH
+
+    source /root/os-setup/.env
 
     exec runuser --user nova --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
     set -euxo pipefail
@@ -196,6 +208,8 @@ let
         pkgs.util-linux
       ]
     }:$PATH
+
+    source /root/os-setup/.env
 
     exec runuser --user neutron --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
     set -euxo pipefail
@@ -258,7 +272,7 @@ in
       path = [ pkgs.mariadb ];
       serviceConfig = {
         Type = "oneshot";
-        ExecStart = "/root/os-setup/database-setup.sh";
+        ExecStart = "/root/os-setup/000-database-setup.sh";
       };
     };
 
@@ -275,8 +289,8 @@ in
         User = "keystone";
         Group = "keystone";
         Type = "oneshot";
-        ExecStartPre = "+/root/os-setup/keystone-all-pre-start.sh";
-        ExecStart = "+/root/os-setup/keystone-all.sh";
+        ExecStartPre = "+/root/os-setup/001-keystone-all-pre-start.sh";
+        ExecStart = "+/root/os-setup/002-keystone-all.sh";
       };
     };
 
@@ -293,7 +307,7 @@ in
         Type = "oneshot";
         User = "glance";
         Group = "glance";
-        ExecStart = "+/root/os-setup/glance.sh";
+        ExecStart = "+/root/os-setup/003-glance.sh";
       };
     };
 
@@ -310,7 +324,7 @@ in
         Type = "oneshot";
         User = "cinder";
         Group = "cinder";
-        ExecStart = "+/root/os-setup/cinder.sh";
+        ExecStart = "+/root/os-setup/003-cinder.sh";
       };
     };
 
@@ -330,7 +344,7 @@ in
         Type = "oneshot";
         User = "placement";
         Group = "placement";
-        ExecStart = "+/root/os-setup/placement.sh";
+        ExecStart = "+/root/os-setup/004-placement.sh";
       };
     };
 
@@ -347,7 +361,7 @@ in
         Type = "oneshot";
         User = "nova";
         Group = "nova";
-        ExecStart = "+/root/os-setup/nova.sh";
+        ExecStart = "+/root/os-setup/006-nova.sh";
       };
     };
 
@@ -364,7 +378,7 @@ in
         Type = "oneshot";
         User = "neutron";
         Group = "neutron";
-        ExecStart = "+/root/os-setup/neutron.sh";
+        ExecStart = "+/root/os-setup/005-neutron.sh";
       };
     };
   };
