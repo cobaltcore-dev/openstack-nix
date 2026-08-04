@@ -153,6 +153,24 @@ let
     EOF
   '';
 
+  cinderStartScript = pkgs.writeShellScript "cinder.sh" ''
+    export PATH=${
+      lib.makeBinPath [
+        cinder
+        pkgs.openstackclient
+        pkgs.util-linux
+      ]
+    }:$PATH
+
+    exec runuser --user cinder --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
+    set -euxo pipefail
+    openstack user create --domain default --password cinder cinder || true
+    openstack role add --project service --user cinder admin  || true
+    openstack role add --user cinder --user-domain default --system all reader || true
+    cinder-manage --config-file ${config.cinder.config} db sync
+    EOF
+  '';
+
 in
 {
   imports = [
@@ -184,6 +202,7 @@ in
       (setupCommand "openstack-keystone-pre-setup" keystonePreStartScript)
       (setupCommand "openstack-keystone-setup" keystoneStartScript)
       (setupCommand "openstack-glance-setup" glanceStartScript)
+      (setupCommand "openstack-cinder-setup" cinderStartScript)
       python-openstackclient
     ];
 
@@ -243,7 +262,7 @@ in
       };
     };
 
-    systemd.services.cinder = {
+    systemd.services.cinder = lib.mkIf (!config.openstack.manual_setup) {
       description = "OpenStack Cinder setup";
       after = [ "keystone-all.service" ];
       wantedBy = [ "multi-user.target" ];
@@ -252,17 +271,13 @@ in
         pkgs.openstackclient
         cinder
       ];
+      restartIfChanged = false;
       serviceConfig = {
+        RemainAfterExit = true;
         Type = "oneshot";
         User = "cinder";
         Group = "cinder";
-        ExecStart = pkgs.writeShellScript "cinder.sh" ''
-          set -euxo pipefail
-          openstack user create --domain default --password cinder cinder || true
-          openstack role add --project service --user cinder admin  || true
-          openstack role add --user cinder --user-domain default --system all reader || true
-          cinder-manage --config-file ${config.cinder.config} db sync
-        '';
+        ExecStart = "+${cinderStartScript}";
       };
     };
 
