@@ -151,6 +151,23 @@ let
     EOF
   '';
 
+  placementStartScript = pkgs.writeShellScript "placement.sh" ''
+    export PATH=${
+      lib.makeBinPath [
+        placement
+        pkgs.openstackclient
+        pkgs.util-linux
+      ]
+    }:$PATH
+
+    exec runuser --user placement --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
+    set -euxo pipefail
+    openstack user create --domain default --password placement placement
+    openstack role add --project service --user placement admin
+    placement-manage --config-file ${config.placement.config} db sync
+    EOF
+  '';
+
 in
 {
   imports = [
@@ -188,6 +205,7 @@ in
       install -m 0700 ${keystoneStartScript} /root/os-setup/keystone-all.sh
       install -m 0700 ${glanceStartScript} /root/os-setup/glance.sh
       install -m 0700 ${cinderStartScript} /root/os-setup/cinder.sh
+      install -m 0700 ${placementStartScript} /root/os-setup/placement.sh
     '';
 
     systemd.services.database-setup = lib.mkIf (!config.openstack.production_setup) {
@@ -260,7 +278,7 @@ in
     # Placement service can be tested by executing
     # curl http://controller:8778
     # and receive some json with version info as result.
-    systemd.services.placement = {
+    systemd.services.placement = lib.mkIf (!config.openstack.production_setup) {
       description = "OpenStack Placement setup";
       after = [ "glance.service" ];
       requiredBy = [ "multi-user.target" ];
@@ -273,12 +291,7 @@ in
         Type = "oneshot";
         User = "placement";
         Group = "placement";
-        ExecStart = pkgs.writeShellScript "placement.sh" ''
-          set -euxo pipefail
-          openstack user create --domain default --password placement placement
-          openstack role add --project service --user placement admin
-          placement-manage --config-file ${config.placement.config} db sync
-        '';
+        ExecStart = "+/root/os-setup/placement.sh";
       };
     };
 
