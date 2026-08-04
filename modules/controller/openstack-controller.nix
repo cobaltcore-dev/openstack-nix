@@ -25,6 +25,12 @@ let
     OS_IDENTITY_API_VERSION = "3";
   };
 
+  adminEnvScript = pkgs.writeShellScript "openstack-admin-env" (
+    lib.concatStringsSep "\n" (
+      lib.mapAttrsToList (name: value: "export ${name}=${lib.escapeShellArg value}") adminEnv
+    )
+  );
+
   databaseSetupScript = pkgs.writeShellScript "database-setup.sh" ''
     export PATH=${lib.makeBinPath [ pkgs.mariadb ]}:$PATH
 
@@ -158,6 +164,7 @@ in
 
     system.activationScripts.openstack-setup-scripts.text = ''
       install -d -m 0700 /root/os-setup
+      install -m 0700 ${adminEnvScript} /root/os-setup/.env
       install -m 0700 ${databaseSetupScript} /root/os-setup/database-setup.sh
       install -m 0700 ${keystonePreStartScript} /root/os-setup/keystone-all-pre-start.sh
       install -m 0700 ${keystoneStartScript} /root/os-setup/keystone-all.sh
