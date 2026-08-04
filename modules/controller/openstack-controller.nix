@@ -133,6 +133,24 @@ let
     EOF
   '';
 
+  cinderStartScript = pkgs.writeShellScript "cinder.sh" ''
+    export PATH=${
+      lib.makeBinPath [
+        cinder
+        pkgs.openstackclient
+        pkgs.util-linux
+      ]
+    }:$PATH
+
+    exec runuser --user cinder --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
+    set -euxo pipefail
+    openstack user create --domain default --password cinder cinder || true
+    openstack role add --project service --user cinder admin  || true
+    openstack role add --user cinder --user-domain default --system all reader || true
+    cinder-manage --config-file ${config.cinder.config} db sync
+    EOF
+  '';
+
 in
 {
   imports = [
@@ -169,6 +187,7 @@ in
       install -m 0700 ${keystonePreStartScript} /root/os-setup/keystone-all-pre-start.sh
       install -m 0700 ${keystoneStartScript} /root/os-setup/keystone-all.sh
       install -m 0700 ${glanceStartScript} /root/os-setup/glance.sh
+      install -m 0700 ${cinderStartScript} /root/os-setup/cinder.sh
     '';
 
     systemd.services.database-setup = lib.mkIf (!config.openstack.production_setup) {
@@ -221,7 +240,7 @@ in
       };
     };
 
-    systemd.services.cinder = {
+    systemd.services.cinder = lib.mkIf (!config.openstack.production_setup) {
       description = "OpenStack Cinder setup";
       after = [ "keystone-all.service" ];
       wantedBy = [ "multi-user.target" ];
@@ -234,13 +253,7 @@ in
         Type = "oneshot";
         User = "cinder";
         Group = "cinder";
-        ExecStart = pkgs.writeShellScript "cinder.sh" ''
-          set -euxo pipefail
-          openstack user create --domain default --password cinder cinder || true
-          openstack role add --project service --user cinder admin  || true
-          openstack role add --user cinder --user-domain default --system all reader || true
-          cinder-manage --config-file ${config.cinder.config} db sync
-        '';
+        ExecStart = "+/root/os-setup/cinder.sh";
       };
     };
 
