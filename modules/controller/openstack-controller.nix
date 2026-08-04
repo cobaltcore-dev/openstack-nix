@@ -237,14 +237,14 @@ in
     system.activationScripts.openstack-setup-scripts.text = ''
       install -d -m 0700 /root/os-setup
       install -m 0700 ${adminEnvScript} /root/os-setup/.env
-      install -m 0700 ${databaseSetupScript} /root/os-setup/database-setup.sh
-      install -m 0700 ${keystonePreStartScript} /root/os-setup/keystone-all-pre-start.sh
-      install -m 0700 ${keystoneStartScript} /root/os-setup/keystone-all.sh
-      install -m 0700 ${glanceStartScript} /root/os-setup/glance.sh
-      install -m 0700 ${cinderStartScript} /root/os-setup/cinder.sh
-      install -m 0700 ${placementStartScript} /root/os-setup/placement.sh
-      install -m 0700 ${novaStartScript} /root/os-setup/nova.sh
-      install -m 0700 ${neutronStartScript} /root/os-setup/neutron.sh
+      install -m 0700 ${databaseSetupScript} /root/os-setup/000-database-setup.sh
+      install -m 0700 ${keystonePreStartScript} /root/os-setup/001-keystone-all-pre-start.sh
+      install -m 0700 ${keystoneStartScript} /root/os-setup/002-keystone-all.sh
+      install -m 0700 ${glanceStartScript} /root/os-setup/003-glance.sh
+      install -m 0700 ${cinderStartScript} /root/os-setup/003-cinder.sh
+      install -m 0700 ${placementStartScript} /root/os-setup/004-placement.sh
+      install -m 0700 ${novaStartScript} /root/os-setup/006-nova.sh
+      install -m 0700 ${neutronStartScript} /root/os-setup/005-neutron.sh
     '';
 
     systemd.services.database-setup = lib.mkIf (!config.openstack.production_setup) {
