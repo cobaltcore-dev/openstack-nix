@@ -24,6 +24,7 @@ let
     OS_AUTH_URL = "http://controller:5000/v3";
     OS_IDENTITY_API_VERSION = "3";
   };
+
   adminEnvScript = pkgs.writeShellScript "openstack-admin-env" (
     lib.concatStringsSep "\n" (
       lib.mapAttrsToList (name: value: "export ${name}=${lib.escapeShellArg value}") adminEnv
@@ -98,6 +99,42 @@ let
     mysql -N -e "GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'localhost' IDENTIFIED BY 'neutron';"
     mysql -N -e "GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'%' IDENTIFIED BY 'neutron';"
   '';
+
+  keystonePreStartScript = pkgs.writeShellScript "keystone-all-pre-start.sh" ''
+    export PATH=${
+      lib.makeBinPath [
+        keystone
+        pkgs.coreutils
+      ]
+    }:$PATH
+
+    # Initialise the database
+    keystone-manage --config-file ${config.keystone.config} db_sync
+    # Set up the keystone's PKI infrastructure
+    keystone-manage --config-file ${config.keystone.config} fernet_setup --keystone-user keystone --keystone-group keystone
+    keystone-manage --config-file ${config.keystone.config} credential_setup --keystone-user keystone --keystone-group keystone
+    chown -R keystone:keystone /etc/keystone
+    chown -R keystone:keystone /var/log/keystone
+  '';
+
+  keystoneStartScript = pkgs.writeShellScript "keystone-all.sh" ''
+    export PATH=${
+      lib.makeBinPath [
+        keystone
+        pkgs.openstackclient
+        pkgs.util-linux
+      ]
+    }:$PATH
+
+    exec runuser --user keystone --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
+    set -euxo pipefail
+    keystone-manage --config-file ${config.keystone.config} bootstrap \
+      --bootstrap-password admin\
+      --bootstrap-region-id RegionOne
+     openstack project create --domain default --description "Service Project" service
+    EOF
+  '';
+
 in
 {
   imports = [
@@ -126,6 +163,8 @@ in
 
     environment.systemPackages = [
       (setupCommand "openstack-database-setup" databaseSetupScript)
+      (setupCommand "openstack-keystone-pre-setup" keystonePreStartScript)
+      (setupCommand "openstack-keystone-setup" keystoneStartScript)
       python-openstackclient
     ];
 
@@ -146,7 +185,7 @@ in
       };
     };
 
-    systemd.services.keystone-all = {
+    systemd.services.keystone-all = lib.mkIf (!config.openstack.manual_setup) {
       description = "OpenStack Keystone Daemon";
       after = [ "database-setup.service" ];
       path = [
@@ -155,27 +194,14 @@ in
       ];
       environment = adminEnv;
       wantedBy = [ "multi-user.target" ];
-      preStart = ''
-        # Initialise the database
-        keystone-manage --config-file ${config.keystone.config} db_sync
-        # Set up the keystone's PKI infrastructure
-        keystone-manage --config-file ${config.keystone.config} fernet_setup --keystone-user keystone --keystone-group keystone
-        keystone-manage --config-file ${config.keystone.config} credential_setup --keystone-user keystone --keystone-group keystone
-        chown -R keystone:keystone /etc/keystone
-        chown -R keystone:keystone /var/log/keystone
-      '';
+      restartIfChanged = false;
       serviceConfig = {
-        PermissionsStartOnly = true;
         User = "keystone";
         Group = "keystone";
+        RemainAfterExit = true;
         Type = "oneshot";
-        ExecStart = pkgs.writeShellScript "keystone-all.sh" ''
-          set -euxo pipefail
-          keystone-manage --config-file ${config.keystone.config} bootstrap \
-            --bootstrap-password admin\
-            --bootstrap-region-id RegionOne
-           openstack project create --domain default --description "Service Project" service
-        '';
+        ExecStartPre = "+${keystonePreStartScript}";
+        ExecStart = "+${keystoneStartScript}";
       };
     };
 
