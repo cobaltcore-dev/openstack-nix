@@ -168,6 +168,26 @@ let
     EOF
   '';
 
+  novaStartScript = pkgs.writeShellScript "nova.sh" ''
+    export PATH=${
+      lib.makeBinPath [
+        nova
+        pkgs.openstackclient
+        pkgs.util-linux
+      ]
+    }:$PATH
+
+    exec runuser --user nova --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
+    set -euxo pipefail
+    openstack user create --domain default --password nova nova
+    openstack role add --project service --user nova admin
+    nova-manage --config-file ${config.nova.config} api_db sync
+    nova-manage --config-file ${config.nova.config} cell_v2 map_cell0
+    nova-manage --config-file ${config.nova.config} cell_v2 create_cell --name=cell1 --verbose
+    nova-manage --config-file ${config.nova.config} db sync
+    EOF
+  '';
+
 in
 {
   imports = [
@@ -206,6 +226,7 @@ in
       install -m 0700 ${glanceStartScript} /root/os-setup/glance.sh
       install -m 0700 ${cinderStartScript} /root/os-setup/cinder.sh
       install -m 0700 ${placementStartScript} /root/os-setup/placement.sh
+      install -m 0700 ${novaStartScript} /root/os-setup/nova.sh
     '';
 
     systemd.services.database-setup = lib.mkIf (!config.openstack.production_setup) {
@@ -295,7 +316,7 @@ in
       };
     };
 
-    systemd.services.nova = {
+    systemd.services.nova = lib.mkIf (!config.openstack.production_setup) {
       description = "OpenStack Nova setup";
       after = [ "neutron.service" ];
       wantedBy = [ "multi-user.target" ];
@@ -308,15 +329,7 @@ in
         Type = "oneshot";
         User = "nova";
         Group = "nova";
-        ExecStart = pkgs.writeShellScript "nova.sh" ''
-          set -euxo pipefail
-          openstack user create --domain default --password nova nova
-          openstack role add --project service --user nova admin
-          nova-manage --config-file ${config.nova.config} api_db sync
-          nova-manage --config-file ${config.nova.config} cell_v2 map_cell0
-          nova-manage --config-file ${config.nova.config} cell_v2 create_cell --name=cell1 --verbose
-          nova-manage --config-file ${config.nova.config} db sync
-        '';
+        ExecStart = "+/root/os-setup/nova.sh";
       };
     };
 
