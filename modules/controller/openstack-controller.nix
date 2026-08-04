@@ -188,6 +188,26 @@ let
     EOF
   '';
 
+  novaStartScript = pkgs.writeShellScript "nova.sh" ''
+    export PATH=${
+      lib.makeBinPath [
+        nova
+        pkgs.openstackclient
+        pkgs.util-linux
+      ]
+    }:$PATH
+
+    exec runuser --user nova --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
+    set -euxo pipefail
+    openstack user create --domain default --password nova nova
+    openstack role add --project service --user nova admin
+    nova-manage --config-file ${config.nova.config} api_db sync
+    nova-manage --config-file ${config.nova.config} cell_v2 map_cell0
+    nova-manage --config-file ${config.nova.config} cell_v2 create_cell --name=cell1 --verbose
+    nova-manage --config-file ${config.nova.config} db sync
+    EOF
+  '';
+
 in
 {
   imports = [
@@ -221,6 +241,7 @@ in
       (setupCommand "openstack-glance-setup" glanceStartScript)
       (setupCommand "openstack-cinder-setup" cinderStartScript)
       (setupCommand "openstack-placement-setup" placementStartScript)
+      (setupCommand "openstack-nova-setup" novaStartScript)
       python-openstackclient
     ];
 
@@ -321,7 +342,7 @@ in
       };
     };
 
-    systemd.services.nova = {
+    systemd.services.nova = lib.mkIf (!config.openstack.manual_setup) {
       description = "OpenStack Nova setup";
       after = [ "neutron.service" ];
       wantedBy = [ "multi-user.target" ];
@@ -330,19 +351,13 @@ in
         pkgs.openstackclient
         nova
       ];
+      restartIfChanged = false;
       serviceConfig = {
+        RemainAfterExit = true;
         Type = "oneshot";
         User = "nova";
         Group = "nova";
-        ExecStart = pkgs.writeShellScript "nova.sh" ''
-          set -euxo pipefail
-          openstack user create --domain default --password nova nova
-          openstack role add --project service --user nova admin
-          nova-manage --config-file ${config.nova.config} api_db sync
-          nova-manage --config-file ${config.nova.config} cell_v2 map_cell0
-          nova-manage --config-file ${config.nova.config} cell_v2 create_cell --name=cell1 --verbose
-          nova-manage --config-file ${config.nova.config} db sync
-        '';
+        ExecStart = "+${novaStartScript}";
       };
     };
 
