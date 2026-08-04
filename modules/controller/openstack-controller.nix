@@ -208,6 +208,23 @@ let
     EOF
   '';
 
+  neutronStartScript = pkgs.writeShellScript "neutron.sh" ''
+    export PATH=${
+      lib.makeBinPath [
+        neutron
+        pkgs.openstackclient
+        pkgs.util-linux
+      ]
+    }:$PATH
+
+    exec runuser --user neutron --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
+    set -euxo pipefail
+    openstack user create --domain default --password neutron neutron
+    openstack role add --project service --user neutron admin
+    neutron-db-manage --config-file ${config.neutron.config} --config-file ${config.neutron.ml2Config} upgrade head
+    EOF
+  '';
+
 in
 {
   imports = [
@@ -242,6 +259,7 @@ in
       (setupCommand "openstack-cinder-setup" cinderStartScript)
       (setupCommand "openstack-placement-setup" placementStartScript)
       (setupCommand "openstack-nova-setup" novaStartScript)
+      (setupCommand "openstack-neutron-setup" neutronStartScript)
       python-openstackclient
     ];
 
@@ -370,16 +388,13 @@ in
         pkgs.openstackclient
         neutron
       ];
+      restartIfChanged = false;
       serviceConfig = {
+        RemainAfterExit = true;
         Type = "oneshot";
         User = "neutron";
         Group = "neutron";
-        ExecStart = pkgs.writeShellScript "neutron.sh" ''
-          set -euxo pipefail
-          openstack user create --domain default --password neutron neutron
-          openstack role add --project service --user neutron admin
-          neutron-db-manage --config-file ${config.neutron.config} --config-file ${config.neutron.ml2Config} upgrade head
-        '';
+        ExecStart = "+${neutronStartScript}";
       };
     };
   };
