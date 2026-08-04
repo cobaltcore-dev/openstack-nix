@@ -98,6 +98,8 @@ let
     mysql -N -e "create database neutron;" || true
     mysql -N -e "GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'localhost' IDENTIFIED BY 'neutron';"
     mysql -N -e "GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'%' IDENTIFIED BY 'neutron';"
+
+    mysql -N -e "FLUSH PRIVILEGES;"
   '';
 
   keystonePreStartScript = pkgs.writeShellScript "keystone-all-pre-start.sh" ''
@@ -129,9 +131,9 @@ let
     exec runuser --user keystone --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
     set -euxo pipefail
     keystone-manage --config-file ${config.keystone.config} bootstrap \
-      --bootstrap-password admin\
+      --bootstrap-password admin \
       --bootstrap-region-id RegionOne
-     openstack project create --domain default --description "Service Project" service
+    openstack project create --domain default --description "Service Project" service
     EOF
   '';
 
