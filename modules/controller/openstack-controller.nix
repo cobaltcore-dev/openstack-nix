@@ -135,6 +135,24 @@ let
     EOF
   '';
 
+  glanceStartScript = pkgs.writeShellScript "glance.sh" ''
+    export PATH=${
+      lib.makeBinPath [
+        glance
+        pkgs.openstackclient
+        pkgs.util-linux
+      ]
+    }:$PATH
+
+    exec runuser --user glance --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
+    set -euxo pipefail
+    openstack user create --domain default --password glance glance
+    openstack role add --project service --user glance admin
+    openstack role add --user glance --user-domain default --system all reader
+    glance-manage --config-file ${config.glance.config} db_sync
+    EOF
+  '';
+
 in
 {
   imports = [
@@ -165,6 +183,7 @@ in
       (setupCommand "openstack-database-setup" databaseSetupScript)
       (setupCommand "openstack-keystone-pre-setup" keystonePreStartScript)
       (setupCommand "openstack-keystone-setup" keystoneStartScript)
+      (setupCommand "openstack-glance-setup" glanceStartScript)
       python-openstackclient
     ];
 
@@ -205,7 +224,7 @@ in
       };
     };
 
-    systemd.services.glance = {
+    systemd.services.glance = lib.mkIf (!config.openstack.manual_setup) {
       description = "OpenStack Glance setup";
       after = [ "keystone-all.service" ];
       wantedBy = [ "multi-user.target" ];
@@ -214,17 +233,13 @@ in
         pkgs.openstackclient
         glance
       ];
+      restartIfChanged = false;
       serviceConfig = {
+        RemainAfterExit = true;
         Type = "oneshot";
         User = "glance";
         Group = "glance";
-        ExecStart = pkgs.writeShellScript "glance.sh" ''
-          set -euxo pipefail
-          openstack user create --domain default --password glance glance
-          openstack role add --project service --user glance admin
-          openstack role add --user glance --user-domain default --system all reader
-          glance-manage --config-file ${config.glance.config} db_sync
-        '';
+        ExecStart = "+${glanceStartScript}";
       };
     };
 
