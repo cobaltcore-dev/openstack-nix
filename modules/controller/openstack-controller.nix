@@ -24,6 +24,54 @@ let
     OS_AUTH_URL = "http://controller:5000/v3";
     OS_IDENTITY_API_VERSION = "3";
   };
+  databaseSetupScript = pkgs.writeShellScript "database-setup.sh" ''
+    export PATH=${lib.makeBinPath [ pkgs.mariadb ]}:$PATH
+
+    # Keystone
+    mysql -N -e "drop database keystone;" || true
+    mysql -N -e "create database keystone;" || true
+    mysql -N -e "GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY 'keystone';"
+    mysql -N -e "GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' IDENTIFIED BY 'keystone';"
+
+    # Glance
+    mysql -N -e "drop database glance;" || true
+    mysql -N -e "create database glance;" || true
+    mysql -N -e "GRANT ALL PRIVILEGES ON glance.* TO 'glance'@'localhost' IDENTIFIED BY 'glance';"
+    mysql -N -e "GRANT ALL PRIVILEGES ON glance.* TO 'glance'@'%' IDENTIFIED BY 'glance';"
+
+    # Cinder
+    mysql -N -e "drop database cinder;" || true
+    mysql -N -e "create database cinder;" || true
+    mysql -N -e "GRANT ALL PRIVILEGES ON cinder.* TO 'cinder'@'localhost' IDENTIFIED BY 'cinder';"
+    mysql -N -e "GRANT ALL PRIVILEGES ON cinder.* TO 'cinder'@'%' IDENTIFIED BY 'cinder';"
+
+    # Placement
+    mysql -N -e "drop database placement;" || true
+    mysql -N -e "create database placement;" || true
+    mysql -N -e "GRANT ALL PRIVILEGES ON placement.* TO 'placement'@'localhost' IDENTIFIED BY 'placement';"
+    mysql -N -e "GRANT ALL PRIVILEGES ON placement.* TO 'placement'@'%' IDENTIFIED BY 'placement';"
+
+    # Nova
+    mysql -N -e "drop database nova_api;" || true
+    mysql -N -e "drop database nova;" || true
+    mysql -N -e "drop database nova_cell0;" || true
+    mysql -N -e "create database nova_api;" || true
+    mysql -N -e "create database nova;" || true
+    mysql -N -e "create database nova_cell0;" || true
+
+    mysql -N -e "GRANT ALL PRIVILEGES ON nova_api.* TO 'nova'@'localhost' IDENTIFIED BY 'nova';"
+    mysql -N -e "GRANT ALL PRIVILEGES ON nova_api.* TO 'nova'@'%' IDENTIFIED BY 'nova';"
+    mysql -N -e "GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'localhost' IDENTIFIED BY 'nova';"
+    mysql -N -e "GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'%' IDENTIFIED BY 'nova';"
+    mysql -N -e "GRANT ALL PRIVILEGES ON nova_cell0.* TO 'nova'@'localhost' IDENTIFIED BY 'nova';"
+    mysql -N -e "GRANT ALL PRIVILEGES ON nova_cell0.* TO 'nova'@'%' IDENTIFIED BY 'nova';"
+
+    # Neutron
+    mysql -N -e "drop database neutron;" || true
+    mysql -N -e "create database neutron;" || true
+    mysql -N -e "GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'localhost' IDENTIFIED BY 'neutron';"
+    mysql -N -e "GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'%' IDENTIFIED BY 'neutron';"
+  '';
 in
 {
   imports = [
@@ -53,6 +101,11 @@ in
       python-openstackclient
     ];
 
+    system.activationScripts.database-setup.text = ''
+      install -d -m 0700 /root/os-setup
+      install -m 0700 ${databaseSetupScript} /root/os-setup/database-setup.sh
+    '';
+
     systemd.services.database-setup = lib.mkIf (!config.openstack.production_setup) {
       description = "OpenStack Database setup";
       after = [
@@ -64,52 +117,7 @@ in
       path = [ pkgs.mariadb ];
       serviceConfig = {
         Type = "oneshot";
-        ExecStart = pkgs.writeShellScript "database-setup.sh" ''
-          # Keystone
-          mysql -N -e "drop database keystone;" || true
-          mysql -N -e "create database keystone;" || true
-          mysql -N -e "GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY 'keystone';"
-          mysql -N -e "GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' IDENTIFIED BY 'keystone';"
-
-          # Glance
-          mysql -N -e "drop database glance;" || true
-          mysql -N -e "create database glance;" || true
-          mysql -N -e "GRANT ALL PRIVILEGES ON glance.* TO 'glance'@'localhost' IDENTIFIED BY 'glance';"
-          mysql -N -e "GRANT ALL PRIVILEGES ON glance.* TO 'glance'@'%' IDENTIFIED BY 'glance';"
-
-          # Cinder
-          mysql -N -e "drop database cinder;" || true
-          mysql -N -e "create database cinder;" || true
-          mysql -N -e "GRANT ALL PRIVILEGES ON cinder.* TO 'cinder'@'localhost' IDENTIFIED BY 'cinder';"
-          mysql -N -e "GRANT ALL PRIVILEGES ON cinder.* TO 'cinder'@'%' IDENTIFIED BY 'cinder';"
-
-          # Placement
-          mysql -N -e "drop database placement;" || true
-          mysql -N -e "create database placement;" || true
-          mysql -N -e "GRANT ALL PRIVILEGES ON placement.* TO 'placement'@'localhost' IDENTIFIED BY 'placement';"
-          mysql -N -e "GRANT ALL PRIVILEGES ON placement.* TO 'placement'@'%' IDENTIFIED BY 'placement';"
-
-          # Nova
-          mysql -N -e "drop database nova_api;" || true
-          mysql -N -e "drop database nova;" || true
-          mysql -N -e "drop database nova_cell0;" || true
-          mysql -N -e "create database nova_api;" || true
-          mysql -N -e "create database nova;" || true
-          mysql -N -e "create database nova_cell0;" || true
-
-          mysql -N -e "GRANT ALL PRIVILEGES ON nova_api.* TO 'nova'@'localhost' IDENTIFIED BY 'nova';"
-          mysql -N -e "GRANT ALL PRIVILEGES ON nova_api.* TO 'nova'@'%' IDENTIFIED BY 'nova';"
-          mysql -N -e "GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'localhost' IDENTIFIED BY 'nova';"
-          mysql -N -e "GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'%' IDENTIFIED BY 'nova';"
-          mysql -N -e "GRANT ALL PRIVILEGES ON nova_cell0.* TO 'nova'@'localhost' IDENTIFIED BY 'nova';"
-          mysql -N -e "GRANT ALL PRIVILEGES ON nova_cell0.* TO 'nova'@'%' IDENTIFIED BY 'nova';"
-
-          # Neutron
-          mysql -N -e "drop database neutron;" || true
-          mysql -N -e "create database neutron;" || true
-          mysql -N -e "GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'localhost' IDENTIFIED BY 'neutron';"
-          mysql -N -e "GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'%' IDENTIFIED BY 'neutron';"
-        '';
+        ExecStart = "/root/os-setup/database-setup.sh";
       };
     };
 
