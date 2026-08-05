@@ -31,6 +31,18 @@ let
     )
   );
 
+  databaseCleanupScript = pkgs.writeShellScript "database-cleanup.sh" ''
+    export PATH=${lib.makeBinPath [ pkgs.mariadb ]}:$PATH
+    mysql -N -e "drop database keystone;" || true
+    mysql -N -e "drop database glance;" || true
+    mysql -N -e "drop database cinder;" || true
+    mysql -N -e "drop database placement;" || true
+    mysql -N -e "drop database nova_api;" || true
+    mysql -N -e "drop database nova;" || true
+    mysql -N -e "drop database nova_cell0;" || true
+    mysql -N -e "drop database neutron;" || true
+  '';
+
   # Keep manual provisioning commands and systemd units on the same store scripts.
   setupCommand =
     name: script:
@@ -55,49 +67,44 @@ let
     export PATH=${lib.makeBinPath [ pkgs.mariadb ]}:$PATH
 
     # Keystone
-    mysql -N -e "drop database keystone;" || true
-    mysql -N -e "create database keystone;" || true
-    mysql -N -e "GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY 'keystone';"
-    mysql -N -e "GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' IDENTIFIED BY 'keystone';"
+    mysql -N -e "CREATE DATABASE IF NOT EXISTS keystone;"
+    mysql -N -e "CREATE USER IF NOT EXISTS 'keystone'@'%' IDENTIFIED BY 'keystone';"
+    mysql -N -e "ALTER USER 'keystone'@'%' IDENTIFIED BY 'keystone';"
+    mysql -N -e "GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%';"
 
     # Glance
-    mysql -N -e "drop database glance;" || true
-    mysql -N -e "create database glance;" || true
-    mysql -N -e "GRANT ALL PRIVILEGES ON glance.* TO 'glance'@'localhost' IDENTIFIED BY 'glance';"
-    mysql -N -e "GRANT ALL PRIVILEGES ON glance.* TO 'glance'@'%' IDENTIFIED BY 'glance';"
+    mysql -N -e "CREATE DATABASE IF NOT EXISTS glance;"
+    mysql -N -e "CREATE USER IF NOT EXISTS 'glance'@'%' IDENTIFIED BY 'glance';"
+    mysql -N -e "ALTER USER 'glance'@'%' IDENTIFIED BY 'glance';"
+    mysql -N -e "GRANT ALL PRIVILEGES ON glance.* TO 'glance'@'%';"
 
     # Cinder
-    mysql -N -e "drop database cinder;" || true
-    mysql -N -e "create database cinder;" || true
-    mysql -N -e "GRANT ALL PRIVILEGES ON cinder.* TO 'cinder'@'localhost' IDENTIFIED BY 'cinder';"
-    mysql -N -e "GRANT ALL PRIVILEGES ON cinder.* TO 'cinder'@'%' IDENTIFIED BY 'cinder';"
+    mysql -N -e "CREATE DATABASE IF NOT EXISTS cinder;"
+    mysql -N -e "CREATE USER IF NOT EXISTS 'cinder'@'%' IDENTIFIED BY 'cinder';"
+    mysql -N -e "ALTER USER 'cinder'@'%' IDENTIFIED BY 'cinder';"
+    mysql -N -e "GRANT ALL PRIVILEGES ON cinder.* TO 'cinder'@'%';"
 
     # Placement
-    mysql -N -e "drop database placement;" || true
-    mysql -N -e "create database placement;" || true
-    mysql -N -e "GRANT ALL PRIVILEGES ON placement.* TO 'placement'@'localhost' IDENTIFIED BY 'placement';"
-    mysql -N -e "GRANT ALL PRIVILEGES ON placement.* TO 'placement'@'%' IDENTIFIED BY 'placement';"
+    mysql -N -e "CREATE DATABASE IF NOT EXISTS placement;"
+    mysql -N -e "CREATE USER IF NOT EXISTS 'placement'@'%' IDENTIFIED BY 'placement';"
+    mysql -N -e "ALTER USER 'placement'@'%' IDENTIFIED BY 'placement';"
+    mysql -N -e "GRANT ALL PRIVILEGES ON placement.* TO 'placement'@'%';"
 
     # Nova
-    mysql -N -e "drop database nova_api;" || true
-    mysql -N -e "drop database nova;" || true
-    mysql -N -e "drop database nova_cell0;" || true
-    mysql -N -e "create database nova_api;" || true
-    mysql -N -e "create database nova;" || true
-    mysql -N -e "create database nova_cell0;" || true
-
-    mysql -N -e "GRANT ALL PRIVILEGES ON nova_api.* TO 'nova'@'localhost' IDENTIFIED BY 'nova';"
-    mysql -N -e "GRANT ALL PRIVILEGES ON nova_api.* TO 'nova'@'%' IDENTIFIED BY 'nova';"
-    mysql -N -e "GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'localhost' IDENTIFIED BY 'nova';"
-    mysql -N -e "GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'%' IDENTIFIED BY 'nova';"
-    mysql -N -e "GRANT ALL PRIVILEGES ON nova_cell0.* TO 'nova'@'localhost' IDENTIFIED BY 'nova';"
-    mysql -N -e "GRANT ALL PRIVILEGES ON nova_cell0.* TO 'nova'@'%' IDENTIFIED BY 'nova';"
+    mysql -N -e "CREATE DATABASE IF NOT EXISTS nova_api;"
+    mysql -N -e "CREATE DATABASE IF NOT EXISTS nova;"
+    mysql -N -e "CREATE DATABASE IF NOT EXISTS nova_cell0;"
+    mysql -N -e "CREATE USER IF NOT EXISTS 'nova'@'%' IDENTIFIED BY 'nova';"
+    mysql -N -e "ALTER USER 'nova'@'%' IDENTIFIED BY 'nova';"
+    mysql -N -e "GRANT ALL PRIVILEGES ON nova_api.* TO 'nova'@'%';"
+    mysql -N -e "GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'%';"
+    mysql -N -e "GRANT ALL PRIVILEGES ON nova_cell0.* TO 'nova'@'%';"
 
     # Neutron
-    mysql -N -e "drop database neutron;" || true
-    mysql -N -e "create database neutron;" || true
-    mysql -N -e "GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'localhost' IDENTIFIED BY 'neutron';"
-    mysql -N -e "GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'%' IDENTIFIED BY 'neutron';"
+    mysql -N -e "CREATE DATABASE IF NOT EXISTS neutron;"
+    mysql -N -e "CREATE USER IF NOT EXISTS 'neutron'@'%' IDENTIFIED BY 'neutron';"
+    mysql -N -e "ALTER USER 'neutron'@'%' IDENTIFIED BY 'neutron';"
+    mysql -N -e "GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'%';"
 
     mysql -N -e "FLUSH PRIVILEGES;"
   '';
@@ -254,6 +261,7 @@ in
   config = {
 
     environment.systemPackages = [
+      (setupCommand "openstack-database-cleanup" databaseCleanupScript)
       (setupCommand "openstack-database-setup" databaseSetupScript)
       (setupCommand "openstack-keystone-pre-setup" keystonePreStartScript)
       (setupCommand "openstack-keystone-setup" keystoneStartScript)
@@ -381,7 +389,7 @@ in
       };
     };
 
-    systemd.services.neutron = {
+    systemd.services.neutron = lib.mkIf (!config.openstack.manual_setup) {
       description = "OpenStack Neutron setup";
       after = [ "placement.service" ];
       wantedBy = [ "multi-user.target" ];
