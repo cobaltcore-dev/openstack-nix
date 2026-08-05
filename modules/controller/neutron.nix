@@ -172,7 +172,7 @@ in
       '';
     };
   };
-  config = mkIf cfg.enable {
+  config = {
 
     users.extraUsers.neutron = {
       group = "neutron";
@@ -252,6 +252,7 @@ in
       serviceConfig = {
         ExecStart = "${neutron}/bin/neutron-metadata-agent --config-file=${cfg.config}";
       };
+      enable = cfg.enable;
     };
 
     virtualisation.vswitch = {
@@ -291,6 +292,7 @@ in
           ${neutron}/bin/neutron-openvswitch-agent --config-file=${cfg.config} --config-file=${cfg.openvswitchConfig}
         '';
       };
+      enable = cfg.enable;
     };
 
     systemd.services.neutron-server = {
@@ -321,6 +323,7 @@ in
         LimitNOFILE = 65535;
         TimeoutStopSec = 15;
       };
+      enable = cfg.enable;
     };
 
     systemd.services.neutron-dhcp-agent = {
@@ -352,6 +355,7 @@ in
         LimitNOFILE = 65535;
         TimeoutStopSec = 15;
       };
+      enable = cfg.enable;
     };
 
   };
