@@ -57,7 +57,7 @@ in
       '';
     };
   };
-  config = mkIf cfg.enable {
+  config = {
 
     users.extraUsers.cinder = {
       group = "cinder";
@@ -121,6 +121,7 @@ in
           .cinder-wsgi-wrapped --port 8776
         '';
       };
+      enable = cfg.enable;
     };
 
     systemd.services.cinder-scheduler = {
@@ -140,6 +141,7 @@ in
           .cinder-scheduler-wrapped
         '';
       };
+      enable = cfg.enable;
     };
   };
 }
