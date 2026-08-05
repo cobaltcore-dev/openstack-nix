@@ -108,7 +108,7 @@ in
       '';
     };
   };
-  config = mkIf cfg.enable {
+  config = {
 
     users.extraUsers.nova = {
       group = "nova";
@@ -184,6 +184,7 @@ in
           nova-api --config-file ${cfg.config}
         '';
       };
+      enable = cfg.enable;
     };
 
     systemd.services.nova-conductor = {
@@ -216,6 +217,7 @@ in
         LimitNOFILE = 65535;
         TimeoutStopSec = 15;
       };
+      enable = cfg.enable;
     };
 
     systemd.services.nova-scheduler = {
@@ -248,6 +250,7 @@ in
         LimitNOFILE = 65535;
         TimeoutStopSec = 15;
       };
+      enable = cfg.enable;
     };
 
     systemd.services.nova-host-discovery = {
@@ -269,6 +272,7 @@ in
           nova-manage cell_v2 discover_hosts --verbose
         '';
       };
+      enable = cfg.enable;
     };
 
     systemd.services.nova-novncproxy = {
@@ -301,6 +305,7 @@ in
         LimitNOFILE = 65535;
         TimeoutStopSec = 15;
       };
+      enable = cfg.enable;
     };
 
     systemd.services.nova-serialproxy = {
@@ -326,6 +331,7 @@ in
         LimitNOFILE = 65535;
         TimeoutStopSec = 15;
       };
+      enable = cfg.enable;
     };
   };
 }

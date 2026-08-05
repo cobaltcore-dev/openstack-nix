@@ -131,6 +131,7 @@ in
           glance-api --config-file=${cfg.config} --config-file=/etc/glance/glance-api-paste.ini
         '';
       };
+      enable = cfg.enable;
     };
 
     services.uwsgi = {

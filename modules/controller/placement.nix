@@ -41,7 +41,7 @@ in
       '';
     };
   };
-  config = mkIf cfg.enable {
+  config = {
 
     users.extraUsers.placement = {
       group = "placement";
@@ -84,6 +84,7 @@ in
           placement-api --port 8778
         '';
       };
+      enable = cfg.enable;
     };
   };
 }
