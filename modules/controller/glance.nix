@@ -62,7 +62,7 @@ in
       '';
     };
   };
-  config = mkIf cfg.enable {
+  config = {
 
     users.extraUsers.glance = {
       group = "glance";
