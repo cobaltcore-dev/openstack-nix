@@ -135,7 +135,7 @@ in
     };
 
     services.uwsgi = {
-      instance.vassals.glance = {
+      instance.vassals.glance = mkIf cfg.enable {
         socket-timeout = 10;
         http-auto-chunked = true;
         http-chunked-input = true;
