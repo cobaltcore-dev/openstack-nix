@@ -98,30 +98,33 @@ in
         };
         "/etc/cinder/cinder.conf" = {
           L = {
-            argument = "${cinderConf}";
+            argument = "${cfg.config}";
           };
         };
       };
     };
 
-    systemd.services.cinder-api = {
-      description = "OpenStack Cinder API Daemon";
-      after = [
-        "cinder.service"
-        "rabbitmq.service"
-        "mysql.service"
-        "network.target"
-      ];
-      path = [ cinder ];
-      wantedBy = [ "multi-user.target" ];
-      serviceConfig = {
-        User = "cinder";
-        Group = "cinder";
-        ExecStart = pkgs.writeShellScript "cinder-api.sh" ''
-          .cinder-wsgi-wrapped --port 8776
-        '';
+    services.uwsgi = {
+      instance.vassals.cinder-api = mkIf cfg.enable {
+        type = "normal";
+        http-socket = "127.0.0.1:8776";
+        wsgi-file = "${cinder}/bin/.cinder-wsgi-wrapped";
+        pyargv = "--config-file ${cfg.config}";
+        env = [ "PATH=$PATH:/run/current-system/sw/bin" ];
+
+        master = true;
+        processes = 4;
+        enable-threads = true;
+        thunder-lock = true;
+        lazy-apps = true;
+        die-on-term = true;
+        vacuum = true;
+        need-app = true;
+        buffer-size = 65535;
+
+        immediate-uid = "cinder";
+        immediate-gid = "cinder";
       };
-      enable = cfg.enable;
     };
 
     systemd.services.cinder-scheduler = {
