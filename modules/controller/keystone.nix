@@ -73,7 +73,7 @@ in
     };
   };
 
-  config = mkIf cfg.enable {
+  config = {
 
     users.extraUsers.keystone = {
       group = "keystone";
@@ -134,7 +134,7 @@ in
       ];
 
       instance.type = "emperor";
-      instance.vassals.keystone = {
+      instance.vassals.keystone = mkIf cfg.enable {
         type = "normal";
         http11-socket = "127.0.0.1:5001";
         buffer-size = 65535;
