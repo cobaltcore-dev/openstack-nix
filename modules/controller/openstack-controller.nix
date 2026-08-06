@@ -33,14 +33,14 @@ let
 
   databaseCleanupScript = pkgs.writeShellScript "database-cleanup.sh" ''
     export PATH=${lib.makeBinPath [ pkgs.mariadb ]}:$PATH
-    mysql -N -e "drop database keystone;" || true
-    mysql -N -e "drop database glance;" || true
-    mysql -N -e "drop database cinder;" || true
-    mysql -N -e "drop database placement;" || true
-    mysql -N -e "drop database nova_api;" || true
-    mysql -N -e "drop database nova;" || true
-    mysql -N -e "drop database nova_cell0;" || true
-    mysql -N -e "drop database neutron;" || true
+    mariadb -N -e "drop database keystone;" || true
+    mariadb -N -e "drop database glance;" || true
+    mariadb -N -e "drop database cinder;" || true
+    mariadb -N -e "drop database placement;" || true
+    mariadb -N -e "drop database nova_api;" || true
+    mariadb -N -e "drop database nova;" || true
+    mariadb -N -e "drop database nova_cell0;" || true
+    mariadb -N -e "drop database neutron;" || true
   '';
 
   # Keep manual provisioning commands and systemd units on the same store scripts.
@@ -67,46 +67,46 @@ let
     export PATH=${lib.makeBinPath [ pkgs.mariadb ]}:$PATH
 
     # Keystone
-    mysql -N -e "CREATE DATABASE IF NOT EXISTS keystone;"
-    mysql -N -e "CREATE USER IF NOT EXISTS 'keystone'@'%' IDENTIFIED BY 'keystone';"
-    mysql -N -e "ALTER USER 'keystone'@'%' IDENTIFIED BY 'keystone';"
-    mysql -N -e "GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%';"
+    mariadb -N -e "CREATE DATABASE IF NOT EXISTS keystone;"
+    mariadb -N -e "CREATE USER IF NOT EXISTS 'keystone'@'%' IDENTIFIED BY 'keystone';"
+    mariadb -N -e "ALTER USER 'keystone'@'%' IDENTIFIED BY 'keystone';"
+    mariadb -N -e "GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%';"
 
     # Glance
-    mysql -N -e "CREATE DATABASE IF NOT EXISTS glance;"
-    mysql -N -e "CREATE USER IF NOT EXISTS 'glance'@'%' IDENTIFIED BY 'glance';"
-    mysql -N -e "ALTER USER 'glance'@'%' IDENTIFIED BY 'glance';"
-    mysql -N -e "GRANT ALL PRIVILEGES ON glance.* TO 'glance'@'%';"
+    mariadb -N -e "CREATE DATABASE IF NOT EXISTS glance;"
+    mariadb -N -e "CREATE USER IF NOT EXISTS 'glance'@'%' IDENTIFIED BY 'glance';"
+    mariadb -N -e "ALTER USER 'glance'@'%' IDENTIFIED BY 'glance';"
+    mariadb -N -e "GRANT ALL PRIVILEGES ON glance.* TO 'glance'@'%';"
 
     # Cinder
-    mysql -N -e "CREATE DATABASE IF NOT EXISTS cinder;"
-    mysql -N -e "CREATE USER IF NOT EXISTS 'cinder'@'%' IDENTIFIED BY 'cinder';"
-    mysql -N -e "ALTER USER 'cinder'@'%' IDENTIFIED BY 'cinder';"
-    mysql -N -e "GRANT ALL PRIVILEGES ON cinder.* TO 'cinder'@'%';"
+    mariadb -N -e "CREATE DATABASE IF NOT EXISTS cinder;"
+    mariadb -N -e "CREATE USER IF NOT EXISTS 'cinder'@'%' IDENTIFIED BY 'cinder';"
+    mariadb -N -e "ALTER USER 'cinder'@'%' IDENTIFIED BY 'cinder';"
+    mariadb -N -e "GRANT ALL PRIVILEGES ON cinder.* TO 'cinder'@'%';"
 
     # Placement
-    mysql -N -e "CREATE DATABASE IF NOT EXISTS placement;"
-    mysql -N -e "CREATE USER IF NOT EXISTS 'placement'@'%' IDENTIFIED BY 'placement';"
-    mysql -N -e "ALTER USER 'placement'@'%' IDENTIFIED BY 'placement';"
-    mysql -N -e "GRANT ALL PRIVILEGES ON placement.* TO 'placement'@'%';"
+    mariadb -N -e "CREATE DATABASE IF NOT EXISTS placement;"
+    mariadb -N -e "CREATE USER IF NOT EXISTS 'placement'@'%' IDENTIFIED BY 'placement';"
+    mariadb -N -e "ALTER USER 'placement'@'%' IDENTIFIED BY 'placement';"
+    mariadb -N -e "GRANT ALL PRIVILEGES ON placement.* TO 'placement'@'%';"
 
     # Nova
-    mysql -N -e "CREATE DATABASE IF NOT EXISTS nova_api;"
-    mysql -N -e "CREATE DATABASE IF NOT EXISTS nova;"
-    mysql -N -e "CREATE DATABASE IF NOT EXISTS nova_cell0;"
-    mysql -N -e "CREATE USER IF NOT EXISTS 'nova'@'%' IDENTIFIED BY 'nova';"
-    mysql -N -e "ALTER USER 'nova'@'%' IDENTIFIED BY 'nova';"
-    mysql -N -e "GRANT ALL PRIVILEGES ON nova_api.* TO 'nova'@'%';"
-    mysql -N -e "GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'%';"
-    mysql -N -e "GRANT ALL PRIVILEGES ON nova_cell0.* TO 'nova'@'%';"
+    mariadb -N -e "CREATE DATABASE IF NOT EXISTS nova_api;"
+    mariadb -N -e "CREATE DATABASE IF NOT EXISTS nova;"
+    mariadb -N -e "CREATE DATABASE IF NOT EXISTS nova_cell0;"
+    mariadb -N -e "CREATE USER IF NOT EXISTS 'nova'@'%' IDENTIFIED BY 'nova';"
+    mariadb -N -e "ALTER USER 'nova'@'%' IDENTIFIED BY 'nova';"
+    mariadb -N -e "GRANT ALL PRIVILEGES ON nova_api.* TO 'nova'@'%';"
+    mariadb -N -e "GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'%';"
+    mariadb -N -e "GRANT ALL PRIVILEGES ON nova_cell0.* TO 'nova'@'%';"
 
     # Neutron
-    mysql -N -e "CREATE DATABASE IF NOT EXISTS neutron;"
-    mysql -N -e "CREATE USER IF NOT EXISTS 'neutron'@'%' IDENTIFIED BY 'neutron';"
-    mysql -N -e "ALTER USER 'neutron'@'%' IDENTIFIED BY 'neutron';"
-    mysql -N -e "GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'%';"
+    mariadb -N -e "CREATE DATABASE IF NOT EXISTS neutron;"
+    mariadb -N -e "CREATE USER IF NOT EXISTS 'neutron'@'%' IDENTIFIED BY 'neutron';"
+    mariadb -N -e "ALTER USER 'neutron'@'%' IDENTIFIED BY 'neutron';"
+    mariadb -N -e "GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'%';"
 
-    mysql -N -e "FLUSH PRIVILEGES;"
+    mariadb -N -e "FLUSH PRIVILEGES;"
   '';
 
   keystonePreStartScript = pkgs.writeShellScript "keystone-all-pre-start.sh" ''
@@ -117,6 +117,8 @@ let
       ]
     }:$PATH
 
+    set -euxo pipefail
+
     # Initialise the database
     keystone-manage --config-file ${config.keystone.config} db_sync
     # Set up the keystone's PKI infrastructure
@@ -124,6 +126,8 @@ let
     keystone-manage --config-file ${config.keystone.config} credential_setup --keystone-user keystone --keystone-group keystone
     chown -R keystone:keystone /etc/keystone
     chown -R keystone:keystone /var/log/keystone
+
+    systemctl restart uwsgi.service
   '';
 
   keystoneStartScript = pkgs.writeShellScript "keystone-all.sh" ''
@@ -153,6 +157,8 @@ let
       ]
     }:$PATH
 
+    systemctl stop glance-api.service
+
     exec runuser --user glance --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
     set -euxo pipefail
     openstack user create --domain default --password glance glance
@@ -160,6 +166,8 @@ let
     openstack role add --user glance --user-domain default --system all reader
     glance-manage --config-file ${config.glance.config} db_sync
     EOF
+
+    systemctl start glance-api.service
   '';
 
   cinderStartScript = pkgs.writeShellScript "cinder.sh" ''
@@ -171,6 +179,8 @@ let
       ]
     }:$PATH
 
+    systemctl stop cinder-api.service cinder-scheduler.service
+
     exec runuser --user cinder --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
     set -euxo pipefail
     openstack user create --domain default --password cinder cinder || true
@@ -178,6 +188,8 @@ let
     openstack role add --user cinder --user-domain default --system all reader || true
     cinder-manage --config-file ${config.cinder.config} db sync
     EOF
+
+    systemctl start cinder-api.service cinder-scheduler.service
   '';
 
   placementStartScript = pkgs.writeShellScript "placement.sh" ''
@@ -189,12 +201,16 @@ let
       ]
     }:$PATH
 
+    systemctl stop placement-api.service
+
     exec runuser --user placement --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
     set -euxo pipefail
     openstack user create --domain default --password placement placement
     openstack role add --project service --user placement admin
     placement-manage --config-file ${config.placement.config} db sync
     EOF
+
+    systemctl start placement-api.service
   '';
 
   novaStartScript = pkgs.writeShellScript "nova.sh" ''
@@ -206,6 +222,12 @@ let
       ]
     }:$PATH
 
+    systemctl stop nova-conductor.service \
+      nova-novncproxy.service \
+      nova-scheduler.service  \
+      nova-serialproxy.service \
+      nova-api.service
+
     exec runuser --user nova --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
     set -euxo pipefail
     openstack user create --domain default --password nova nova
@@ -215,6 +237,12 @@ let
     nova-manage --config-file ${config.nova.config} cell_v2 create_cell --name=cell1 --verbose
     nova-manage --config-file ${config.nova.config} db sync
     EOF
+
+    systemctl start nova-conductor.service \
+      nova-novncproxy.service \
+      nova-scheduler.service  \
+      nova-serialproxy.service \
+      nova-api.service
   '';
 
   neutronStartScript = pkgs.writeShellScript "neutron.sh" ''
@@ -226,12 +254,21 @@ let
       ]
     }:$PATH
 
+    systemctl stop neutron-dhcp-agent.service \
+      neutron-metadata-agent.service \
+      neutron-openvswitch-agent.service
+
     exec runuser --user neutron --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
     set -euxo pipefail
     openstack user create --domain default --password neutron neutron
     openstack role add --project service --user neutron admin
     neutron-db-manage --config-file ${config.neutron.config} --config-file ${config.neutron.ml2Config} upgrade head
     EOF
+
+    systemctl start neutron-dhcp-agent.service \
+      neutron-metadata-agent.service \
+      neutron-openvswitch-agent.service
+
   '';
 
 in
