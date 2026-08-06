@@ -166,7 +166,7 @@ let
       ]
     }:$PATH
 
-    systemctl stop cinder-api.service cinder-scheduler.service
+    systemctl stop cinder-scheduler.service
 
     source /root/os-setup/.env
 
@@ -178,7 +178,7 @@ let
     cinder-manage --config-file ${config.cinder.config} db sync
     EOF
 
-    systemctl start cinder-api.service cinder-scheduler.service
+    systemctl start cinder-scheduler.service
   '';
 
   placementStartScript = pkgs.writeShellScript "placement.sh" ''
