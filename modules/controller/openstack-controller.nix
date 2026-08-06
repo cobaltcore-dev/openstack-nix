@@ -86,6 +86,9 @@ let
     mariadb -N -e "ALTER USER 'neutron'@'%' IDENTIFIED BY 'neutron';"
     mariadb -N -e "GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'%';"
 
+    # fix mariadb permissions
+    mariadb -N -e "delete from mysql.user where user = ''';"
+
     mariadb -N -e "FLUSH PRIVILEGES;"
   '';
 
