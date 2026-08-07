@@ -78,7 +78,7 @@ in
     };
   };
 
-  config = mkIf cfg.enable {
+  config = {
     users.extraUsers.neutron = {
       group = "neutron";
       isSystemUser = true;
@@ -158,6 +158,7 @@ in
           ${neutron}/bin/neutron-openvswitch-agent --config-file=${cfg.config} --config-file=${cfg.openvswitchConfig}
         '';
       };
+      enable = cfg.enable;
     };
   };
 }

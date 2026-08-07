@@ -9,4 +9,13 @@ with lib;
       the destructive database setup service is disabled.
     '';
   };
+
+  options.openstack.myIp = lib.mkOption {
+    # default of CI/CD setup
+    default = "10.0.0.39";
+    type = types.str;
+    description = ''
+      My own ip address.
+    '';
+  };
 }
