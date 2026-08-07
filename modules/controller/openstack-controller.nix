@@ -142,7 +142,7 @@ let
       ]
     }:$PATH
 
-    exec runuser --user keystone --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
+    runuser --user keystone --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
     set -euxo pipefail
     keystone-manage --config-file ${config.keystone.config} bootstrap \
       --bootstrap-password admin \
@@ -160,17 +160,13 @@ let
       ]
     }:$PATH
 
-    systemctl stop glance-api.service
-
-    exec runuser --user glance --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
+    runuser --user glance --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
     set -euxo pipefail
     openstack user create --domain default --password glance glance
     openstack role add --project service --user glance admin
     openstack role add --user glance --user-domain default --system all reader
     glance-manage --config-file ${config.glance.config} db_sync
     EOF
-
-    systemctl start glance-api.service
   '';
 
   cinderStartScript = pkgs.writeShellScript "cinder.sh" ''
@@ -182,17 +178,13 @@ let
       ]
     }:$PATH
 
-    systemctl stop cinder-scheduler.service
-
-    exec runuser --user cinder --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
+    runuser --user cinder --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
     set -euxo pipefail
     openstack user create --domain default --password cinder cinder || true
     openstack role add --project service --user cinder admin  || true
     openstack role add --user cinder --user-domain default --system all reader || true
     cinder-manage --config-file ${config.cinder.config} db sync
     EOF
-
-    systemctl start cinder-scheduler.service
   '';
 
   placementStartScript = pkgs.writeShellScript "placement.sh" ''
@@ -204,16 +196,12 @@ let
       ]
     }:$PATH
 
-    systemctl stop placement-api.service
-
-    exec runuser --user placement --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
+    runuser --user placement --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
     set -euxo pipefail
     openstack user create --domain default --password placement placement
     openstack role add --project service --user placement admin
     placement-manage --config-file ${config.placement.config} db sync
     EOF
-
-    systemctl start placement-api.service
   '';
 
   novaStartScript = pkgs.writeShellScript "nova.sh" ''
@@ -225,13 +213,7 @@ let
       ]
     }:$PATH
 
-    systemctl stop nova-conductor.service \
-      nova-novncproxy.service \
-      nova-scheduler.service  \
-      nova-serialproxy.service \
-      nova-api.service
-
-    exec runuser --user nova --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
+    runuser --user nova --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
     set -euxo pipefail
     openstack user create --domain default --password nova nova
     openstack role add --project service --user nova admin
@@ -240,12 +222,6 @@ let
     nova-manage --config-file ${config.nova.config} cell_v2 create_cell --name=cell1 --verbose
     nova-manage --config-file ${config.nova.config} db sync
     EOF
-
-    systemctl start nova-conductor.service \
-      nova-novncproxy.service \
-      nova-scheduler.service  \
-      nova-serialproxy.service \
-      nova-api.service
   '';
 
   neutronStartScript = pkgs.writeShellScript "neutron.sh" ''
@@ -257,21 +233,12 @@ let
       ]
     }:$PATH
 
-    systemctl stop neutron-dhcp-agent.service \
-      neutron-metadata-agent.service \
-      neutron-openvswitch-agent.service
-
-    exec runuser --user neutron --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
+    runuser --user neutron --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
     set -euxo pipefail
     openstack user create --domain default --password neutron neutron
     openstack role add --project service --user neutron admin
     neutron-db-manage --config-file ${config.neutron.config} --config-file ${config.neutron.ml2Config} upgrade head
     EOF
-
-    systemctl start neutron-dhcp-agent.service \
-      neutron-metadata-agent.service \
-      neutron-openvswitch-agent.service
-
   '';
 
 in
@@ -341,8 +308,8 @@ in
       wantedBy = [ "multi-user.target" ];
       restartIfChanged = false;
       serviceConfig = {
-        User = "keystone";
-        Group = "keystone";
+        User = "root";
+        Group = "root";
         RemainAfterExit = true;
         Type = "oneshot";
         ExecStartPre = "+${keystonePreStartScript}";
@@ -363,8 +330,8 @@ in
       serviceConfig = {
         RemainAfterExit = true;
         Type = "oneshot";
-        User = "glance";
-        Group = "glance";
+        User = "root";
+        Group = "root";
         ExecStart = "+${glanceStartScript}";
       };
     };
@@ -382,8 +349,8 @@ in
       serviceConfig = {
         RemainAfterExit = true;
         Type = "oneshot";
-        User = "cinder";
-        Group = "cinder";
+        User = "root";
+        Group = "root";
         ExecStart = "+${cinderStartScript}";
       };
     };
@@ -404,8 +371,8 @@ in
       serviceConfig = {
         RemainAfterExit = true;
         Type = "oneshot";
-        User = "placement";
-        Group = "placement";
+        User = "root";
+        Group = "root";
         ExecStart = "+${placementStartScript}";
       };
     };
@@ -423,8 +390,8 @@ in
       serviceConfig = {
         RemainAfterExit = true;
         Type = "oneshot";
-        User = "nova";
-        Group = "nova";
+        User = "root";
+        Group = "root";
         ExecStart = "+${novaStartScript}";
       };
     };
@@ -442,8 +409,8 @@ in
       serviceConfig = {
         RemainAfterExit = true;
         Type = "oneshot";
-        User = "neutron";
-        Group = "neutron";
+        User = "root";
+        Group = "root";
         ExecStart = "+${neutronStartScript}";
       };
     };
