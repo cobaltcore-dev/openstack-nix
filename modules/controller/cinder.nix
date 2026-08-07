@@ -129,7 +129,7 @@ in
     services.uwsgi = lib.mkIf (config.openstack.production_setup) {
       instance.vassals.cinder-api = mkIf cfg.enable {
         type = "normal";
-        http-socket = "127.0.0.1:8776";
+        http-socket = "0.0.0.0:8776";
         wsgi-file = "${cinder}/bin/.cinder-wsgi-wrapped";
         pyargv = "--config-file ${cfg.config}";
         env = [ "PATH=$PATH:/run/current-system/sw/bin" ];
