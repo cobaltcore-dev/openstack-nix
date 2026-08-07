@@ -121,11 +121,26 @@ let
   cinderTgtConf = pkgs.writeText "cinder.conf" ''
     include /var/lib/cinder/volumes/*
   '';
+
+  cinderDefaultNFSexports = pkgs.writeText "exports" ''
+    /exports 10.0.0.0/24(rw,no_root_squash,insecure)
+  '';
 in
 {
   imports = [
+    ../generic/global-options.nix
     ../generic/controller-host-entry.nix
   ];
+
+  options.openstack = {
+    storageIP = mkOption {
+      type = types.str;
+      default = "10.0.0.20";
+      description = ''
+        IP address of the storage node.
+      '';
+    };
+  };
 
   options.cinder-storage-node = {
     enable = mkEnableOption "Enable OpenStack Cinder storage node." // {
@@ -157,9 +172,15 @@ in
         Possible options: [ lvm | nfs ]
       '';
     };
+    exports = mkOption {
+      default = cinderDefaultNFSexports;
+      description = ''
+        The nfs-server /etc/exports file.
+      '';
+    };
   };
 
-  config = mkIf cfg.enable {
+  config = {
     users.extraUsers.cinder = {
       group = "cinder";
       isSystemUser = true;
@@ -227,7 +248,7 @@ in
                 group = "cinder";
                 mode = "0644";
                 argument = ''
-                  10.0.0.20:/exports
+                  ${config.openstack.storageIP}:/exports
                 '';
               };
             };
@@ -237,7 +258,7 @@ in
     # start iSCSI target daemon
     # we expose LVM block storage as iSCSI to compute hosts
     systemd.services.tgtd = {
-      enable = if (cfg.backend == "lvm") then true else false;
+      enable = if (cfg.backend == "lvm" && cfg.enable) then true else false;
       description = "iSCSI target framework daemon";
       wantedBy = [ "multi-user.target" ];
       after = [
@@ -270,11 +291,10 @@ in
     };
 
     services.nfs.server.enable = if (cfg.backend == "lvm") then false else true;
-    services.nfs.server.exports = ''
-      /exports 10.0.0.0/24(rw,no_root_squash,insecure)
-    '';
+    services.nfs.server.exports = builtins.readFile cfg.exports;
 
-    systemd.services.cinder-volume-group-setup = {
+    # run this service only in CI/CD setups
+    systemd.services.cinder-volume-group-setup = lib.mkIf (!config.openstack.production_setup) {
       description = "OpenStack Cinder volume group setup";
       wantedBy = [ "multi-user.target" ];
       path = with pkgs; [
@@ -305,6 +325,7 @@ in
               exportfs -rv
             '';
       };
+      enable = cfg.enable;
     };
 
     # It seems regardless of what we do, the cinder-volume service does not
@@ -370,6 +391,7 @@ in
         Restart = "on-failure";
         RestartSec = 20;
       };
+      enable = cfg.enable;
     };
   };
 }
