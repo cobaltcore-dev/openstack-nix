@@ -104,7 +104,29 @@ in
       };
     };
 
-    services.uwsgi = {
+    # create systemd service only if running in non production mode (CI/CD setup)
+    systemd.services.cinder-api = lib.mkIf (!config.openstack.production_setup) {
+      description = "OpenStack Cinder API Daemon";
+      after = [
+        "cinder.service"
+        "rabbitmq.service"
+        "mysql.service"
+        "network.target"
+      ];
+      path = [ cinder ];
+      wantedBy = [ "multi-user.target" ];
+      serviceConfig = {
+        User = "cinder";
+        Group = "cinder";
+        ExecStart = pkgs.writeShellScript "cinder-api.sh" ''
+          .cinder-wsgi-wrapped --port 8776
+        '';
+      };
+      enable = cfg.enable;
+    };
+
+    # create uwsgi vassal configuration only in production setup
+    services.uwsgi = lib.mkIf (config.openstack.production_setup) {
       instance.vassals.cinder-api = mkIf cfg.enable {
         type = "normal";
         http-socket = "127.0.0.1:8776";
