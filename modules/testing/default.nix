@@ -301,12 +301,14 @@ in
     };
 
   testCompute =
-    { ... }:
+    { lib, ... }:
     {
       imports = [
         common
         portForwardingCompute
       ];
+
+      openstack.computeIP = lib.mkDefault "10.0.0.39";
 
       # this is an example how to  enable / disable all port forwardings or change port numbers
       # openstack-testing.enable = true; # enable / disable all port forwardings
