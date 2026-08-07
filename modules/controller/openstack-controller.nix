@@ -236,6 +236,7 @@ let
 in
 {
   imports = [
+    ../generic/global-options.nix
     ./generic.nix
     ../generic/controller-host-entry.nix
     (import ./keystone.nix { inherit keystone; })
@@ -246,15 +247,6 @@ in
     (import ./horizon.nix { inherit horizon; })
     (import ./cinder.nix { inherit cinder; }) # only cinder management component
   ];
-
-  options.openstack.production_setup = lib.mkOption {
-    type = lib.types.bool;
-    default = false;
-    description = ''
-      Whether the controller uses a production database setup. When enabled,
-      the destructive database setup service is disabled.
-    '';
-  };
 
   config = {
 
