@@ -62,7 +62,8 @@ in
       };
     };
 
-    systemd.services.placement-api = {
+    # create systemd service only if running in non production mode (CI/CD setup)
+    systemd.services.placement-api = lib.mkIf (!config.openstack.production_setup) {
       description = "OpenStack Placement API Daemon";
       after = [
         "placement.service"
@@ -85,6 +86,29 @@ in
         '';
       };
       enable = cfg.enable;
+    };
+
+    # create uwsgi vassal configuration only in production setup
+    services.uwsgi = lib.mkIf (config.openstack.production_setup) {
+      instance.vassals.placement-api = mkIf cfg.enable {
+        type = "normal";
+        http-socket = "127.0.0.1:8778";
+        wsgi-file = "${placement}/bin/.placement-api-wrapped";
+        pyargv = "--config-file ${cfg.config}";
+
+        master = true;
+        processes = 4;
+        enable-threads = true;
+        thunder-lock = true;
+        lazy-apps = true;
+        die-on-term = true;
+        vacuum = true;
+        need-app = true;
+        buffer-size = 65535;
+
+        immediate-uid = "placement";
+        immediate-gid = "placement";
+      };
     };
   };
 }
