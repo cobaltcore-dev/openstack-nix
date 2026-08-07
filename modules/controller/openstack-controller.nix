@@ -244,6 +244,7 @@ let
 in
 {
   imports = [
+    ../generic/global-options.nix
     ./generic.nix
     ../generic/controller-host-entry.nix
     (import ./keystone.nix { inherit keystone; })
@@ -254,16 +255,6 @@ in
     (import ./horizon.nix { inherit horizon; })
     (import ./cinder.nix { inherit cinder; }) # only cinder management component
   ];
-
-  options.openstack.manual_setup = lib.mkOption {
-    type = lib.types.bool;
-    default = false;
-    description = ''
-      Whether to manage OpenStack setup manually. When enabled, automatic
-      database setup, OpenStack service bootstrapping, and Cinder storage
-      initialization are disabled. Setup must be performed separately.
-    '';
-  };
 
   config = {
 
