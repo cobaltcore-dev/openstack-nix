@@ -25,7 +25,7 @@ let
     state_path = /var/lib/nova
     rootwrap_config = ${rootwrapConf}
     compute_driver = libvirt.LibvirtDriver
-    my_ip = 10.0.0.39
+    my_ip = ${config.openstack.myIp}
     transport_url = rabbit://openstack:openstack@controller
 
     [api]
@@ -146,7 +146,7 @@ in
     };
   };
 
-  config = mkIf cfg.enable {
+  config = {
     users.extraUsers.nova = {
       group = "nova";
       isSystemUser = true;
@@ -194,7 +194,7 @@ in
     };
 
     services.openiscsi = {
-      enable = true;
+      enable = cfg.enable;
       name = "iqn.iscsi.${config.networking.hostName}";
     };
 
@@ -228,6 +228,7 @@ in
           ${cfg.novaPackage}/bin/nova-compute --config-file=${cfg.config}
         '';
       };
+      enable = cfg.enable;
     };
   };
 }
