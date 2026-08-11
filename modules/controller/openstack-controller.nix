@@ -242,6 +242,24 @@ let
     EOF
   '';
 
+  checkControllerScript = pkgs.writeShellScript "check-controller.sh" ''
+    export PATH=${
+      lib.makeBinPath [
+        pkgs.openstackclient
+      ]
+    }:$PATH
+
+    systemctl status neutron-server.service
+    systemctl status glance-api.server
+    systemctl status uwsgi.service
+    systemctl status cinder-scheduler.service
+    systemctl status nova-api.service
+    systemctl status nova-scheduler.service
+    systemctl status nova-conductor.service
+    systemctl status nova-novncproxy.service
+    systemctl status nova-serialproxy.service
+  '';
+
 in
 {
   imports = [
@@ -275,6 +293,7 @@ in
       install -m 0700 ${placementStartScript} /root/os-setup/004-placement.sh
       install -m 0700 ${novaStartScript} /root/os-setup/006-nova.sh
       install -m 0700 ${neutronStartScript} /root/os-setup/005-neutron.sh
+      install -m 0700 ${checkControllerScript} /root/os-setup/100-check-controller.sh
     '';
 
     systemd.services.database-setup = lib.mkIf (!config.openstack.production_setup) {
