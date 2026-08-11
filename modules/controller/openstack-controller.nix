@@ -160,6 +160,15 @@ let
       ]
     }:$PATH
 
+    mkdir -p /var/lib/glance
+    mkdir -p /var/lib/glance/images
+    chown -R glance /var/lib/glance
+    chgrp -R glance /var/lib/glance
+
+    mkdir -p /var/log/glance
+    chown glance /var/log/glance
+    chgrp glance /var/log/glance
+
     runuser --user glance --preserve-environment -- ${pkgs.runtimeShell} <<'EOF'
     set -euxo pipefail
     openstack user create --domain default --password glance glance

@@ -75,27 +75,6 @@ in
 
     systemd.tmpfiles.settings = {
       "10-glance" = {
-        "/var/lib/glance/" = {
-          D = {
-            user = "glance";
-            group = "glance";
-            mode = "0755";
-          };
-        };
-        "/var/log/glance/" = {
-          D = {
-            user = "glance";
-            group = "glance";
-            mode = "0755";
-          };
-        };
-        "/var/lib/glance/images" = {
-          D = {
-            user = "glance";
-            group = "glance";
-            mode = "0755";
-          };
-        };
         "/etc/glance/glance-api.conf" = {
           L = {
             argument = "${cfg.config}";
@@ -109,6 +88,27 @@ in
         "/etc/glance/schema-image.json" = {
           L = {
             argument = "${glance}/etc/glance/schema-image.json";
+          };
+        };
+        "/var/lib/glance/" = {
+          d = {
+            user = "glance";
+            group = "glance";
+            mode = "0755";
+          };
+        };
+        "/var/log/glance/" = {
+          d = {
+            user = "glance";
+            group = "glance";
+            mode = "0755";
+          };
+        };
+        "/var/lib/glance/images" = {
+          d = {
+            user = "glance";
+            group = "glance";
+            mode = "0755";
           };
         };
       };
