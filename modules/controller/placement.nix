@@ -92,7 +92,7 @@ in
     services.uwsgi = lib.mkIf (config.openstack.production_setup) {
       instance.vassals.placement-api = mkIf cfg.enable {
         type = "normal";
-        http-socket = "127.0.0.1:8778";
+        http-socket = "0.0.0.0:8778";
         wsgi-file = "${placement}/bin/.placement-api-wrapped";
         pyargv = "--config-file ${cfg.config}";
 
