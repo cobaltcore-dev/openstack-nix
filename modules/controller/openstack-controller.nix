@@ -250,6 +250,24 @@ let
     EOF
   '';
 
+  checkControllerScript = pkgs.writeShellScript "check-controller.sh" ''
+    export PATH=${
+      lib.makeBinPath [
+        pkgs.openstackclient
+      ]
+    }:$PATH
+
+    systemctl status neutron-server.service
+    systemctl status glance-api.server
+    systemctl status uwsgi.service
+    systemctl status cinder-scheduler.service
+    systemctl status nova-api.service
+    systemctl status nova-scheduler.service
+    systemctl status nova-conductor.service
+    systemctl status nova-novncproxy.service
+    systemctl status nova-serialproxy.service
+  '';
+
 in
 {
   imports = [
@@ -277,6 +295,7 @@ in
       (setupCommand "openstack-placement-setup" placementStartScript)
       (setupCommand "openstack-nova-setup" novaStartScript)
       (setupCommand "openstack-neutron-setup" neutronStartScript)
+      (setupCommand "openstack-check-controller" checkControllerScript)
       python-openstackclient
     ];
 
