@@ -125,6 +125,48 @@ let
   cinderDefaultNFSexports = pkgs.writeText "exports" ''
     /exports 10.0.0.0/24(rw,no_root_squash,insecure)
   '';
+
+  cinderVolumeSetupScript = pkgs.writeShellScript "cinder-volume-setup.sh" ''
+    export PATH=${
+      lib.makeBinPath [
+        pkgs.util-linux
+      ]
+    }:$PATH
+
+    if [ -e /exports/.cinder-volume-setup-done-dont-delete-me ]; then
+      echo "cinder volume setup already done. Check content of this script."
+    fi
+
+    mkdir /exports
+    mkfs.ext4 -F -m 0 -L cinder /dev/vdb
+    mount /dev/vdb /exports
+    exportfs -rv
+    rm -rf /exports/lost+found
+    chown cinder /exports
+    chgrp cinder /exports
+
+    systemctl restart cinder-volume.service
+    touch /exports/.cinder-volume-setup-done-dont-delete-me
+  '';
+
+  cinderVolumeSetupCommand = pkgs.writeShellApplication {
+    name = "openstack-cinder-volume-setup";
+    runtimeInputs = with pkgs; [
+      coreutils
+      systemd
+      util-linux
+      nfs-utils
+      e2fsprogs
+    ];
+    text = ''
+      if (( EUID != 0 )); then
+        echo "Run this command as root." >&2
+        exit 1
+      fi
+      exec ${cinderVolumeSetupScript} "$@"
+    '';
+  };
+
 in
 {
   imports = [
@@ -181,6 +223,7 @@ in
   };
 
   config = {
+
     users.extraUsers.cinder = {
       group = "cinder";
       isSystemUser = true;
@@ -333,7 +376,10 @@ in
     # workaround, add it as a systemPackage.
     # Update: still does not work -.-
 
-    environment.systemPackages =
+    environment.systemPackages = [
+      cinderVolumeSetupCommand
+    ]
+    ++ (
       if (cfg.backend == "lvm") then
         with pkgs;
         [
@@ -346,7 +392,8 @@ in
           qemu
           nfs-utils
           e2fsprogs
-        ];
+        ]
+    );
 
     systemd.services.cinder-volume = {
       description = "OpenStack Cinder Volume";
