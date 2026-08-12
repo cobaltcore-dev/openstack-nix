@@ -162,28 +162,28 @@ in
     systemd.tmpfiles.settings = {
       "10-nova" = {
         "/var/log/nova" = {
-          D = {
+          d = {
             group = "nova";
             mode = "0755";
             user = "nova";
           };
         };
         "/var/lock/nova" = {
-          D = {
+          d = {
             group = "nova";
             mode = "0755";
             user = "nova";
           };
         };
         "/var/lib/nova" = {
-          D = {
+          d = {
             group = "nova";
             mode = "0755";
             user = "nova";
           };
         };
         "/var/lib/nova/instances" = {
-          D = {
+          d = {
             group = "nova";
             mode = "0755";
             user = "nova";
