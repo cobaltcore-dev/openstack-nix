@@ -198,28 +198,28 @@ in
     systemd.tmpfiles.settings = {
       "20-cinder" = {
         "/var/lib/cinder/" = {
-          D = {
+          d = {
             user = "cinder";
             group = "cinder";
             mode = "0755";
           };
         };
         "/var/lib/cinder/volumes" = {
-          D = {
+          d = {
             user = "cinder";
             group = "cinder";
             mode = "0755";
           };
         };
         "/var/log/cinder/" = {
-          D = {
+          d = {
             user = "cinder";
             group = "cinder";
             mode = "0755";
           };
         };
         "/etc/cinder/cinder.conf" = {
-          L = {
+          "L+" = {
             argument = "${cfg.config}";
           };
         };
@@ -229,12 +229,12 @@ in
           # LVM configuration files
           {
             "/etc/tgt/conf.d/cinder.conf" = {
-              L = {
+              "L+" = {
                 argument = "${cinderTgtConf}";
               };
             };
             "/etc/tgt/targets.conf" = {
-              L = {
+              "L+" = {
                 argument = "${pkgs.tgt}/etc/tgt/targets.conf";
               };
             };
