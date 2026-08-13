@@ -56,6 +56,24 @@ in
         The OpenStack Cinder package to use.
       '';
     };
+    envCinderApi = mkOption {
+      type = types.listOf types.str;
+      default = [
+        "PYTHONWARNINGS=ignore::DeprecationWarning"
+        "PATH=$PATH:/run/current-system/sw/bin"
+      ];
+      description = ''
+        Environment variables passed to the cinder-api uWSGI vassal.
+      '';
+    };
+    envCinderScheduler = mkOption {
+      default = {
+        PYTHONWARNINGS = "ignore::DeprecationWarning";
+      };
+      description = ''
+        Environment variables passed to the cinder-scheduler systemd unit.
+      '';
+    };
   };
   config = {
 
@@ -132,7 +150,7 @@ in
         http-socket = "0.0.0.0:8776";
         wsgi-file = "${cinder}/bin/.cinder-wsgi-wrapped";
         pyargv = "--config-file ${cfg.config}";
-        env = [ "PATH=$PATH:/run/current-system/sw/bin" ];
+        env = cfg.envCinderApi;
 
         master = true;
         processes = 4;
@@ -167,6 +185,7 @@ in
         '';
       };
       enable = cfg.enable;
+      environment = cfg.envCinderScheduler;
     };
   };
 }
