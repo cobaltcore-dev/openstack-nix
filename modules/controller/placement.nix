@@ -40,6 +40,15 @@ in
         The Placement config.
       '';
     };
+    env = mkOption {
+      type = types.listOf types.str;
+      default = [
+        "PYTHONWARNINGS=ignore::DeprecationWarning"
+      ];
+      description = ''
+        Environment variables passed to the placement uWSGI vassal.
+      '';
+    };
   };
   config = {
 
@@ -108,6 +117,7 @@ in
 
         immediate-uid = "placement";
         immediate-gid = "placement";
+        env = cfg.env;
       };
     };
   };
