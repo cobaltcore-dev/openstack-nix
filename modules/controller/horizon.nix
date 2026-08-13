@@ -30,6 +30,15 @@ in
       description = "The Horizon Package to use";
       type = types.package;
     };
+    env = mkOption {
+      type = types.listOf types.str;
+      default = [
+        "PYTHONWARNINGS=ignore::DeprecationWarning"
+      ];
+      description = ''
+        Environment variables passed to the horizon uWSGI vassal.
+      '';
+    };
   };
 
   config = {
@@ -89,6 +98,7 @@ in
         thunder-lock = true;
         lazy-apps = true;
         chdir = "/var/lib/openstack_dashboard";
+        env = cfg.env;
       };
     };
 
