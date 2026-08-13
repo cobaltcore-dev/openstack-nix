@@ -61,6 +61,15 @@ in
         The Glance config.
       '';
     };
+    env = mkOption {
+      type = types.listOf types.str;
+      default = [
+        "PYTHONWARNINGS=ignore::DeprecationWarning"
+      ];
+      description = ''
+        Environment variables passed to the Keystone uWSGI vassal.
+      '';
+    };
   };
   config = {
 
@@ -155,6 +164,7 @@ in
         immediate-uid = "glance";
         immediate-gid = "glance";
         wsgi-file = "${glance}/bin/.glance-wsgi-api-wrapped";
+        env = cfg.env;
       };
     };
   };
