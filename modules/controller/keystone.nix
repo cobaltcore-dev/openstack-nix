@@ -71,6 +71,15 @@ in
         The Keystone config.
       '';
     };
+    env = mkOption {
+      type = types.listOf types.str;
+      default = [
+        "PYTHONWARNINGS=ignore::DeprecationWarning"
+      ];
+      description = ''
+        Environment variables passed to the Keystone uWSGI vassal.
+      '';
+    };
   };
 
   config = {
@@ -148,6 +157,7 @@ in
         threads = 4;
         thunder-lock = true;
         lazy-apps = true;
+        env = cfg.env;
       };
     };
   };
