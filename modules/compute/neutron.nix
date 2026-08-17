@@ -70,6 +70,9 @@ let
       ovs-vsctl add-port br-provider ${cfg.providerInterface}
     fi
 
+    # enable uplink provider interface
+    ip link set dev ${cfg.providerInterface} up
+
   '';
 
 in
