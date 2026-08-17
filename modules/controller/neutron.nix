@@ -193,27 +193,27 @@ in
           };
         };
         "/etc/neutron/neutron.conf" = {
-          L = {
+          "L+" = {
             argument = "${cfg.config}";
           };
         };
         "/etc/neutron/plugins/ml2/ml2_conf.ini" = {
-          L = {
+          "L+" = {
             argument = "${cfg.ml2Config}";
           };
         };
         "/etc/neutron/plugins/ml2/openvswitch_agent.ini" = {
-          L = {
+          "L+" = {
             argument = "${cfg.openvswitchConfig}";
           };
         };
         "/etc/neutron/dhcp_agent.ini" = {
-          L = {
+          "L+" = {
             argument = "${cfg.dhcpAgentConfig}";
           };
         };
         "/etc/neutron/api-paste.ini" = {
-          L = {
+          "L+" = {
             argument = "${neutron}/etc/neutron/api-paste.ini";
           };
         };
