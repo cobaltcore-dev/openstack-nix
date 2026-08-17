@@ -287,6 +287,8 @@ in
         ExecStartPre = pkgs.writeShellScript "pre.sh" ''
           ${pkgs.openvswitch}/bin/ovs-vsctl add-br br-provider || true
           ${pkgs.openvswitch}/bin/ovs-vsctl add-port br-provider ${cfg.providerInterface} || true
+          # enable uplink provider interface
+          ip link set dev ${cfg.providerInterface} up
         '';
         ExecStart = pkgs.writeShellScript "neutron-openvswitch.sh" ''
           ${neutron}/bin/neutron-openvswitch-agent --config-file=${cfg.config} --config-file=${cfg.openvswitchConfig}
