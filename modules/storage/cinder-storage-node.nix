@@ -273,7 +273,7 @@ in
           # NFS configuration files
           {
             "/etc/cinder/nfs_shares" = {
-              f = {
+              "f+" = {
                 user = "cinder";
                 group = "cinder";
                 mode = "0644";
