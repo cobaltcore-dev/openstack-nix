@@ -44,6 +44,11 @@ let
     catalog.RegionOne.volumev3.adminURL = http://controller:8776/v3
     catalog.RegionOne.volumev3.internalURL = http://controller:8776/v3
     catalog.RegionOne.volumev3.name = Cinder Service
+
+    catalog.RegionOne.dns.publicURL = http://controller:9001/
+    catalog.RegionOne.dns.adminURL = http://controller:9001/
+    catalog.RegionOne.dns.internalURL = http://controller:9001/
+    catalog.RegionOne.dns.name = DNS Service
   '';
 
   keystoneConf = pkgs.writeText "keystone.conf" ''
@@ -112,7 +117,7 @@ in
         # Certain executables e.g. keystone-wsgi-public expect the config file
         # at a default location.
         "/etc/keystone/keystone.conf" = {
-          L = {
+          "L+" = {
             argument = "${cfg.config}";
           };
         };

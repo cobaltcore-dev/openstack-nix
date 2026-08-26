@@ -3,6 +3,7 @@
   python3Packages,
   writeText,
   lib,
+  libredirect,
 }:
 let
   # In the past, the packages was not ready for the latest python interpreter.
@@ -66,6 +67,38 @@ let
         python-openstackclient
         python-swiftclient
         taskflow
+        tooz
+        ;
+    };
+    designate = callPackage ./designate.nix {
+      inherit
+        futurist
+        libredirect
+        infoblox-client
+        keystoneauth1
+        keystonemiddleware
+        openstacksdk
+        oslo-concurrency
+        oslo-config
+        oslo-context
+        oslo-db
+        oslo-i18n
+        oslo-log
+        oslo-messaging
+        oslo-middleware
+        oslo-policy
+        oslo-reports
+        oslo-rootwrap
+        oslo-serialization
+        oslo-service
+        oslo-upgradecheck
+        oslo-utils
+        oslo-versionedobjects
+        osprofiler
+        oslotest
+        python3Packages
+        python-designateclient
+        sqlalchemy
         tooz
         ;
     };
@@ -219,6 +252,14 @@ let
         xstatic-term-js
         xstatic-tv4
         ;
+    };
+    infoblox-client = callPackage ./infoblox-client.nix {
+      inherit
+        python3Packages
+        oslo-log
+        oslo-serialization
+
+      ;
     };
     jsonpath-rw-ext = callPackage ./jsonpath-rw-ext.nix { inherit python3Packages; };
     keystone = callPackage ./keystone.nix {
@@ -793,6 +834,7 @@ let
         osc-lib
         oslo-i18n
         python-cinderclient
+        python-designateclient
         python-keystoneclient
         python3Packages
         ;
