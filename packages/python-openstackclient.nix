@@ -3,6 +3,7 @@
   osc-lib,
   oslo-i18n,
   python-cinderclient,
+  python-designateclient,
   python-keystoneclient,
   python3Packages,
 }:
@@ -50,6 +51,7 @@ python3Packages.buildPythonPackage rec {
     oslo-i18n
     pbr
     python-cinderclient
+    python-designateclient
     python-keystoneclient
     requests
     stevedore
