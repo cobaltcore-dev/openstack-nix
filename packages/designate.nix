@@ -77,6 +77,18 @@ python3Packages.buildPythonPackage (rec {
     pbr
   ];
 
+  postPatch = ''
+    cp ${./designate-knot3-backend.py} designate/backend/impl_knot3.py
+
+    substituteInPlace etc/designate/rootwrap.d/bind9.filters \
+      --replace-fail "/usr/sbin/rndc" "rndc"
+
+    substituteInPlace setup.cfg \
+      --replace-fail \
+        "infoblox = designate.backend.impl_infoblox:InfobloxBackend" \
+        $'infoblox = designate.backend.impl_infoblox:InfobloxBackend\n\tknot3 = designate.backend.impl_knot3:Knot3Backend'
+  '';
+
   propagatedBuildInputs = [
     (alembic.override { inherit sqlalchemy; })
     dnspython
