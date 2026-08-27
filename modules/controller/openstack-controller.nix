@@ -7,6 +7,7 @@
   horizon,
   cinder,
   python-openstackclient,
+  designate,
 }:
 {
   config,
@@ -41,6 +42,7 @@ let
     mariadb -N -e "drop database nova;" || true
     mariadb -N -e "drop database nova_cell0;" || true
     mariadb -N -e "drop database neutron;" || true
+    mariadb -N -e "drop database designate;" || true
   '';
 
   # Keep manual provisioning commands and systemd units on the same store scripts.
@@ -105,6 +107,12 @@ let
     mariadb -N -e "CREATE USER IF NOT EXISTS 'neutron'@'%' IDENTIFIED BY 'neutron';"
     mariadb -N -e "ALTER USER 'neutron'@'%' IDENTIFIED BY 'neutron';"
     mariadb -N -e "GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'%';"
+
+    # Designate
+    mariadb -N -e "CREATE DATABASE IF NOT EXISTS designate CHARACTER SET utf8 COLLATE utf8_general_ci;"
+    mariadb -N -e "CREATE USER IF NOT EXISTS 'designate'@'%' IDENTIFIED BY 'designate';"
+    mariadb -N -e "ALTER USER 'designate'@'%' IDENTIFIED BY 'designate';"
+    mariadb -N -e "GRANT ALL PRIVILEGES ON designate.* TO 'designate'@'%';"
 
     # fix mariadb permissions
     mariadb -N -e "delete from mysql.user where user = ''';"
@@ -250,6 +258,25 @@ let
     EOF
   '';
 
+  designateStartScript = pkgs.writeShellScript "designate.sh" ''
+    export PATH=${
+      lib.makeBinPath [
+        designate
+        pkgs.openstackclient
+        pkgs.util-linux
+      ]
+    }:$PATH
+
+    set -euxo pipefail
+
+    runuser --user designate -- \
+      ${designate}/bin/designate-manage --config-file ${config.designate.config} database sync
+
+    openstack user show designate >/dev/null 2>&1 || \
+      openstack user create --domain default --password designate designate
+    openstack role add --project service --user designate admin
+  '';
+
   checkControllerScript = pkgs.writeShellScript "check-controller.sh" ''
     export PATH=${
       lib.makeBinPath [
@@ -281,6 +308,7 @@ in
     (import ./neutron.nix { inherit neutron; })
     (import ./horizon.nix { inherit horizon; })
     (import ./cinder.nix { inherit cinder; }) # only cinder management component
+    (import ./designate.nix { inherit designate; })
   ];
 
   config = {
@@ -295,6 +323,7 @@ in
       (setupCommand "openstack-placement-setup" placementStartScript)
       (setupCommand "openstack-nova-setup" novaStartScript)
       (setupCommand "openstack-neutron-setup" neutronStartScript)
+      (setupCommand "openstack-designate-setup" designateStartScript)
       (setupCommand "openstack-check-controller" checkControllerScript)
       python-openstackclient
     ];
@@ -433,5 +462,28 @@ in
         ExecStart = "+${neutronStartScript}";
       };
     };
+
+    systemd.services.designate =
+      lib.mkIf (config.designate.enable && !config.openstack.manual_setup)
+        {
+          description = "OpenStack Designate setup";
+          after = [ "keystone-all.service" ];
+          wantedBy = [ "multi-user.target" ];
+          environment = adminEnv;
+          path = [
+            pkgs.gnugrep
+            pkgs.openstackclient
+            pkgs.util-linux
+            designate
+          ];
+          restartIfChanged = false;
+          serviceConfig = {
+            RemainAfterExit = true;
+            Type = "oneshot";
+            User = "root";
+            Group = "root";
+            ExecStart = "+${designateStartScript}";
+          };
+        };
   };
 }
