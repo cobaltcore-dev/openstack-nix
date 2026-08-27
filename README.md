@@ -63,6 +63,17 @@ openstack-nix.nixosModules
 There are modules to setup the OpenStack controller, an OpenStack compute node
 and modules simplifying the creation of new NixOS tests.
 
+#### Designate DNS backend
+
+Enabling `designate.enable` requires a separately configured BIND server.
+The Designate module manages the OpenStack DNS services and their pool
+configuration; the deployment owns BIND, its RNDC credentials, and DNS access.
+
+The default pool expects BIND on the controller, serving DNS on port 53 and
+accepting RNDC on `127.0.0.1:953`. Provision the matching RNDC key at
+`/etc/bind/rndc.key` on the controller. Keep the key outside the Nix store;
+Designate invokes RNDC through its privileged rootwrap helper.
+
 ### NixOS tests
 
 The NixOS tests are located under the `tests` attribute. To execute a NixOS test
