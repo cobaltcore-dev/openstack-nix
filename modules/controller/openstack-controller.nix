@@ -7,6 +7,7 @@
   horizon,
   cinder,
   python-openstackclient,
+  designate,
 }:
 {
   config,
@@ -41,6 +42,7 @@ let
     mariadb -N -e "drop database nova;" || true
     mariadb -N -e "drop database nova_cell0;" || true
     mariadb -N -e "drop database neutron;" || true
+    mariadb -N -e "drop database designate;" || true
   '';
 
   databaseSetupScript = pkgs.writeShellScript "database-setup.sh" ''
@@ -85,6 +87,12 @@ let
     mariadb -N -e "CREATE USER IF NOT EXISTS 'neutron'@'%' IDENTIFIED BY 'neutron';"
     mariadb -N -e "ALTER USER 'neutron'@'%' IDENTIFIED BY 'neutron';"
     mariadb -N -e "GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'%';"
+
+    # Designate
+    mariadb -N -e "CREATE DATABASE IF NOT EXISTS designate CHARACTER SET utf8 COLLATE utf8_general_ci;"
+    mariadb -N -e "CREATE USER IF NOT EXISTS 'designate'@'%' IDENTIFIED BY 'designate';"
+    mariadb -N -e "ALTER USER 'designate'@'%' IDENTIFIED BY 'designate';"
+    mariadb -N -e "GRANT ALL PRIVILEGES ON designate.* TO 'designate'@'%';"
 
     # fix mariadb permissions
     mariadb -N -e "delete from mysql.user where user = ''';"
@@ -242,6 +250,39 @@ let
     EOF
   '';
 
+  designateStartScript = pkgs.writeShellScript "designate.sh" ''
+    export PATH=${
+      lib.makeBinPath [
+        designate
+        pkgs.openstackclient
+        pkgs.util-linux
+      ]
+    }:$PATH
+
+    source /root/os-setup/.env
+
+    set -euxo pipefail
+
+    runuser --user designate -- \
+      ${designate}/bin/designate-manage --config-file ${config.designate.config} database sync
+
+    openstack user show designate >/dev/null 2>&1 || \
+      openstack user create --domain default --password designate designate
+    openstack role add --project service --user designate admin
+
+    # dynamic service endpoint updates are not implemented / configured in keystone currently
+    #openstack service show designate >/dev/null 2>&1 || \
+    #  openstack service create --name designate --description "DNS" dns
+    #
+    #for interface in public internal admin; do
+    #  if ! openstack endpoint list \
+    #    --service designate --interface "$interface" -f value -c ID | grep -q .; then
+    #    openstack endpoint create --region RegionOne \
+    #      dns "$interface" http://controller:9001/
+    #  fi
+    #done
+  '';
+
   checkControllerScript = pkgs.writeShellScript "check-controller.sh" ''
     export PATH=${
       lib.makeBinPath [
@@ -273,6 +314,7 @@ in
     (import ./neutron.nix { inherit neutron; })
     (import ./horizon.nix { inherit horizon; })
     (import ./cinder.nix { inherit cinder; }) # only cinder management component
+    (import ./designate.nix { inherit designate; })
   ];
 
   config = {
@@ -293,6 +335,7 @@ in
       install -m 0700 ${placementStartScript} /root/os-setup/004-placement.sh
       install -m 0700 ${novaStartScript} /root/os-setup/006-nova.sh
       install -m 0700 ${neutronStartScript} /root/os-setup/005-neutron.sh
+      install -m 0700 ${designateStartScript} /root/os-setup/007-designate.sh
       install -m 0700 ${checkControllerScript} /root/os-setup/100-check-controller.sh
     '';
 
@@ -416,5 +459,26 @@ in
         ExecStart = "+/root/os-setup/005-neutron.sh";
       };
     };
+
+    systemd.services.designate =
+      lib.mkIf (config.designate.enable && !config.openstack.production_setup)
+        {
+          description = "OpenStack Designate setup";
+          after = [ "keystone-all.service" ];
+          wantedBy = [ "multi-user.target" ];
+          environment = adminEnv;
+          path = [
+            pkgs.gnugrep
+            pkgs.openstackclient
+            pkgs.util-linux
+            designate
+          ];
+          serviceConfig = {
+            Type = "oneshot";
+            User = "root";
+            Group = "root";
+            ExecStart = "+/root/os-setup/007-designate.sh";
+          };
+        };
   };
 }
