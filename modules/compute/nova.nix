@@ -220,6 +220,7 @@ in
           lvm2
           openiscsi
           nfs-utils
+          e2fsprogs
         ]
         ++ cfg.extraPkgs;
       environment.PYTHONPATH = "${nova_env}/${pkgs.python3.sitePackages}";
