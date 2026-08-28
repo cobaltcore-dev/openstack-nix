@@ -186,7 +186,7 @@ in
     systemd.tmpfiles.settings = {
       "10-neutron" = {
         "/var/log/neutron" = {
-          D = {
+          d = {
             group = "neutron";
             mode = "0755";
             user = "neutron";
@@ -218,21 +218,21 @@ in
           };
         };
         "/var/lock/neutron" = {
-          D = {
+          d = {
             group = "neutron";
             mode = "0755";
             user = "neutron";
           };
         };
         "/var/lib/neutron" = {
-          D = {
+          d = {
             group = "neutron";
             mode = "0755";
             user = "neutron";
           };
         };
         "/var/lib/neutron/dhcp" = {
-          D = {
+          d = {
             group = "neutron";
             mode = "0755";
             user = "neutron";
