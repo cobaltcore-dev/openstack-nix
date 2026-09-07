@@ -35,14 +35,14 @@ let
 
   cinderConfLvm = pkgs.writeText "cinder.conf" ''
     [DEFAULT]
-    transport_url = rabbit://openstack:openstack@${cfg.controllerHostname}
+    transport_url = rabbit://openstack:openstack@${config.openstack.controllerHostname}
     auth_strategy = keystone
     my_ip = 10.0.0.20
     enabled_backends = lvm
     volumes_dir = /var/lib/cinder/volumes
     state_path = /var/lib/cinder
     rootwrap_config = ${rootwrapConf}
-    glance_api_servers = http://${cfg.controllerHostname}:9292
+    glance_api_servers = http://${config.openstack.controllerHostname}:9292
     verify_glance_signatures = disabled
     log_dir = /var/log/cinder
     iscsi_ip_address = $my_ip
@@ -50,12 +50,12 @@ let
     iscsi_target_prefix = iqn.2010-10.org.openstack:
 
     [database]
-    connection = mysql+pymysql://cinder:cinder@${cfg.controllerHostname}/cinder
+    connection = mysql+pymysql://cinder:cinder@${config.openstack.controllerHostname}/cinder
 
     [keystone_authtoken]
-    www_authenticate_uri = http://${cfg.controllerHostname}:5000
-    auth_url = http://${cfg.controllerHostname}:5000
-    memcached_servers = ${cfg.controllerHostname}:11211
+    www_authenticate_uri = http://${config.openstack.controllerHostname}:5000
+    auth_url = http://${config.openstack.controllerHostname}:5000
+    memcached_servers = ${config.openstack.controllerHostname}:11211
     auth_type = password
     project_domain_name = default
     user_domain_name = default
@@ -82,24 +82,24 @@ let
 
   cinderConfNfs = pkgs.writeText "cinder.conf" ''
     [DEFAULT]
-    transport_url = rabbit://openstack:openstack@${cfg.controllerHostname}
+    transport_url = rabbit://openstack:openstack@${config.openstack.controllerHostname}
     auth_strategy = keystone
     my_ip = 10.0.0.20
     enabled_backends = nfs
     volumes_dir = /var/lib/cinder/volumes
     state_path = /var/lib/cinder
     rootwrap_config = ${rootwrapConf}
-    glance_api_servers = http://${cfg.controllerHostname}:9292
+    glance_api_servers = http://${config.openstack.controllerHostname}:9292
     verify_glance_signatures = disabled
     log_dir = /var/log/cinder
 
     [database]
-    connection = mysql+pymysql://cinder:cinder@${cfg.controllerHostname}/cinder
+    connection = mysql+pymysql://cinder:cinder@${config.openstack.controllerHostname}/cinder
 
     [keystone_authtoken]
-    www_authenticate_uri = http://${cfg.controllerHostname}:5000
-    auth_url = http://${cfg.controllerHostname}:5000
-    memcached_servers = ${cfg.controllerHostname}:11211
+    www_authenticate_uri = http://${config.openstack.controllerHostname}:5000
+    auth_url = http://${config.openstack.controllerHostname}:5000
+    memcached_servers = ${config.openstack.controllerHostname}:11211
     auth_type = password
     project_domain_name = default
     user_domain_name = default
@@ -176,13 +176,6 @@ in
   options.cinder-storage-node = {
     enable = mkEnableOption "Enable OpenStack Cinder storage node." // {
       default = true;
-    };
-    controllerHostname = mkOption {
-      type = types.str;
-      default = "controller";
-      description = ''
-        Hostname of the OpenStack controller.
-      '';
     };
     config = mkOption {
       default = if (cfg.backend == "lvm") then cinderConfLvm else cinderConfNfs;
