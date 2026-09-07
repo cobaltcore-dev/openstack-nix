@@ -182,6 +182,13 @@ in
         IP address of the storage node.
       '';
     };
+    storagePath = mkOption {
+      type = types.str;
+      default = "/exports";
+      description = ''
+        Exported filesystem path on the storage node.
+      '';
+    };
   };
 
   options.cinder-storage-node = {
@@ -291,7 +298,7 @@ in
                 group = "cinder";
                 mode = "0644";
                 argument = ''
-                  ${config.openstack.storageIP}:/exports
+                  ${config.openstack.storageIP}:${config.openstack.storagePath}
                 '';
               };
             };
