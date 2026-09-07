@@ -14,40 +14,40 @@ let
   serviceEndPointTemplateConf = pkgs.writeText "default_catalog.templates" ''
     # config for templated.Catalog, using camelCase because I don't want to do
     # translations for keystone compat
-    catalog.RegionOne.identity.publicURL = http://controller:5000/v3
-    catalog.RegionOne.identity.adminURL = http://controller:5000/v3
-    catalog.RegionOne.identity.internalURL = http://controller:5000/v3
+    catalog.RegionOne.identity.publicURL = http://${config.openstack.controllerHostname}:5000/v3
+    catalog.RegionOne.identity.adminURL = http://${config.openstack.controllerHostname}:5000/v3
+    catalog.RegionOne.identity.internalURL = http://${config.openstack.controllerHostname}:5000/v3
     catalog.RegionOne.identity.name = Identity Service
 
     # fake compute service for now to help novaclient tests work
-    catalog.RegionOne.compute.publicURL = http://controller:8774/v2.1
-    catalog.RegionOne.compute.adminURL = http://controller:8774/v2.1
-    catalog.RegionOne.compute.internalURL = http://controller:8774/v2.1
+    catalog.RegionOne.compute.publicURL = http://${config.openstack.controllerHostname}:8774/v2.1
+    catalog.RegionOne.compute.adminURL = http://${config.openstack.controllerHostname}:8774/v2.1
+    catalog.RegionOne.compute.internalURL = http://${config.openstack.controllerHostname}:8774/v2.1
     catalog.RegionOne.compute.name = Compute Service V2.1
 
-    catalog.RegionOne.image.publicURL = http://controller:9292
-    catalog.RegionOne.image.adminURL = http://controller:9292
-    catalog.RegionOne.image.internalURL = http://controller:9292
+    catalog.RegionOne.image.publicURL = http://${config.openstack.controllerHostname}:9292
+    catalog.RegionOne.image.adminURL = http://${config.openstack.controllerHostname}:9292
+    catalog.RegionOne.image.internalURL = http://${config.openstack.controllerHostname}:9292
     catalog.RegionOne.image.name = Image Service
 
-    catalog.RegionOne.network.publicURL = http://controller:9696
-    catalog.RegionOne.network.adminURL = http://controller:9696
-    catalog.RegionOne.network.internalURL = http://controller:9696
+    catalog.RegionOne.network.publicURL = http://${config.openstack.controllerHostname}:9696
+    catalog.RegionOne.network.adminURL = http://${config.openstack.controllerHostname}:9696
+    catalog.RegionOne.network.internalURL = http://${config.openstack.controllerHostname}:9696
     catalog.RegionOne.network.name = Network Service
 
-    catalog.RegionOne.placement.publicURL = http://controller:8778
-    catalog.RegionOne.placement.adminURL = http://controller:8778
-    catalog.RegionOne.placement.internalURL = http://controller:8778
+    catalog.RegionOne.placement.publicURL = http://${config.openstack.controllerHostname}:8778
+    catalog.RegionOne.placement.adminURL = http://${config.openstack.controllerHostname}:8778
+    catalog.RegionOne.placement.internalURL = http://${config.openstack.controllerHostname}:8778
     catalog.RegionOne.placement.name = Placement Service
 
-    catalog.RegionOne.volumev3.publicURL = http://controller:8776/v3
-    catalog.RegionOne.volumev3.adminURL = http://controller:8776/v3
-    catalog.RegionOne.volumev3.internalURL = http://controller:8776/v3
+    catalog.RegionOne.volumev3.publicURL = http://${config.openstack.controllerHostname}:8776/v3
+    catalog.RegionOne.volumev3.adminURL = http://${config.openstack.controllerHostname}:8776/v3
+    catalog.RegionOne.volumev3.internalURL = http://${config.openstack.controllerHostname}:8776/v3
     catalog.RegionOne.volumev3.name = Cinder Service
 
-    catalog.RegionOne.dns.publicURL = http://controller:9001/
-    catalog.RegionOne.dns.adminURL = http://controller:9001/
-    catalog.RegionOne.dns.internalURL = http://controller:9001/
+    catalog.RegionOne.dns.publicURL = http://${config.openstack.controllerHostname}:9001/
+    catalog.RegionOne.dns.adminURL = http://${config.openstack.controllerHostname}:9001/
+    catalog.RegionOne.dns.internalURL = http://${config.openstack.controllerHostname}:9001/
     catalog.RegionOne.dns.name = DNS Service
   '';
 
@@ -55,7 +55,7 @@ let
     [DEFAULT]
     log_dir = /var/log/keystone
     [database]
-    connection = mysql+pymysql://keystone:keystone@controller/keystone
+    connection = mysql+pymysql://keystone:keystone@${config.openstack.controllerHostname}/keystone
 
     [token]
     provider = fernet
@@ -127,7 +127,7 @@ in
     services.nginx = {
       enable = true;
       virtualHosts = {
-        controller = {
+        ${config.openstack.controllerHostname} = {
           locations."/".proxyPass = "http://127.0.0.1:5001/";
           listen = [
             {
