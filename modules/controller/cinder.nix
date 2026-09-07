@@ -13,18 +13,18 @@ let
 
   cinderConf = pkgs.writeText "cinder-api.conf" ''
     [DEFAULT]
-    transport_url = rabbit://openstack:openstack@controller
+    transport_url = rabbit://openstack:openstack@${config.openstack.controllerHostname}
     auth_strategy = keystone
-    my_ip = controller
+    my_ip = ${config.openstack.controllerIP}
     verify_glance_signatures = disabled
 
     [database]
-    connection = mysql+pymysql://cinder:cinder@controller/cinder
+    connection = mysql+pymysql://cinder:cinder@${config.openstack.controllerHostname}/cinder
 
     [keystone_authtoken]
-    www_authenticate_uri = http://controller:5000
-    auth_url = http://controller:5000
-    memcached_servers = controller:11211
+    www_authenticate_uri = http://${config.openstack.controllerHostname}:5000
+    auth_url = http://${config.openstack.controllerHostname}:5000
+    memcached_servers = ${config.openstack.controllerHostname}:11211
     auth_type = password
     project_domain_name = default
     user_domain_name = default
