@@ -11,17 +11,17 @@ let
 
   designateConf = pkgs.writeText "designate.conf" ''
     [DEFAULT]
-    transport_url = rabbit://openstack:openstack@controller
+    transport_url = rabbit://openstack:openstack@${config.openstack.controllerHostname}
     auth_strategy = keystone
     log_dir = /var/log/designate
     root_helper = "/run/wrappers/bin/sudo ${designate}/bin/designate-rootwrap ${rootwrapConf}"
 
     [storage:sqlalchemy]
-    connection = mysql+pymysql://designate:designate@controller/designate
+    connection = mysql+pymysql://designate:designate@${config.openstack.controllerHostname}/designate
 
     [service:api]
     listen = 0.0.0.0:9001
-    api_base_uri = http://controller:9001/
+    api_base_uri = http://${config.openstack.controllerHostname}:9001/
     api_paste_config = ${designate}/etc/designate/api-paste.ini
     auth_strategy = keystone
     enable_api_v2 = true
@@ -36,9 +36,9 @@ let
     threads = 20
 
     [keystone_authtoken]
-    www_authenticate_uri = http://controller:5000
-    auth_url = http://controller:5000
-    memcached_servers = controller:11211
+    www_authenticate_uri = http://${config.openstack.controllerHostname}:5000
+    auth_url = http://${config.openstack.controllerHostname}:5000
+    memcached_servers = ${config.openstack.controllerHostname}:11211
     auth_type = password
     project_domain_name = Default
     user_domain_name = Default

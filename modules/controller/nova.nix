@@ -13,14 +13,14 @@ let
 
   novaConf = pkgs.writeText "nova.conf" ''
     [api_database]
-    connection = mysql+pymysql://nova:nova@controller/nova_api
+    connection = mysql+pymysql://nova:nova@${config.openstack.controllerHostname}/nova_api
 
     [database]
-    connection = mysql+pymysql://nova:nova@controller/nova
+    connection = mysql+pymysql://nova:nova@${config.openstack.controllerHostname}/nova
 
     [DEFAULT]
-    transport_url = rabbit://openstack:openstack@controller:5672/
-    my_ip = 10.0.0.11
+    transport_url = rabbit://openstack:openstack@${config.openstack.controllerHostname}:5672/
+    my_ip = ${config.openstack.controllerIP}
     log_dir = /var/log/nova
     lock_path = /var/lock/nova
     state_path = /var/lib/nova
@@ -29,9 +29,9 @@ let
     auth_strategy = keystone
 
     [keystone_authtoken]
-    www_authenticate_uri = http://controller:5000/
-    auth_url = http://controller:5000/
-    memcached_servers = controller:11211
+    www_authenticate_uri = http://${config.openstack.controllerHostname}:5000/
+    auth_url = http://${config.openstack.controllerHostname}:5000/
+    memcached_servers = ${config.openstack.controllerHostname}:11211
     auth_type = password
     project_domain_name = Default
     user_domain_name = Default
@@ -41,7 +41,7 @@ let
 
     [service_user]
     send_service_user_token = true
-    auth_url = http://controller:5000/
+    auth_url = http://${config.openstack.controllerHostname}:5000/
     auth_strategy = keystone
     auth_type = password
     project_domain_name = Default
@@ -59,7 +59,7 @@ let
     server_proxyclient_address = $my_ip
 
     [glance]
-    api_servers = http://controller:9292
+    api_servers = http://${config.openstack.controllerHostname}:9292
 
     [oslo_concurrency]
     lock_path = /var/lib/nova/tmp
@@ -69,7 +69,7 @@ let
     project_name = service
     auth_type = password
     user_domain_name = Default
-    auth_url = http://controller:5000/v3
+    auth_url = http://${config.openstack.controllerHostname}:5000/v3
     username = placement
     password = placement
 
@@ -77,7 +77,7 @@ let
     discover_hosts_in_cells_interval = 300
 
     [neutron]
-    auth_url = http://controller:5000
+    auth_url = http://${config.openstack.controllerHostname}:5000
     auth_type = password
     project_domain_name = Default
     user_domain_name = Default
