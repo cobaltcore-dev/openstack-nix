@@ -25,7 +25,7 @@ let
     debug = false
     # File name for the paste.deploy config for api service (string value)
     api_paste_config = ${neutron}/etc/neutron/api-paste.ini
-    transport_url = rabbit://openstack:openstack@controller
+    transport_url = rabbit://openstack:openstack@${config.openstack.controllerHostname}
     log_dir = /var/log/neutron
 
     [agent]

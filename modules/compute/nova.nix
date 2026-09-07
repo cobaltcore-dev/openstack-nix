@@ -26,7 +26,7 @@ let
     rootwrap_config = ${rootwrapConf}
     compute_driver = libvirt.LibvirtDriver
     my_ip = ${config.openstack.myIp}
-    transport_url = rabbit://openstack:openstack@controller
+    transport_url = rabbit://openstack:openstack@${config.openstack.controllerHostname}
 
     [api]
     auth_strategy = keystone
@@ -38,12 +38,12 @@ let
     connection = sqlite:////var/lib/nova/nova.sqlite
 
     [glance]
-    api_servers = http://controller:9292
+    api_servers = http://${config.openstack.controllerHostname}:9292
 
     [keystone_authtoken]
-    www_authenticate_uri = http://controller:5000/
-    auth_url = http://controller:5000/
-    memcached_servers = controller:11211
+    www_authenticate_uri = http://${config.openstack.controllerHostname}:5000/
+    auth_url = http://${config.openstack.controllerHostname}:5000/
+    memcached_servers = ${config.openstack.controllerHostname}:11211
     auth_type = password
     project_domain_name = Default
     user_domain_name = Default
@@ -55,7 +55,7 @@ let
     virt_type = kvm
 
     [neutron]
-    auth_url = http://controller:5000
+    auth_url = http://${config.openstack.controllerHostname}:5000
     auth_type = password
     project_domain_name = Default
     user_domain_name = Default
@@ -76,13 +76,13 @@ let
     project_name = service
     auth_type = password
     user_domain_name = Default
-    auth_url = http://controller:5000/v3
+    auth_url = http://${config.openstack.controllerHostname}:5000/v3
     username = placement
     password = placement
 
     [service_user]
     send_service_user_token = true
-    auth_url = http://controller:5000/
+    auth_url = http://${config.openstack.controllerHostname}:5000/
     auth_strategy = keystone
     auth_type = password
     project_domain_name = Default
