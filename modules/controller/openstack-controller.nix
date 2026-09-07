@@ -22,7 +22,7 @@ let
     OS_PROJECT_NAME = "admin";
     OS_USER_DOMAIN_NAME = "Default";
     OS_PROJECT_DOMAIN_NAME = "Default";
-    OS_AUTH_URL = "http://controller:5000/v3";
+    OS_AUTH_URL = "http://${config.openstack.controllerHostname}:5000/v3";
     OS_IDENTITY_API_VERSION = "3";
   };
 
@@ -278,7 +278,7 @@ let
     #  if ! openstack endpoint list \
     #    --service designate --interface "$interface" -f value -c ID | grep -q .; then
     #    openstack endpoint create --region RegionOne \
-    #      dns "$interface" http://controller:9001/
+    #      dns "$interface" http://${config.openstack.controllerHostname}:9001/
     #  fi
     #done
   '';
@@ -407,7 +407,7 @@ in
     };
 
     # Placement service can be tested by executing
-    # curl http://controller:8778
+    # curl http://${config.openstack.controllerHostname}:8778
     # and receive some json with version info as result.
     systemd.services.placement = lib.mkIf (!config.openstack.production_setup) {
       description = "OpenStack Placement setup";

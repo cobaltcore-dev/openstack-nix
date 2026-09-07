@@ -16,8 +16,8 @@ let
     auth_strategy = keystone
 
     [keystone_authtoken]
-    www_authenticate_uri  = http://controller:5000
-    auth_url = http://controller:5000
+    www_authenticate_uri  = http://${config.openstack.controllerHostname}:5000
+    auth_url = http://${config.openstack.controllerHostname}:5000
     auth_type = password
     project_domain_name = Default
     user_domain_name = Default
@@ -26,7 +26,7 @@ let
     password = placement
 
     [placement_database]
-    connection = mysql+pymysql://placement:placement@controller/placement
+    connection = mysql+pymysql://placement:placement@${config.openstack.controllerHostname}/placement
   '';
 in
 {

@@ -25,24 +25,24 @@ let
   # neutron.conf is used as configuration file for neutron-metadata-agent as well
   neutronConf = pkgs.writeText "neutron.conf" ''
     [database]
-    connection = mysql+pymysql://neutron:neutron@controller/neutron
+    connection = mysql+pymysql://neutron:neutron@${config.openstack.controllerHostname}/neutron
 
     [DEFAULT]
     core_plugin = ml2
     service_plugins =
     api_paste_config = ${neutron}/etc/neutron/api-paste.ini
-    transport_url = rabbit://openstack:openstack@controller
+    transport_url = rabbit://openstack:openstack@${config.openstack.controllerHostname}
     auth_strategy = keystone
     notify_nova_on_port_status_changes = true
     notify_nova_on_port_data_changes = true
     log_dir = /var/log/neutron
-    nova_metadata_host = controller
+    nova_metadata_host = ${config.openstack.controllerHostname}
     metadata_proxy_shared_secret = neutron_metadata_secret
 
     [keystone_authtoken]
-    www_authenticate_uri = http://controller:5000
-    auth_url = http://controller:5000
-    memcached_servers = controller:11211
+    www_authenticate_uri = http://${config.openstack.controllerHostname}:5000
+    auth_url = http://${config.openstack.controllerHostname}:5000
+    memcached_servers = ${config.openstack.controllerHostname}:11211
     auth_type = password
     project_domain_name = Default
     user_domain_name = Default
@@ -57,7 +57,7 @@ let
     service_token_roles = admin
 
     [nova]
-    auth_url = http://controller:5000
+    auth_url = http://${config.openstack.controllerHostname}:5000
     auth_type = password
     project_domain_name = Default
     user_domain_name = Default
