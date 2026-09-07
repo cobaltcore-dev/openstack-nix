@@ -1,6 +1,14 @@
 { lib, config, ... }:
 with lib;
 {
+  options.openstack.controllerHostname = lib.mkOption {
+    type = types.str;
+    default = "controller";
+    description = ''
+      Hostname of the OpenStack controller.
+    '';
+  };
+
   options.openstack.production_setup = lib.mkOption {
     type = lib.types.bool;
     default = false;
