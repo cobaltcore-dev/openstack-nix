@@ -37,7 +37,7 @@ let
     [DEFAULT]
     transport_url = rabbit://openstack:openstack@${config.openstack.controllerHostname}
     auth_strategy = keystone
-    my_ip = 10.0.0.20
+    my_ip = ${config.openstack.storageIP}
     enabled_backends = lvm
     volumes_dir = /var/lib/cinder/volumes
     state_path = /var/lib/cinder
@@ -84,7 +84,7 @@ let
     [DEFAULT]
     transport_url = rabbit://openstack:openstack@${config.openstack.controllerHostname}
     auth_strategy = keystone
-    my_ip = 10.0.0.20
+    my_ip = ${config.openstack.storageIP}
     enabled_backends = nfs
     volumes_dir = /var/lib/cinder/volumes
     state_path = /var/lib/cinder
