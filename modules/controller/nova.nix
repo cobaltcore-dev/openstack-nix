@@ -122,12 +122,12 @@ in
     systemd.tmpfiles.settings = {
       "10-nova" = {
         "/etc/nova/nova.conf" = {
-          L = {
+          "L+" = {
             argument = "${cfg.config}";
           };
         };
         "/etc/nova/api-paste.ini" = {
-          L = {
+          "L+" = {
             argument = "${cfg.novaPackage}/etc/nova/api-paste.ini";
           };
         };
@@ -153,7 +153,7 @@ in
           };
         };
         "/usr/share/novnc" = {
-          L = {
+          "L+" = {
             argument = "${pkgs.novnc}/share/webapps/novnc";
           };
         };
