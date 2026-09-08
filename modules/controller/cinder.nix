@@ -89,21 +89,21 @@ in
     systemd.tmpfiles.settings = {
       "10-cinder" = {
         "/var/lib/cinder/" = {
-          D = {
+          d = {
             user = "cinder";
             group = "cinder";
             mode = "0755";
           };
         };
         "/var/lib/cinder/volumes" = {
-          D = {
+          d = {
             user = "cinder";
             group = "cinder";
             mode = "0755";
           };
         };
         "/var/log/cinder/" = {
-          D = {
+          d = {
             user = "cinder";
             group = "cinder";
             mode = "0755";

@@ -64,7 +64,7 @@ in
     systemd.tmpfiles.settings = {
       "10-placement" = {
         "/etc/placement/placement.conf" = {
-          L = {
+          "L+" = {
             argument = "${cfg.config}";
           };
         };

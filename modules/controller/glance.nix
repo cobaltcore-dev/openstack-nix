@@ -85,17 +85,17 @@ in
     systemd.tmpfiles.settings = {
       "10-glance" = {
         "/etc/glance/glance-api.conf" = {
-          L = {
+          "L+" = {
             argument = "${cfg.config}";
           };
         };
         "/etc/glance/glance-api-paste.ini" = {
-          L = {
+          "L+" = {
             argument = "${glance}/etc/glance/glance-api-paste.ini";
           };
         };
         "/etc/glance/schema-image.json" = {
-          L = {
+          "L+" = {
             argument = "${glance}/etc/glance/schema-image.json";
           };
         };
