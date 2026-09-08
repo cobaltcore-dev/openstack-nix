@@ -11,7 +11,7 @@ with lib;
 let
   cfg = config.cinder;
 
-  cinderConf = pkgs.writeText "cinder-api.conf" ''
+  cinderConf = pkgs.writeText "cinder.conf" ''
     [DEFAULT]
     transport_url = rabbit://openstack:openstack@${config.openstack.controllerHostname}
     auth_strategy = keystone
