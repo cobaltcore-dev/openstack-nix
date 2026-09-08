@@ -232,35 +232,40 @@ in
       cinder ALL = (root) NOPASSWD: ${cinder_env}/bin/cinder-rootwrap ${rootwrapConf} *
     '';
 
+    # set this attributes only if this storage module is deployed to a different host than the controller
+    # or: don't set this attributes if this storage module is deployed alongside the controller module
     systemd.tmpfiles.settings = {
-      "20-cinder" = {
-        "/var/lib/cinder/" = {
-          d = {
-            user = "cinder";
-            group = "cinder";
-            mode = "0755";
+      "20-cinder" =
+        lib.mkIf
+          (!(config ? cinder && builtins.isBool config.cinder.enable && config.cinder.enable == true))
+          {
+            "/var/lib/cinder/" = {
+              d = {
+                user = "cinder";
+                group = "cinder";
+                mode = "0755";
+              };
+            };
+            "/var/lib/cinder/volumes" = {
+              d = {
+                user = "cinder";
+                group = "cinder";
+                mode = "0755";
+              };
+            };
+            "/var/log/cinder/" = {
+              d = {
+                user = "cinder";
+                group = "cinder";
+                mode = "0755";
+              };
+            };
+            "/etc/cinder/cinder.conf" = {
+              "L+" = {
+                argument = "${cfg.config}";
+              };
+            };
           };
-        };
-        "/var/lib/cinder/volumes" = {
-          d = {
-            user = "cinder";
-            group = "cinder";
-            mode = "0755";
-          };
-        };
-        "/var/log/cinder/" = {
-          d = {
-            user = "cinder";
-            group = "cinder";
-            mode = "0755";
-          };
-        };
-        "/etc/cinder/cinder.conf" = {
-          "L+" = {
-            argument = "${cfg.config}";
-          };
-        };
-      };
       "20-cinder-backend" =
         if (cfg.backend == "lvm") then
           # LVM configuration files
