@@ -51,37 +51,53 @@ let
   '';
 
   designatePools = pkgs.writeText "pools.yaml" ''
-    - name: default-knot
-      description: External Knot DNS 3 pool
+    - name: default
+      description: Designate bind backend pool
       attributes: {}
 
       ns_records:
-        - hostname: ns1.example.org.
+        - hostname: osdns.openstack.test.
+          priority: 2
+        - hostname: controller.openstack.test.
           priority: 1
 
+      # List out the nameservers for this pool. These are the actual BIND servers.
+      # We use these to verify changes have propagated to all nameservers.
       nameservers:
+        # controller bind
+        - host: ${config.openstack.controllerIP}
+          port: 53
+        # dedicated dns server knot (replace it later)
         - host: ${cfg.knot.address}
           port: 53
 
+      # List out the targets for this pool. For BIND, most often, there will be one
+      # entry for each BIND server.
       targets:
-        - type: knot3
-          description: External Knot DNS 3 server
+        - type: bind9
+          description: local bind server on controller
+
+          # List out the designate-mdns servers from which BIND servers should
+          # request zone transfers (AXFRs) from.
           masters:
-            - host: ${config.openstack.myIp}
+              # IP address of controller
+            - host: ${config.openstack.controllerIP}
               port: 5354
+
+          # BIND Configuration options
+          # in our use case localhost == controller
           options:
-            host: ${cfg.knot.address}
+            host: 127.0.0.1
             port: 53
-            ssh_bin_path: ${pkgs.openssh}/bin/ssh
-            ssh_host: ${cfg.knot.sshHost}
-            ssh_port: ${toString cfg.knot.sshPort}
-            ssh_user: ${cfg.knot.sshUser}
-            ssh_identity_file: ${cfg.knot.sshIdentityFile}
-            ssh_known_hosts_file: ${cfg.knot.sshKnownHostsFile}
-            knotc_bin_path: ${cfg.knot.knotcBinPath}
-            confdb_path: /var/lib/knot/confdb
-            control_socket: /run/knot/knot.sock
-            template: designate
+            rndc_host: 127.0.0.1
+            rndc_port: 953
+            rndc_key_file: /etc/bind/rndc.key
+            # set relative path so rootwrap works
+            rndc_bin_path: rndc
+
+      also_notifies:
+        - host: ${cfg.knot.address}
+          port: 53
   '';
 
   service = command: {
@@ -144,36 +160,6 @@ in
         type = lib.types.str;
         default = "192.168.200.23";
         description = "IP address of the external Knot DNS server.";
-      };
-      sshHost = lib.mkOption {
-        type = lib.types.str;
-        default = cfg.knot.address;
-        description = "SSH host used to manage Knot's dynamic zone configuration.";
-      };
-      sshUser = lib.mkOption {
-        type = lib.types.str;
-        default = "designate-knot";
-        description = "Restricted account used to run knotc on the Knot server.";
-      };
-      sshPort = lib.mkOption {
-        type = lib.types.port;
-        default = 22;
-        description = "SSH port of the external Knot server.";
-      };
-      sshIdentityFile = lib.mkOption {
-        type = lib.types.str;
-        default = "/var/lib/designate/.ssh/id_ed25519";
-        description = "Runtime path to Designate's SSH private key.";
-      };
-      sshKnownHostsFile = lib.mkOption {
-        type = lib.types.str;
-        default = "/etc/ssh/ssh_known_hosts";
-        description = "Known-hosts file used to authenticate the Knot server.";
-      };
-      knotcBinPath = lib.mkOption {
-        type = lib.types.str;
-        default = "${pkgs.knot-dns}/bin/knotc";
-        description = "Path to knotc on the external Knot server.";
       };
     };
   };
