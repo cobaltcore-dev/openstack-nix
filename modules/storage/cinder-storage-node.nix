@@ -41,7 +41,7 @@ let
     enabled_backends = lvm
     volumes_dir = /var/lib/cinder/volumes
     state_path = /var/lib/cinder
-    rootwrap_config = ${rootwrapConf}
+    rootwrap_config = /etc/cinder/rootwrap.conf
     glance_api_servers = http://${config.openstack.controllerHostname}:9292
     verify_glance_signatures = disabled
     log_dir = /var/log/cinder
@@ -88,7 +88,7 @@ let
     enabled_backends = nfs
     volumes_dir = /var/lib/cinder/volumes
     state_path = /var/lib/cinder
-    rootwrap_config = ${rootwrapConf}
+    rootwrap_config = /etc/cinder/rootwrap.conf
     glance_api_servers = http://${config.openstack.controllerHostname}:9292
     verify_glance_signatures = disabled
     log_dir = /var/log/cinder
@@ -227,6 +227,12 @@ in
         The nfs-server /etc/exports file.
       '';
     };
+    rootwrapConf = mkOption {
+      default = rootwrapConf;
+      description = ''
+        Cinder root wrap configuration file.
+      '';
+    };
   };
 
   config = {
@@ -243,6 +249,7 @@ in
     security.sudo.enable = true;
     security.sudo.extraConfig = ''
       cinder ALL = (root) NOPASSWD: ${cinder_env}/bin/cinder-rootwrap ${rootwrapConf} *
+      cinder ALL = (root) NOPASSWD: ${cinder_env}/bin/cinder-rootwrap /etc/cinder/rootwrap.conf *
     '';
 
     # set this attributes only if this storage module is deployed to a different host than the controller
@@ -308,6 +315,13 @@ in
               };
             };
           };
+      "20-cinder-root-wrap" = {
+        "/etc/cinder/rootwrap.conf" = {
+          "L+" = {
+            argument = "${cfg.rootwrapConf}";
+          };
+        };
+      };
     };
 
     # start iSCSI target daemon
