@@ -26,4 +26,12 @@ with lib;
       My own ip address.
     '';
   };
+
+  options.openstack.live_migration_inbound_addr = lib.mkOption {
+    default = "10.100.100.1";
+    type = types.str;
+    description = ''
+      My own ip address of the migration network. Usually our internal 100G link.
+    '';
+  };
 }
