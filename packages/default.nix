@@ -258,8 +258,7 @@ let
         python3Packages
         oslo-log
         oslo-serialization
-
-      ;
+        ;
     };
     jsonpath-rw-ext = callPackage ./jsonpath-rw-ext.nix { inherit python3Packages; };
     keystone = callPackage ./keystone.nix {
