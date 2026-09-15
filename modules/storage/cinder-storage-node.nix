@@ -123,7 +123,7 @@ let
   '';
 
   cinderDefaultNFSexports = pkgs.writeText "exports" ''
-    /exports 10.0.0.0/24(rw,no_root_squash,insecure)
+    ${config.openstack.storagePath} 10.0.0.0/24(rw,no_root_squash,insecure)
   '';
 
   cinderVolumeSetupScript = pkgs.writeShellScript "cinder-volume-setup.sh" ''
@@ -133,20 +133,22 @@ let
       ]
     }:$PATH
 
-    if [ -e /exports/.cinder-volume-setup-done-dont-delete-me ]; then
+    set -euxo pipefail
+
+    if [ -e ${config.openstack.storagePath}/.cinder-volume-setup-done-dont-delete-me ]; then
       echo "cinder volume setup already done. Check content of this script."
     fi
 
-    mkdir /exports
+    mkdir ${config.openstack.storagePath}
     mkfs.ext4 -F -m 0 -L cinder /dev/vdb
-    mount /dev/vdb /exports
+    mount /dev/vdb ${config.openstack.storagePath}
     exportfs -rv
-    rm -rf /exports/lost+found
-    chown cinder /exports
-    chgrp cinder /exports
+    rm -rf ${config.openstack.storagePath}/lost+found
+    chown cinder ${config.openstack.storagePath}
+    chgrp cinder ${config.openstack.storagePath}
 
     systemctl restart cinder-volume.service
-    touch /exports/.cinder-volume-setup-done-dont-delete-me
+    touch ${config.openstack.storagePath}/.cinder-volume-setup-done-dont-delete-me
   '';
 
 in
@@ -346,7 +348,7 @@ in
       };
     };
 
-    services.nfs.server.enable = if (cfg.backend == "lvm") then false else true;
+    services.nfs.server.enable = cfg.enable && cfg.backend != "lvm";
     services.nfs.server.exports = builtins.readFile cfg.exports;
 
     # run this service only in CI/CD setups
