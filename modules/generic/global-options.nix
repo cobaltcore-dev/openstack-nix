@@ -1,4 +1,4 @@
-{ lib, config, ... }:
+{ lib, ... }:
 with lib;
 {
   options.openstack.controllerHostname = lib.mkOption {

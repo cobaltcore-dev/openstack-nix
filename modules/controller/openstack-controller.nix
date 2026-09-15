@@ -476,27 +476,25 @@ in
       };
     };
 
-    systemd.services.designate =
-      lib.mkIf (config.designate.enable && !config.openstack.manual_setup)
-        {
-          description = "OpenStack Designate setup";
-          after = [ "keystone-all.service" ];
-          wantedBy = [ "multi-user.target" ];
-          environment = adminEnv;
-          path = [
-            pkgs.gnugrep
-            pkgs.openstackclient
-            pkgs.util-linux
-            designate
-          ];
-          restartIfChanged = false;
-          serviceConfig = {
-            RemainAfterExit = true;
-            Type = "oneshot";
-            User = "root";
-            Group = "root";
-            ExecStart = "+${designateStartScript}";
-          };
-        };
+    systemd.services.designate = lib.mkIf (config.designate.enable && !config.openstack.manual_setup) {
+      description = "OpenStack Designate setup";
+      after = [ "keystone-all.service" ];
+      wantedBy = [ "multi-user.target" ];
+      environment = adminEnv;
+      path = [
+        pkgs.gnugrep
+        pkgs.openstackclient
+        pkgs.util-linux
+        designate
+      ];
+      restartIfChanged = false;
+      serviceConfig = {
+        RemainAfterExit = true;
+        Type = "oneshot";
+        User = "root";
+        Group = "root";
+        ExecStart = "+${designateStartScript}";
+      };
+    };
   };
 }
