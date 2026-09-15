@@ -67,12 +67,11 @@ let
       echo "br-provider didn't exist already. Proceed with basic setup."
       set -euxo pipefail
       ovs-vsctl add-br br-provider
-      ovs-vsctl add-port br-provider ${cfg.providerInterface}
     fi
+    ovs-vsctl --may-exist add-port br-provider ${cfg.providerInterface}
 
     # enable uplink provider interface
     ip link set dev ${cfg.providerInterface} up
-
   '';
 
 in
