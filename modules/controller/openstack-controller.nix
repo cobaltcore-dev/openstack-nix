@@ -47,6 +47,7 @@ let
 
   databaseSetupScript = pkgs.writeShellScript "database-setup.sh" ''
     export PATH=${lib.makeBinPath [ pkgs.mariadb ]}:$PATH
+    set -euxo pipefail
 
     # Keystone
     mariadb -N -e "CREATE DATABASE IF NOT EXISTS keystone;"
@@ -291,7 +292,7 @@ let
     }:$PATH
 
     systemctl status neutron-server.service
-    systemctl status glance-api.server
+    systemctl status glance-api.service
     systemctl status uwsgi.service
     systemctl status cinder-scheduler.service
     systemctl status nova-api.service
