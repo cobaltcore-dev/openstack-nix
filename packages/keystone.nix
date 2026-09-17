@@ -21,11 +21,13 @@ let
     bandit
     bcrypt
     cryptography
+    dogpile-cache
     flask
     flask-restful
     freezegun
     hacking
     jsonschema
+    ldap
     ldappool
     lxml
     oauthlib
@@ -35,7 +37,7 @@ let
     pycodestyle
     pymysql
     pysaml2
-    ldap
+    python-memcached
     requests
     stestr
     tempest
@@ -82,6 +84,7 @@ python3Packages.buildPythonPackage (rec {
     pymysql
     pysaml2
     python-keystoneclient
+    python-memcached
     sqlalchemy
     webob
   ];
