@@ -57,6 +57,11 @@ let
     [database]
     connection = mysql+pymysql://keystone:keystone@${config.openstack.controllerHostname}/keystone
 
+    [cache]
+    enabled = true
+    backend = dogpile.cache.memcached
+    memcache_servers = 127.0.0.1:11211
+
     [token]
     provider = fernet
 
@@ -101,14 +106,14 @@ in
     systemd.tmpfiles.settings = {
       "10-keystone" = {
         "/var/lib/keystone/" = {
-          D = {
+          d = {
             user = "keystone";
             group = "keystone";
             mode = "0755";
           };
         };
         "/var/log/keystone/" = {
-          D = {
+          d = {
             user = "keystone";
             group = "keystone";
             mode = "0755";
