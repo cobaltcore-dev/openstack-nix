@@ -53,8 +53,8 @@ let
     connection = mysql+pymysql://cinder:cinder@${config.openstack.controllerHostname}/cinder
 
     [keystone_authtoken]
-    www_authenticate_uri = http://${config.openstack.controllerHostname}:5000
-    auth_url = http://${config.openstack.controllerHostname}:5000
+    www_authenticate_uri = http://${config.openstack.controllerHostname}:5000/v3
+    auth_url = http://${config.openstack.controllerHostname}:5000/v3
     memcached_servers = ${config.openstack.controllerHostname}:11211
     auth_type = password
     project_domain_name = default
@@ -97,8 +97,8 @@ let
     connection = mysql+pymysql://cinder:cinder@${config.openstack.controllerHostname}/cinder
 
     [keystone_authtoken]
-    www_authenticate_uri = http://${config.openstack.controllerHostname}:5000
-    auth_url = http://${config.openstack.controllerHostname}:5000
+    www_authenticate_uri = http://${config.openstack.controllerHostname}:5000/v3
+    auth_url = http://${config.openstack.controllerHostname}:5000/v3
     memcached_servers = ${config.openstack.controllerHostname}:11211
     auth_type = password
     project_domain_name = default

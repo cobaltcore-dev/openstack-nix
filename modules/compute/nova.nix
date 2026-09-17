@@ -41,8 +41,8 @@ let
     api_servers = http://${config.openstack.controllerHostname}:9292
 
     [keystone_authtoken]
-    www_authenticate_uri = http://${config.openstack.controllerHostname}:5000/
-    auth_url = http://${config.openstack.controllerHostname}:5000/
+    www_authenticate_uri = http://${config.openstack.controllerHostname}:5000/v3
+    auth_url = http://${config.openstack.controllerHostname}:5000/v3
     memcached_servers = ${config.openstack.controllerHostname}:11211
     auth_type = password
     project_domain_name = Default
@@ -55,7 +55,7 @@ let
     virt_type = kvm
 
     [neutron]
-    auth_url = http://${config.openstack.controllerHostname}:5000
+    auth_url = http://${config.openstack.controllerHostname}:5000/v3
     auth_type = password
     project_domain_name = Default
     user_domain_name = Default
@@ -82,7 +82,7 @@ let
 
     [service_user]
     send_service_user_token = true
-    auth_url = http://${config.openstack.controllerHostname}:5000/
+    auth_url = http://${config.openstack.controllerHostname}:5000/v3
     auth_strategy = keystone
     auth_type = password
     project_domain_name = Default
