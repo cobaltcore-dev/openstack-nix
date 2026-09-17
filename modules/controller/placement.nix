@@ -16,8 +16,8 @@ let
     auth_strategy = keystone
 
     [keystone_authtoken]
-    www_authenticate_uri  = http://${config.openstack.controllerHostname}:5000
-    auth_url = http://${config.openstack.controllerHostname}:5000
+    www_authenticate_uri  = http://${config.openstack.controllerHostname}:5000/v3
+    auth_url = http://${config.openstack.controllerHostname}:5000/v3
     auth_type = password
     project_domain_name = Default
     user_domain_name = Default
