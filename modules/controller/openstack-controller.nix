@@ -342,6 +342,7 @@ in
       serviceConfig = {
         RemainAfterExit = true;
         Type = "oneshot";
+        ExecStartPre = "${databaseCleanupScript}";
         ExecStart = "${databaseSetupScript}";
       };
     };
