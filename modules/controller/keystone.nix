@@ -14,43 +14,53 @@ let
   serviceEndPointTemplateConf = pkgs.writeText "default_catalog.templates" ''
     # config for templated.Catalog, using camelCase because I don't want to do
     # translations for keystone compat
-    catalog.RegionOne.identity.publicURL = http://controller:5000/v3
-    catalog.RegionOne.identity.adminURL = http://controller:5000/v3
-    catalog.RegionOne.identity.internalURL = http://controller:5000/v3
+    catalog.RegionOne.identity.publicURL = http://${config.openstack.controllerHostname}:5000/v3
+    catalog.RegionOne.identity.adminURL = http://${config.openstack.controllerHostname}:5000/v3
+    catalog.RegionOne.identity.internalURL = http://${config.openstack.controllerHostname}:5000/v3
     catalog.RegionOne.identity.name = Identity Service
 
     # fake compute service for now to help novaclient tests work
-    catalog.RegionOne.compute.publicURL = http://controller:8774/v2.1
-    catalog.RegionOne.compute.adminURL = http://controller:8774/v2.1
-    catalog.RegionOne.compute.internalURL = http://controller:8774/v2.1
+    catalog.RegionOne.compute.publicURL = http://${config.openstack.controllerHostname}:8774/v2.1
+    catalog.RegionOne.compute.adminURL = http://${config.openstack.controllerHostname}:8774/v2.1
+    catalog.RegionOne.compute.internalURL = http://${config.openstack.controllerHostname}:8774/v2.1
     catalog.RegionOne.compute.name = Compute Service V2.1
 
-    catalog.RegionOne.image.publicURL = http://controller:9292
-    catalog.RegionOne.image.adminURL = http://controller:9292
-    catalog.RegionOne.image.internalURL = http://controller:9292
+    catalog.RegionOne.image.publicURL = http://${config.openstack.controllerHostname}:9292
+    catalog.RegionOne.image.adminURL = http://${config.openstack.controllerHostname}:9292
+    catalog.RegionOne.image.internalURL = http://${config.openstack.controllerHostname}:9292
     catalog.RegionOne.image.name = Image Service
 
-    catalog.RegionOne.network.publicURL = http://controller:9696
-    catalog.RegionOne.network.adminURL = http://controller:9696
-    catalog.RegionOne.network.internalURL = http://controller:9696
+    catalog.RegionOne.network.publicURL = http://${config.openstack.controllerHostname}:9696
+    catalog.RegionOne.network.adminURL = http://${config.openstack.controllerHostname}:9696
+    catalog.RegionOne.network.internalURL = http://${config.openstack.controllerHostname}:9696
     catalog.RegionOne.network.name = Network Service
 
-    catalog.RegionOne.placement.publicURL = http://controller:8778
-    catalog.RegionOne.placement.adminURL = http://controller:8778
-    catalog.RegionOne.placement.internalURL = http://controller:8778
+    catalog.RegionOne.placement.publicURL = http://${config.openstack.controllerHostname}:8778
+    catalog.RegionOne.placement.adminURL = http://${config.openstack.controllerHostname}:8778
+    catalog.RegionOne.placement.internalURL = http://${config.openstack.controllerHostname}:8778
     catalog.RegionOne.placement.name = Placement Service
 
-    catalog.RegionOne.volumev3.publicURL = http://controller:8776/v3
-    catalog.RegionOne.volumev3.adminURL = http://controller:8776/v3
-    catalog.RegionOne.volumev3.internalURL = http://controller:8776/v3
+    catalog.RegionOne.volumev3.publicURL = http://${config.openstack.controllerHostname}:8776/v3
+    catalog.RegionOne.volumev3.adminURL = http://${config.openstack.controllerHostname}:8776/v3
+    catalog.RegionOne.volumev3.internalURL = http://${config.openstack.controllerHostname}:8776/v3
     catalog.RegionOne.volumev3.name = Cinder Service
+
+    catalog.RegionOne.dns.publicURL = http://${config.openstack.controllerHostname}:9001/
+    catalog.RegionOne.dns.adminURL = http://${config.openstack.controllerHostname}:9001/
+    catalog.RegionOne.dns.internalURL = http://${config.openstack.controllerHostname}:9001/
+    catalog.RegionOne.dns.name = DNS Service
   '';
 
   keystoneConf = pkgs.writeText "keystone.conf" ''
     [DEFAULT]
     log_dir = /var/log/keystone
     [database]
-    connection = mysql+pymysql://keystone:keystone@controller/keystone
+    connection = mysql+pymysql://keystone:keystone@${config.openstack.controllerHostname}/keystone
+
+    [cache]
+    enabled = true
+    backend = dogpile.cache.memcached
+    memcache_servers = 127.0.0.1:11211
 
     [token]
     provider = fernet
@@ -71,9 +81,18 @@ in
         The Keystone config.
       '';
     };
+    env = mkOption {
+      type = types.listOf types.str;
+      default = [
+        "PYTHONWARNINGS=ignore::DeprecationWarning"
+      ];
+      description = ''
+        Environment variables passed to the Keystone uWSGI vassal.
+      '';
+    };
   };
 
-  config = mkIf cfg.enable {
+  config = {
 
     users.extraUsers.keystone = {
       group = "keystone";
@@ -87,14 +106,14 @@ in
     systemd.tmpfiles.settings = {
       "10-keystone" = {
         "/var/lib/keystone/" = {
-          D = {
+          d = {
             user = "keystone";
             group = "keystone";
             mode = "0755";
           };
         };
         "/var/log/keystone/" = {
-          D = {
+          d = {
             user = "keystone";
             group = "keystone";
             mode = "0755";
@@ -103,7 +122,7 @@ in
         # Certain executables e.g. keystone-wsgi-public expect the config file
         # at a default location.
         "/etc/keystone/keystone.conf" = {
-          L = {
+          "L+" = {
             argument = "${cfg.config}";
           };
         };
@@ -113,7 +132,7 @@ in
     services.nginx = {
       enable = true;
       virtualHosts = {
-        controller = {
+        ${config.openstack.controllerHostname} = {
           locations."/".proxyPass = "http://127.0.0.1:5001/";
           listen = [
             {
@@ -134,7 +153,7 @@ in
       ];
 
       instance.type = "emperor";
-      instance.vassals.keystone = {
+      instance.vassals.keystone = mkIf cfg.enable {
         type = "normal";
         http11-socket = "127.0.0.1:5001";
         buffer-size = 65535;
@@ -148,6 +167,7 @@ in
         threads = 4;
         thunder-lock = true;
         lazy-apps = true;
+        env = cfg.env;
       };
     };
   };

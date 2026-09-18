@@ -16,8 +16,8 @@ let
     auth_strategy = keystone
 
     [keystone_authtoken]
-    www_authenticate_uri  = http://controller:5000
-    auth_url = http://controller:5000
+    www_authenticate_uri  = http://${config.openstack.controllerHostname}:5000/v3
+    auth_url = http://${config.openstack.controllerHostname}:5000/v3
     auth_type = password
     project_domain_name = Default
     user_domain_name = Default
@@ -26,7 +26,7 @@ let
     password = placement
 
     [placement_database]
-    connection = mysql+pymysql://placement:placement@controller/placement
+    connection = mysql+pymysql://placement:placement@${config.openstack.controllerHostname}/placement
   '';
 in
 {
@@ -40,8 +40,17 @@ in
         The Placement config.
       '';
     };
+    env = mkOption {
+      type = types.listOf types.str;
+      default = [
+        "PYTHONWARNINGS=ignore::DeprecationWarning"
+      ];
+      description = ''
+        Environment variables passed to the placement uWSGI vassal.
+      '';
+    };
   };
-  config = mkIf cfg.enable {
+  config = {
 
     users.extraUsers.placement = {
       group = "placement";
@@ -55,14 +64,15 @@ in
     systemd.tmpfiles.settings = {
       "10-placement" = {
         "/etc/placement/placement.conf" = {
-          L = {
+          "L+" = {
             argument = "${cfg.config}";
           };
         };
       };
     };
 
-    systemd.services.placement-api = {
+    # create systemd service only if running in non production mode (CI/CD setup)
+    systemd.services.placement-api = lib.mkIf (!config.openstack.production_setup) {
       description = "OpenStack Placement API Daemon";
       after = [
         "placement.service"
@@ -83,6 +93,31 @@ in
           # cannot be expressed in the nixos config AFAIK.
           placement-api --port 8778
         '';
+      };
+      enable = cfg.enable;
+    };
+
+    # create uwsgi vassal configuration only in production setup
+    services.uwsgi = lib.mkIf (config.openstack.production_setup) {
+      instance.vassals.placement-api = mkIf cfg.enable {
+        type = "normal";
+        http-socket = "0.0.0.0:8778";
+        wsgi-file = "${placement}/bin/.placement-api-wrapped";
+        pyargv = "--config-file ${cfg.config}";
+
+        master = true;
+        processes = 4;
+        enable-threads = true;
+        thunder-lock = true;
+        lazy-apps = true;
+        die-on-term = true;
+        vacuum = true;
+        need-app = true;
+        buffer-size = 65535;
+
+        immediate-uid = "placement";
+        immediate-gid = "placement";
+        env = cfg.env;
       };
     };
   };

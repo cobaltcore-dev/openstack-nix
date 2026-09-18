@@ -65,6 +65,7 @@
             python3Packages
             writeText
             lib
+            libredirect
             ;
         };
 

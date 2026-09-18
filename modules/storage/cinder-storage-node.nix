@@ -35,14 +35,14 @@ let
 
   cinderConfLvm = pkgs.writeText "cinder.conf" ''
     [DEFAULT]
-    transport_url = rabbit://openstack:openstack@controller
+    transport_url = rabbit://openstack:openstack@${config.openstack.controllerHostname}
     auth_strategy = keystone
-    my_ip = 10.0.0.20
+    my_ip = ${config.openstack.storageIP}
     enabled_backends = lvm
     volumes_dir = /var/lib/cinder/volumes
     state_path = /var/lib/cinder
-    rootwrap_config = ${rootwrapConf}
-    glance_api_servers = http://controller:9292
+    rootwrap_config = /etc/cinder/rootwrap.conf
+    glance_api_servers = http://${config.openstack.controllerHostname}:9292
     verify_glance_signatures = disabled
     log_dir = /var/log/cinder
     iscsi_ip_address = $my_ip
@@ -50,12 +50,12 @@ let
     iscsi_target_prefix = iqn.2010-10.org.openstack:
 
     [database]
-    connection = mysql+pymysql://cinder:cinder@controller/cinder
+    connection = mysql+pymysql://cinder:cinder@${config.openstack.controllerHostname}/cinder
 
     [keystone_authtoken]
-    www_authenticate_uri = http://controller:5000
-    auth_url = http://controller:5000
-    memcached_servers = controller:11211
+    www_authenticate_uri = http://${config.openstack.controllerHostname}:5000/v3
+    auth_url = http://${config.openstack.controllerHostname}:5000/v3
+    memcached_servers = ${config.openstack.controllerHostname}:11211
     auth_type = password
     project_domain_name = default
     user_domain_name = default
@@ -82,24 +82,24 @@ let
 
   cinderConfNfs = pkgs.writeText "cinder.conf" ''
     [DEFAULT]
-    transport_url = rabbit://openstack:openstack@controller
+    transport_url = rabbit://openstack:openstack@${config.openstack.controllerHostname}
     auth_strategy = keystone
-    my_ip = 10.0.0.20
+    my_ip = ${config.openstack.storageIP}
     enabled_backends = nfs
     volumes_dir = /var/lib/cinder/volumes
     state_path = /var/lib/cinder
-    rootwrap_config = ${rootwrapConf}
-    glance_api_servers = http://controller:9292
+    rootwrap_config = /etc/cinder/rootwrap.conf
+    glance_api_servers = http://${config.openstack.controllerHostname}:9292
     verify_glance_signatures = disabled
     log_dir = /var/log/cinder
 
     [database]
-    connection = mysql+pymysql://cinder:cinder@controller/cinder
+    connection = mysql+pymysql://cinder:cinder@${config.openstack.controllerHostname}/cinder
 
     [keystone_authtoken]
-    www_authenticate_uri = http://controller:5000
-    auth_url = http://controller:5000
-    memcached_servers = controller:11211
+    www_authenticate_uri = http://${config.openstack.controllerHostname}:5000/v3
+    auth_url = http://${config.openstack.controllerHostname}:5000/v3
+    memcached_servers = ${config.openstack.controllerHostname}:11211
     auth_type = password
     project_domain_name = default
     user_domain_name = default
@@ -121,11 +121,61 @@ let
   cinderTgtConf = pkgs.writeText "cinder.conf" ''
     include /var/lib/cinder/volumes/*
   '';
+
+  cinderDefaultNFSexports = pkgs.writeText "exports" ''
+    ${config.openstack.storagePath} 10.0.0.0/24(rw,no_root_squash,insecure)
+  '';
+
+  cinderVolumeSetupScript = pkgs.writeShellScript "cinder-volume-setup.sh" ''
+    export PATH=${
+      lib.makeBinPath [
+        pkgs.util-linux
+        pkgs.nfs-utils
+      ]
+    }:$PATH
+
+    set -euxo pipefail
+
+    if [ -e ${config.openstack.storagePath}/.cinder-volume-setup-done-dont-delete-me ]; then
+      echo "cinder volume setup already done. Check content of this script."
+      exit 0
+    fi
+
+    mkdir ${config.openstack.storagePath}
+    mkfs.ext4 -F -m 0 -L cinder /dev/vdb
+    mount /dev/vdb ${config.openstack.storagePath}
+    exportfs -rv
+    rm -rf ${config.openstack.storagePath}/lost+found
+    chown cinder ${config.openstack.storagePath}
+    chgrp cinder ${config.openstack.storagePath}
+
+    systemctl restart cinder-volume.service
+    touch ${config.openstack.storagePath}/.cinder-volume-setup-done-dont-delete-me
+  '';
+
 in
 {
   imports = [
+    ../generic/global-options.nix
     ../generic/controller-host-entry.nix
   ];
+
+  options.openstack = {
+    storageIP = mkOption {
+      type = types.str;
+      default = "10.0.0.20";
+      description = ''
+        IP address of the storage node.
+      '';
+    };
+    storagePath = mkOption {
+      type = types.str;
+      default = "/exports";
+      description = ''
+        Exported filesystem path on the storage node.
+      '';
+    };
+  };
 
   options.cinder-storage-node = {
     enable = mkEnableOption "Enable OpenStack Cinder storage node." // {
@@ -157,9 +207,27 @@ in
         Possible options: [ lvm | nfs ]
       '';
     };
+    exports = mkOption {
+      default = cinderDefaultNFSexports;
+      description = ''
+        The nfs-server /etc/exports file.
+      '';
+    };
+    rootwrapConf = mkOption {
+      default = rootwrapConf;
+      description = ''
+        Cinder root wrap configuration file.
+      '';
+    };
   };
 
-  config = mkIf cfg.enable {
+  config = {
+
+    system.activationScripts.openstack-setup-scripts.text = ''
+      install -d -m 0700 /root/os-setup
+      install -m 0700 ${cinderVolumeSetupScript} /root/os-setup/000-cinder-volume-setup.sh
+    '';
+
     users.extraUsers.cinder = {
       group = "cinder";
       isSystemUser = true;
@@ -172,48 +240,54 @@ in
     security.sudo.enable = true;
     security.sudo.extraConfig = ''
       cinder ALL = (root) NOPASSWD: ${cinder_env}/bin/cinder-rootwrap ${rootwrapConf} *
+      cinder ALL = (root) NOPASSWD: ${cinder_env}/bin/cinder-rootwrap /etc/cinder/rootwrap.conf *
     '';
 
+    # set this attributes only if this storage module is deployed to a different host than the controller
+    # or: don't set this attributes if this storage module is deployed alongside the controller module
     systemd.tmpfiles.settings = {
-      "20-cinder" = {
-        "/var/lib/cinder/" = {
-          D = {
-            user = "cinder";
-            group = "cinder";
-            mode = "0755";
+      "20-cinder" =
+        lib.mkIf
+          (!(config ? cinder && builtins.isBool config.cinder.enable && config.cinder.enable == true))
+          {
+            "/var/lib/cinder/" = {
+              d = {
+                user = "cinder";
+                group = "cinder";
+                mode = "0755";
+              };
+            };
+            "/var/lib/cinder/volumes" = {
+              d = {
+                user = "cinder";
+                group = "cinder";
+                mode = "0755";
+              };
+            };
+            "/var/log/cinder/" = {
+              d = {
+                user = "cinder";
+                group = "cinder";
+                mode = "0755";
+              };
+            };
+            "/etc/cinder/cinder.conf" = {
+              "L+" = {
+                argument = "${cfg.config}";
+              };
+            };
           };
-        };
-        "/var/lib/cinder/volumes" = {
-          D = {
-            user = "cinder";
-            group = "cinder";
-            mode = "0755";
-          };
-        };
-        "/var/log/cinder/" = {
-          D = {
-            user = "cinder";
-            group = "cinder";
-            mode = "0755";
-          };
-        };
-        "/etc/cinder/cinder.conf" = {
-          L = {
-            argument = "${cfg.config}";
-          };
-        };
-      };
       "20-cinder-backend" =
         if (cfg.backend == "lvm") then
           # LVM configuration files
           {
             "/etc/tgt/conf.d/cinder.conf" = {
-              L = {
+              "L+" = {
                 argument = "${cinderTgtConf}";
               };
             };
             "/etc/tgt/targets.conf" = {
-              L = {
+              "L+" = {
                 argument = "${pkgs.tgt}/etc/tgt/targets.conf";
               };
             };
@@ -222,22 +296,29 @@ in
           # NFS configuration files
           {
             "/etc/cinder/nfs_shares" = {
-              f = {
+              "f+" = {
                 user = "cinder";
                 group = "cinder";
                 mode = "0644";
                 argument = ''
-                  10.0.0.20:/exports
+                  ${config.openstack.storageIP}:${config.openstack.storagePath}
                 '';
               };
             };
           };
+      "20-cinder-root-wrap" = {
+        "/etc/cinder/rootwrap.conf" = {
+          "L+" = {
+            argument = "${cfg.rootwrapConf}";
+          };
+        };
+      };
     };
 
     # start iSCSI target daemon
     # we expose LVM block storage as iSCSI to compute hosts
     systemd.services.tgtd = {
-      enable = if (cfg.backend == "lvm") then true else false;
+      enable = if (cfg.backend == "lvm" && cfg.enable) then true else false;
       description = "iSCSI target framework daemon";
       wantedBy = [ "multi-user.target" ];
       after = [
@@ -269,12 +350,11 @@ in
       };
     };
 
-    services.nfs.server.enable = if (cfg.backend == "lvm") then false else true;
-    services.nfs.server.exports = ''
-      /exports 10.0.0.0/24(rw,no_root_squash,insecure)
-    '';
+    services.nfs.server.enable = cfg.enable && cfg.backend != "lvm";
+    services.nfs.server.exports = builtins.readFile cfg.exports;
 
-    systemd.services.cinder-volume-group-setup = {
+    # run this service only in CI/CD setups
+    systemd.services.cinder-volume-group-setup = lib.mkIf (!config.openstack.production_setup) {
       description = "OpenStack Cinder volume group setup";
       wantedBy = [ "multi-user.target" ];
       path = with pkgs; [
@@ -305,6 +385,7 @@ in
               exportfs -rv
             '';
       };
+      enable = cfg.enable;
     };
 
     # It seems regardless of what we do, the cinder-volume service does not
@@ -370,6 +451,7 @@ in
         Restart = "on-failure";
         RestartSec = 20;
       };
+      enable = cfg.enable;
     };
   };
 }

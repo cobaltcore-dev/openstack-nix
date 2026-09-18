@@ -6,6 +6,11 @@
 {
   services.mysql.enable = true;
   services.mysql.package = lib.mkDefault pkgs.mariadb;
+  services.mysql.settings = {
+    mysqld = {
+      max_connections = 500;
+    };
+  };
 
   services.rabbitmq = {
     enable = true;
