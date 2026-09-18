@@ -322,6 +322,13 @@ in
 
     environment.systemPackages = [
       python-openstackclient
+      cinder
+      designate
+      glance
+      keystone
+      neutron
+      nova
+      placement
     ];
 
     system.activationScripts.openstack-setup-scripts.text = ''
