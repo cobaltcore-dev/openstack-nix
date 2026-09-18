@@ -130,6 +130,7 @@ let
     export PATH=${
       lib.makeBinPath [
         pkgs.util-linux
+        pkgs.nfs-utils
       ]
     }:$PATH
 
@@ -137,6 +138,7 @@ let
 
     if [ -e ${config.openstack.storagePath}/.cinder-volume-setup-done-dont-delete-me ]; then
       echo "cinder volume setup already done. Check content of this script."
+      exit 0
     fi
 
     mkdir ${config.openstack.storagePath}
