@@ -339,6 +339,13 @@ in
       (setupCommand "openstack-designate-setup" designateStartScript)
       (setupCommand "openstack-check-controller" checkControllerScript)
       python-openstackclient
+      cinder
+      designate
+      glance
+      keystone
+      neutron
+      nova
+      placement
     ];
 
     systemd.services.database-setup = lib.mkIf (!config.openstack.manual_setup) {
