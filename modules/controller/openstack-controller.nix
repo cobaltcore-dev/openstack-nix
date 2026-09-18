@@ -351,6 +351,7 @@ in
       path = [ pkgs.mariadb ];
       serviceConfig = {
         Type = "oneshot";
+        ExecStartPre = "/root/os-setup/000-database-cleanup.sh";
         ExecStart = "/root/os-setup/000-database-setup.sh";
       };
     };
