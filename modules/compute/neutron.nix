@@ -167,6 +167,7 @@ in
       after = [
         "network.target"
         "ovsdb.service"
+        "systemd-networkd.service"
       ];
       wantedBy = [ "multi-user.target" ];
       path = with pkgs; [
