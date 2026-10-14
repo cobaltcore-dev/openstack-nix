@@ -24,7 +24,7 @@ let
 
         services.getty.autologinUser = "root";
 
-        openstack.controllerIP = "10.0.0.11";
+        openstack.controllerIP = lib.mkDefault "10.0.0.11";
 
         networking = {
           useDHCP = false;
