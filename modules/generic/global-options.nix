@@ -13,7 +13,8 @@ with lib;
     type = types.str;
     description = ''
       IP address of the controller, used by controller services and for the
-      controller and controller.local entries in /etc/hosts.
+      configured controller hostname in /etc/hosts. The controller and
+      controller.local aliases also resolve to this address.
     '';
   };
 
