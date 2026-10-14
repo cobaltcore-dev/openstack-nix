@@ -26,6 +26,11 @@ let
 
         openstack.controllerIP = lib.mkDefault "10.0.0.11";
 
+        # The shared host Nix store can be owned by a non-root UID. Root's SSH
+        # client then rejects systemd's included proxy config on ownership
+        # checks. These tests only need TCP SSH, not systemd's socket proxy.
+        programs.ssh.systemd-ssh-proxy.enable = false;
+
         networking = {
           useDHCP = false;
           networkmanager.enable = false;
