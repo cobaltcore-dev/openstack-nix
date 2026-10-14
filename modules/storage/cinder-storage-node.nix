@@ -405,9 +405,9 @@ in
               set -euxo pipefail
 
               # create a filesystem and mount and export it
-              mkdir /exports
+              mkdir ${lib.escapeShellArg config.openstack.storagePath}
               mkfs.ext4 -F -m 0 /dev/vdb
-              mount /dev/vdb /exports
+              mount /dev/vdb ${lib.escapeShellArg config.openstack.storagePath}
               exportfs -rv
             '';
       };
