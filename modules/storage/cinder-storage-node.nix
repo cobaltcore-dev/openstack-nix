@@ -126,6 +126,8 @@ let
     ${config.openstack.storagePath} 10.0.0.0/24(rw,no_root_squash,insecure)
   '';
 
+  # Run explicitly via openstack-cinder-volume-setup during manual deployment
+  # to format and mount the NFS storage disk and restart Cinder.
   cinderVolumeSetupScript = pkgs.writeShellScript "cinder-volume-setup.sh" ''
     export PATH=${
       lib.makeBinPath [
@@ -142,8 +144,8 @@ let
     fi
 
     mkdir ${config.openstack.storagePath}
-    mkfs.ext4 -F -m 0 -L cinder /dev/vdb
-    mount /dev/vdb ${config.openstack.storagePath}
+    mkfs.ext4 -F -m 0 -L cinder ${lib.escapeShellArg cfg.setupDevice}
+    mount ${lib.escapeShellArg cfg.setupDevice} ${config.openstack.storagePath}
     exportfs -rv
     rm -rf ${config.openstack.storagePath}/lost+found
     chown cinder ${config.openstack.storagePath}
@@ -198,6 +200,17 @@ in
   options.cinder-storage-node = {
     enable = mkEnableOption "Enable OpenStack Cinder storage node." // {
       default = true;
+    };
+    setupDevice = mkOption {
+      type = types.str;
+      default = "/dev/vdb";
+      example = "/dev/disk/by-id/your-storage-disk";
+      description = ''
+        Block device formatted and mounted by openstack-cinder-volume-setup
+        during manual deployment of the NFS backend. Running that command
+        creates an ext4 filesystem on this device, destroying existing data.
+        This option does not affect automatic test storage initialization.
+      '';
     };
     config = mkOption {
       default = if (cfg.backend == "lvm") then cinderConfLvm else cinderConfNfs;
