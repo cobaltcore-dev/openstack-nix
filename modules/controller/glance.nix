@@ -17,12 +17,12 @@ let
     log_dir = /var/log/glance
 
     [database]
-    connection = mysql+pymysql://glance:glance@controller/glance
+    connection = mysql+pymysql://glance:glance@${config.openstack.controllerHostname}/glance
 
     [keystone_authtoken]
-    www_authenticate_uri  = http://controller:5000
-    auth_url = http://controller:5000
-    memcached_servers = controller:11211
+    www_authenticate_uri  = http://${config.openstack.controllerHostname}:5000/v3
+    auth_url = http://${config.openstack.controllerHostname}:5000/v3
+    memcached_servers = ${config.openstack.controllerHostname}:11211
     auth_type = password
     project_domain_name = Default
     user_domain_name = Default
@@ -40,7 +40,7 @@ let
     filesystem_store_datadir = /var/lib/glance/images/
 
     [oslo_limit]
-    auth_url = http://controller:5000
+    auth_url = http://${config.openstack.controllerHostname}:5000/v3
     auth_type = password
     user_domain_id = default
     username = glance
@@ -61,8 +61,17 @@ in
         The Glance config.
       '';
     };
+    env = mkOption {
+      type = types.listOf types.str;
+      default = [
+        "PYTHONWARNINGS=ignore::DeprecationWarning"
+      ];
+      description = ''
+        Environment variables passed to the Keystone uWSGI vassal.
+      '';
+    };
   };
-  config = mkIf cfg.enable {
+  config = {
 
     users.extraUsers.glance = {
       group = "glance";
@@ -75,40 +84,40 @@ in
 
     systemd.tmpfiles.settings = {
       "10-glance" = {
+        "/etc/glance/glance-api.conf" = {
+          "L+" = {
+            argument = "${cfg.config}";
+          };
+        };
+        "/etc/glance/glance-api-paste.ini" = {
+          "L+" = {
+            argument = "${glance}/etc/glance/glance-api-paste.ini";
+          };
+        };
+        "/etc/glance/schema-image.json" = {
+          "L+" = {
+            argument = "${glance}/etc/glance/schema-image.json";
+          };
+        };
         "/var/lib/glance/" = {
-          D = {
+          d = {
             user = "glance";
             group = "glance";
             mode = "0755";
           };
         };
         "/var/log/glance/" = {
-          D = {
+          d = {
             user = "glance";
             group = "glance";
             mode = "0755";
           };
         };
         "/var/lib/glance/images" = {
-          D = {
+          d = {
             user = "glance";
             group = "glance";
             mode = "0755";
-          };
-        };
-        "/etc/glance/glance-api.conf" = {
-          L = {
-            argument = "${cfg.config}";
-          };
-        };
-        "/etc/glance/glance-api-paste.ini" = {
-          L = {
-            argument = "${glance}/etc/glance/glance-api-paste.ini";
-          };
-        };
-        "/etc/glance/schema-image.json" = {
-          L = {
-            argument = "${glance}/etc/glance/schema-image.json";
           };
         };
       };
@@ -131,10 +140,11 @@ in
           glance-api --config-file=${cfg.config} --config-file=/etc/glance/glance-api-paste.ini
         '';
       };
+      enable = cfg.enable;
     };
 
     services.uwsgi = {
-      instance.vassals.glance = {
+      instance.vassals.glance = mkIf cfg.enable {
         socket-timeout = 10;
         http-auto-chunked = true;
         http-chunked-input = true;
@@ -154,6 +164,7 @@ in
         immediate-uid = "glance";
         immediate-gid = "glance";
         wsgi-file = "${glance}/bin/.glance-wsgi-api-wrapped";
+        env = cfg.env;
       };
     };
   };

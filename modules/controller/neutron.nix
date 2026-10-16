@@ -3,6 +3,7 @@
   config,
   lib,
   pkgs,
+  utils,
   ...
 }:
 
@@ -10,6 +11,7 @@ with lib;
 
 let
   cfg = config.neutron;
+  providerDevice = "${utils.escapeSystemdPath "/sys/subsystem/net/devices/${cfg.providerInterface}"}.device";
 
   # For live migration to work, neutron-server must allow certain actions.
   policyConf = pkgs.writeText "policy.yaml" ''
@@ -25,24 +27,24 @@ let
   # neutron.conf is used as configuration file for neutron-metadata-agent as well
   neutronConf = pkgs.writeText "neutron.conf" ''
     [database]
-    connection = mysql+pymysql://neutron:neutron@controller/neutron
+    connection = mysql+pymysql://neutron:neutron@${config.openstack.controllerHostname}/neutron
 
     [DEFAULT]
     core_plugin = ml2
     service_plugins =
     api_paste_config = ${neutron}/etc/neutron/api-paste.ini
-    transport_url = rabbit://openstack:openstack@controller
+    transport_url = rabbit://openstack:openstack@${config.openstack.controllerHostname}
     auth_strategy = keystone
     notify_nova_on_port_status_changes = true
     notify_nova_on_port_data_changes = true
     log_dir = /var/log/neutron
-    nova_metadata_host = controller
+    nova_metadata_host = ${config.openstack.controllerHostname}
     metadata_proxy_shared_secret = neutron_metadata_secret
 
     [keystone_authtoken]
-    www_authenticate_uri = http://controller:5000
-    auth_url = http://controller:5000
-    memcached_servers = controller:11211
+    www_authenticate_uri = http://${config.openstack.controllerHostname}:5000/v3
+    auth_url = http://${config.openstack.controllerHostname}:5000/v3
+    memcached_servers = ${config.openstack.controllerHostname}:11211
     auth_type = password
     project_domain_name = Default
     user_domain_name = Default
@@ -57,7 +59,7 @@ let
     service_token_roles = admin
 
     [nova]
-    auth_url = http://controller:5000
+    auth_url = http://${config.openstack.controllerHostname}:5000/v3
     auth_type = password
     project_domain_name = Default
     user_domain_name = Default
@@ -172,7 +174,7 @@ in
       '';
     };
   };
-  config = mkIf cfg.enable {
+  config = {
 
     users.extraUsers.neutron = {
       group = "neutron";
@@ -186,53 +188,53 @@ in
     systemd.tmpfiles.settings = {
       "10-neutron" = {
         "/var/log/neutron" = {
-          D = {
+          d = {
             group = "neutron";
             mode = "0755";
             user = "neutron";
           };
         };
         "/etc/neutron/neutron.conf" = {
-          L = {
+          "L+" = {
             argument = "${cfg.config}";
           };
         };
         "/etc/neutron/plugins/ml2/ml2_conf.ini" = {
-          L = {
+          "L+" = {
             argument = "${cfg.ml2Config}";
           };
         };
         "/etc/neutron/plugins/ml2/openvswitch_agent.ini" = {
-          L = {
+          "L+" = {
             argument = "${cfg.openvswitchConfig}";
           };
         };
         "/etc/neutron/dhcp_agent.ini" = {
-          L = {
+          "L+" = {
             argument = "${cfg.dhcpAgentConfig}";
           };
         };
         "/etc/neutron/api-paste.ini" = {
-          L = {
+          "L+" = {
             argument = "${neutron}/etc/neutron/api-paste.ini";
           };
         };
         "/var/lock/neutron" = {
-          D = {
+          d = {
             group = "neutron";
             mode = "0755";
             user = "neutron";
           };
         };
         "/var/lib/neutron" = {
-          D = {
+          d = {
             group = "neutron";
             mode = "0755";
             user = "neutron";
           };
         };
         "/var/lib/neutron/dhcp" = {
-          D = {
+          d = {
             group = "neutron";
             mode = "0755";
             user = "neutron";
@@ -252,6 +254,7 @@ in
       serviceConfig = {
         ExecStart = "${neutron}/bin/neutron-metadata-agent --config-file=${cfg.config}";
       };
+      enable = cfg.enable;
     };
 
     virtualisation.vswitch = {
@@ -269,7 +272,14 @@ in
       after = [
         "network.target"
         "ovsdb.service"
+        "ovs-vswitchd.service"
+        providerDevice
         "neutron.service"
+      ];
+      # Bridge setup needs both the switching daemon and the provider NIC.
+      requires = [
+        "ovs-vswitchd.service"
+        providerDevice
       ];
       wantedBy = [ "multi-user.target" ];
       path = with pkgs; [
@@ -286,11 +296,14 @@ in
         ExecStartPre = pkgs.writeShellScript "pre.sh" ''
           ${pkgs.openvswitch}/bin/ovs-vsctl add-br br-provider || true
           ${pkgs.openvswitch}/bin/ovs-vsctl add-port br-provider ${cfg.providerInterface} || true
+          # enable uplink provider interface
+          ip link set dev ${cfg.providerInterface} up
         '';
         ExecStart = pkgs.writeShellScript "neutron-openvswitch.sh" ''
           ${neutron}/bin/neutron-openvswitch-agent --config-file=${cfg.config} --config-file=${cfg.openvswitchConfig}
         '';
       };
+      enable = cfg.enable;
     };
 
     systemd.services.neutron-server = {
@@ -321,6 +334,7 @@ in
         LimitNOFILE = 65535;
         TimeoutStopSec = 15;
       };
+      enable = cfg.enable;
     };
 
     systemd.services.neutron-dhcp-agent = {
@@ -352,6 +366,7 @@ in
         LimitNOFILE = 65535;
         TimeoutStopSec = 15;
       };
+      enable = cfg.enable;
     };
 
   };
