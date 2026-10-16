@@ -3,6 +3,7 @@
   config,
   lib,
   pkgs,
+  utils,
   ...
 }:
 
@@ -10,6 +11,7 @@ with lib;
 
 let
   cfg = config.neutron;
+  providerDevice = "${utils.escapeSystemdPath "/sys/subsystem/net/devices/${cfg.providerInterface}"}.device";
 
   # For live migration to work, neutron-server must allow certain actions.
   policyConf = pkgs.writeText "policy.yaml" ''
@@ -270,7 +272,14 @@ in
       after = [
         "network.target"
         "ovsdb.service"
+        "ovs-vswitchd.service"
+        providerDevice
         "neutron.service"
+      ];
+      # Bridge setup needs both the switching daemon and the provider NIC.
+      requires = [
+        "ovs-vswitchd.service"
+        providerDevice
       ];
       wantedBy = [ "multi-user.target" ];
       path = with pkgs; [
