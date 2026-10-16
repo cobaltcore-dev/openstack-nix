@@ -181,7 +181,7 @@ in
         User = "cinder";
         Group = "cinder";
         ExecStart = pkgs.writeShellScript "cinder-scheduler.sh" ''
-          .cinder-scheduler-wrapped
+          .cinder-scheduler-wrapped --config-file ${cfg.config}
         '';
       };
       enable = cfg.enable;
