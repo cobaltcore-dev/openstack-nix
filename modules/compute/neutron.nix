@@ -3,6 +3,7 @@
   config,
   lib,
   pkgs,
+  utils,
   ...
 }:
 
@@ -10,6 +11,7 @@ with lib;
 
 let
   cfg = config.neutron;
+  providerDevice = "${utils.escapeSystemdPath "/sys/subsystem/net/devices/${cfg.providerInterface}"}.device";
   neutron_env = pkgs.python3.buildEnv.override {
     extraLibs = [ neutron ];
   };
@@ -167,7 +169,14 @@ in
       after = [
         "network.target"
         "ovsdb.service"
+        "ovs-vswitchd.service"
+        providerDevice
         "systemd-networkd.service"
+      ];
+      # Bridge setup needs both the switching daemon and the provider NIC.
+      requires = [
+        "ovs-vswitchd.service"
+        providerDevice
       ];
       wantedBy = [ "multi-user.target" ];
       path = with pkgs; [
