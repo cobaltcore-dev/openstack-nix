@@ -53,6 +53,9 @@ let
 
     [libvirt]
     virt_type = kvm
+    ${optionalString (config.openstack.live_migration_inbound_addr != null) ''
+      live_migration_inbound_addr = ${config.openstack.live_migration_inbound_addr}
+    ''}
 
     [neutron]
     auth_url = http://${config.openstack.controllerHostname}:5000/v3

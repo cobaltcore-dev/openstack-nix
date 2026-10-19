@@ -30,4 +30,14 @@ with lib;
       physical deployments.
     '';
   };
+
+  options.openstack.live_migration_inbound_addr = lib.mkOption {
+    default = null;
+    type = types.nullOr types.str;
+    description = ''
+      Address of this compute node on the live migration network. When set,
+      configures Nova's libvirt live_migration_inbound_addr. When null, the
+      setting is omitted and Nova uses its default.
+    '';
+  };
 }
