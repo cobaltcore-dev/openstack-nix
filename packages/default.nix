@@ -206,7 +206,6 @@ let
         django-appconf
         django-compressor
         django-debreach
-        django-pyscss
         enmerkar
         futurist
         keystoneauth1

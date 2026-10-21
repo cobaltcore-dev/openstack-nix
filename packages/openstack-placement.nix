@@ -28,7 +28,7 @@ let
 in
 python3Packages.buildPythonPackage (rec {
   pname = "openstack-placement";
-  version = "12.0.0";
+  version = "13.0.0";
   pyproject = true;
   build-system = [
     python3Packages.pbr
@@ -68,11 +68,15 @@ python3Packages.buildPythonPackage (rec {
   ];
 
   checkPhase = ''
+    # Newer Python versions quote argparse choices again.
+    substituteInPlace placement/tests/unit/cmd/test_manage.py \
+      --replace-fail 'message = "choose from db"' "message = \"choose from 'db'\""
     stestr run
   '';
 
   src = fetchPypi {
-    inherit pname version;
-    sha256 = "sha256-DCA7PMCnVKKq6ckdx+6n11jZuNG5LY4BySRXWqWF7qo=";
+    pname = "openstack_placement";
+    inherit version;
+    sha256 = "sha256-egR3mjssA0CdX75+wSAt0DD4Ftw5Sw6ZcI1mA2zbyq8=";
   };
 })

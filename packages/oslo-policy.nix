@@ -21,7 +21,7 @@ let
 in
 python3Packages.buildPythonPackage rec {
   pname = "oslo.policy";
-  version = "4.4.0";
+  version = "4.5.0";
 
   pyproject = true;
   build-system = [
@@ -57,6 +57,6 @@ python3Packages.buildPythonPackage rec {
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "sha256-LV9QyLq8vLgOHuQLKv+3y0ZGUP37HZZUoU3fWxk2mcU=";
+    sha256 = "sha256-Wt5pgfGKM8ORJ0ovAA4ct7ESKHs9hKeUEl9GUGIzPGo=";
   };
 }

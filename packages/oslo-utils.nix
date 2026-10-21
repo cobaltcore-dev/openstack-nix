@@ -1,5 +1,7 @@
 {
   fetchPypi,
+  lib,
+  libxcrypt-legacy,
   oslo-config,
   oslo-i18n,
   oslotest,
@@ -28,7 +30,7 @@ let
 in
 python3Packages.buildPythonPackage rec {
   pname = "oslo.utils";
-  version = "7.4.0";
+  version = "8.0.0";
 
   pyproject = true;
   build-system = [
@@ -40,6 +42,12 @@ python3Packages.buildPythonPackage rec {
     pbr
     qemu
   ];
+
+  postPatch = ''
+    # ctypes cannot discover libraries in the Nix store through the system linker.
+    substituteInPlace oslo_utils/secretutils.py \
+      --replace-fail 'ctypes.util.find_library("crypt")' '"${lib.getLib libxcrypt-legacy}/lib/libcrypt.so.1"'
+  '';
 
   propagatedBuildInputs = [
     debtcollector
@@ -74,6 +82,6 @@ python3Packages.buildPythonPackage rec {
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "sha256-ql3LXaoF3fS1NPLN7aVvfyFIXJb1y69qjAhx2AO3Ps4=";
+    sha256 = "sha256-kG/PHIb2cfIkwZJbKo03WgU5FD+2FYsT4gKnndjmxpQ=";
   };
 }

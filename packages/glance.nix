@@ -40,7 +40,7 @@ let
 in
 python3Packages.buildPythonPackage (rec {
   pname = "glance";
-  version = "29.0.0";
+  version = "30.0.0";
   # Single-store tests must register their options independently of test order.
   patches = [
     ./patches/glance-single-store-test-options.patch
@@ -109,6 +109,6 @@ python3Packages.buildPythonPackage (rec {
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "sha256-gI6+t3MnSiD3adVMDedWlRnk1wyGyVnGHCM3ByLYIrk=";
+    sha256 = "sha256-4p35NHTioaNBY+4VnnIzGUHMCzCwAJIlk/lUDAHGjlo=";
   };
 })

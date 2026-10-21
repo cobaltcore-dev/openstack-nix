@@ -45,7 +45,7 @@ let
 in
 python3Packages.buildPythonPackage (rec {
   pname = "glance_store";
-  version = "4.8.1";
+  version = "4.9.0";
   pyproject = true;
   build-system = [
     python3Packages.pbr
@@ -99,6 +99,6 @@ python3Packages.buildPythonPackage (rec {
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "sha256-nkLWMCzcytNyI+rZoHRBWh1LnA7+gCcrN7YoZFb0dzc=";
+    sha256 = "sha256-bOwHZH/btbeYoLl4Oxe9xB3lGljhU+26UbkkmygTi9Q=";
   };
 })

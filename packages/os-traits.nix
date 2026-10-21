@@ -15,7 +15,7 @@ let
 in
 python3Packages.buildPythonPackage rec {
   pname = "os-traits";
-  version = "3.2.0";
+  version = "3.3.0";
 
   pyproject = true;
   build-system = [
@@ -45,6 +45,6 @@ python3Packages.buildPythonPackage rec {
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "sha256-NVr3coxNz8Ws4N2DVEX94r928pk7DGyxy7S/c4mDABU=";
+    sha256 = "sha256-IBUOQG+mk6I9H7HFGNGyoS9JV8JWGrwi9zOtXTxreOE=";
   };
 }
