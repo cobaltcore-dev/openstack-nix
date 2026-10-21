@@ -106,7 +106,6 @@ pkgs.testers.nixosTest {
 
       start_all()
       controllerVM.wait_for_unit("glance-api.service")
-      controllerVM.wait_for_unit("placement-api.service")
       controllerVM.wait_for_unit("neutron-server.service")
       controllerVM.wait_for_unit("nova-scheduler.service")
       controllerVM.wait_for_unit("nova-conductor.service")

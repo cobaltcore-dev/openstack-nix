@@ -193,7 +193,7 @@ in
         "neutron-server.service"
         "nova.service"
         "glance-api.service"
-        "placement-api.service"
+        "uwsgi.service"
         "postgresql.service"
         "mysql.service"
         "keystone.service"
@@ -225,7 +225,7 @@ in
       after = [
         "neutron-server.service"
         "glance-api.service"
-        "placement-api.service"
+        "uwsgi.service"
         "nova.service"
         "postgresql.service"
         "mysql.service"
@@ -280,7 +280,7 @@ in
       after = [
         "neutron-server.service"
         "glance-api.service"
-        "placement-api.service"
+        "uwsgi.service"
         "nova.service"
         "postgresql.service"
         "mysql.service"

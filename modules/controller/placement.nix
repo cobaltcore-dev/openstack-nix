@@ -71,53 +71,42 @@ in
       };
     };
 
-    # create systemd service only if running in non production mode (CI/CD setup)
-    systemd.services.placement-api = lib.mkIf (!config.openstack.manual_setup) {
-      description = "OpenStack Placement API Daemon";
-      after = [
-        "placement.service"
-        "rabbitmq.service"
-        "mysql.service"
-        "network.target"
-      ];
-      path = [ placement ];
-      wantedBy = [ "multi-user.target" ];
-      serviceConfig = {
-        User = "placement";
-        Group = "placement";
-        ExecStart = pkgs.writeShellScript "placement-api.sh" ''
-          # Using the placement-api binary directly warns about that should only
-          # be done in development environments. The "correct" way is to use
-          # uwsgi, which is kinda tricky in nixos because we would have to start
-          # the keystone uwsgi service at first, and placement later. That
-          # cannot be expressed in the nixos config AFAIK.
-          placement-api --port 8778
-        '';
-      };
-      enable = cfg.enable;
-    };
+    services.uwsgi = {
+      instance.vassals = optionalAttrs cfg.enable {
+        placement-api = {
+          type = "normal";
+          http-socket = "0.0.0.0:8778";
+          wsgi-file = "${placement}/bin/.placement-api-wrapped";
+          pyargv = "--config-file ${cfg.config}";
 
-    # create uwsgi vassal configuration only in production setup
-    services.uwsgi = lib.mkIf (config.openstack.manual_setup) {
-      instance.vassals.placement-api = mkIf cfg.enable {
-        type = "normal";
-        http-socket = "0.0.0.0:8778";
-        wsgi-file = "${placement}/bin/.placement-api-wrapped";
-        pyargv = "--config-file ${cfg.config}";
+          master = true;
+          processes = 4;
+          enable-threads = true;
+          thunder-lock = true;
+          lazy-apps = true;
+          die-on-term = true;
+          vacuum = true;
+          need-app = true;
+          buffer-size = 65535;
 
-        master = true;
-        processes = 4;
-        enable-threads = true;
-        thunder-lock = true;
-        lazy-apps = true;
-        die-on-term = true;
-        vacuum = true;
-        need-app = true;
-        buffer-size = 65535;
-
-        immediate-uid = "placement";
-        immediate-gid = "placement";
-        env = cfg.env;
+          immediate-uid = "placement";
+          immediate-gid = "placement";
+          env = cfg.env;
+        }
+        // optionalAttrs (!config.openstack.manual_setup) {
+          # Keystone must start in the same emperor before Placement setup can
+          # finish. Wait only in this vassal, using a hook that works as non-root.
+          exec-asap = pkgs.writeShellScript "placement-api-wait-for-setup" ''
+            for ((attempt = 0; attempt < 300; attempt++)); do
+              if test -f /run/placement-setup/ready; then
+                exit 0
+              fi
+              ${pkgs.coreutils}/bin/sleep 1
+            done
+            echo "Timed out waiting for Placement database setup" >&2
+            exit 1
+          '';
+        };
       };
     };
   };

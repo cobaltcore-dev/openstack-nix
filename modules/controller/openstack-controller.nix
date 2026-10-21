@@ -433,6 +433,8 @@ in
         User = "root";
         Group = "root";
         ExecStart = "+${placementStartScript}";
+        RuntimeDirectory = "placement-setup";
+        ExecStartPost = "${pkgs.coreutils}/bin/touch /run/placement-setup/ready";
       };
     };
 
