@@ -122,48 +122,45 @@ in
       };
     };
 
-    # create systemd service only if running in non production mode (CI/CD setup)
-    systemd.services.cinder-api = lib.mkIf (!config.openstack.manual_setup) {
-      description = "OpenStack Cinder API Daemon";
-      after = [
-        "cinder.service"
-        "rabbitmq.service"
-        "mysql.service"
-        "network.target"
-      ];
-      path = [ cinder ];
-      wantedBy = [ "multi-user.target" ];
-      serviceConfig = {
-        User = "cinder";
-        Group = "cinder";
-        ExecStart = pkgs.writeShellScript "cinder-api.sh" ''
-          .cinder-wsgi-wrapped --port 8776
-        '';
-      };
-      enable = cfg.enable;
-    };
+    services.uwsgi = {
+      instance.vassals = optionalAttrs cfg.enable {
+        cinder-api = {
+          type = "normal";
+          http-socket = "0.0.0.0:8776";
+          wsgi-file = "${cinder}/bin/.cinder-wsgi-wrapped";
+          pyargv = "--config-file ${cfg.config}";
+          env = cfg.envCinderApi;
 
-    # create uwsgi vassal configuration only in production setup
-    services.uwsgi = lib.mkIf (config.openstack.manual_setup) {
-      instance.vassals.cinder-api = mkIf cfg.enable {
-        type = "normal";
-        http-socket = "0.0.0.0:8776";
-        wsgi-file = "${cinder}/bin/.cinder-wsgi-wrapped";
-        pyargv = "--config-file ${cfg.config}";
-        env = cfg.envCinderApi;
+          master = true;
+          processes = 4;
+          enable-threads = true;
+          thunder-lock = true;
+          lazy-apps = true;
+          die-on-term = true;
+          vacuum = true;
+          need-app = true;
+          buffer-size = 65535;
 
-        master = true;
-        processes = 4;
-        enable-threads = true;
-        thunder-lock = true;
-        lazy-apps = true;
-        die-on-term = true;
-        vacuum = true;
-        need-app = true;
-        buffer-size = 65535;
-
-        immediate-uid = "cinder";
-        immediate-gid = "cinder";
+          immediate-uid = "cinder";
+          immediate-gid = "cinder";
+        }
+        // optionalAttrs (!config.openstack.manual_setup) {
+          # Keystone must be available in the same emperor before automatic
+          # Cinder setup can finish, so only this vassal waits for the schema.
+          # As there is no uwsgi mechanism to serialize the vassals, we use a
+          # marker file created in the systemd service setup of cinder to wait
+          # for first.
+          exec-asap = pkgs.writeShellScript "cinder-api-wait-for-setup" ''
+            for ((attempt = 0; attempt < 300; attempt++)); do
+              if test -f /run/cinder-setup/ready; then
+                exit 0
+              fi
+              ${pkgs.coreutils}/bin/sleep 1
+            done
+            echo "Timed out waiting for Cinder database setup" >&2
+            exit 1
+          '';
+        };
       };
     };
 

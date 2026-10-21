@@ -409,6 +409,8 @@ in
         User = "root";
         Group = "root";
         ExecStart = "+${cinderStartScript}";
+        RuntimeDirectory = "cinder-setup";
+        ExecStartPost = "${pkgs.coreutils}/bin/touch /run/cinder-setup/ready";
       };
     };
 

@@ -49,4 +49,9 @@
     ];
     instance.type = "emperor";
   };
+
+  # Match ExecStop's SIGINT when systemd stops the remaining processes too.
+  # SIGQUIT can dump core for vassals still starting and their helper commands
+  # during the uWSGI restart performed by Keystone setup.
+  systemd.services.uwsgi.serviceConfig.KillSignal = lib.mkForce "SIGINT";
 }
