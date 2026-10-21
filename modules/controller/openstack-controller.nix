@@ -315,17 +315,17 @@ in
   config = {
 
     environment.systemPackages = [
-      (setupCommand "openstack-database-cleanup" databaseCleanupScript)
-      (setupCommand "openstack-database-setup" databaseSetupScript)
-      (setupCommand "openstack-keystone-pre-setup" keystonePreStartScript)
-      (setupCommand "openstack-keystone-setup" keystoneStartScript)
-      (setupCommand "openstack-glance-setup" glanceStartScript)
-      (setupCommand "openstack-cinder-setup" cinderStartScript)
-      (setupCommand "openstack-placement-setup" placementStartScript)
-      (setupCommand "openstack-nova-setup" novaStartScript)
-      (setupCommand "openstack-neutron-setup" neutronStartScript)
-      (setupCommand "openstack-designate-setup" designateStartScript)
-      (setupCommand "openstack-check-controller" checkControllerScript)
+      (setupCommand "openstack-database-cleanup-000" databaseCleanupScript)
+      (setupCommand "openstack-database-setup-000" databaseSetupScript)
+      (setupCommand "openstack-keystone-pre-setup-001" keystonePreStartScript)
+      (setupCommand "openstack-keystone-setup-002" keystoneStartScript)
+      (setupCommand "openstack-glance-setup-003" glanceStartScript)
+      (setupCommand "openstack-cinder-setup-004" cinderStartScript)
+      (setupCommand "openstack-placement-setup-005" placementStartScript)
+      (setupCommand "openstack-neutron-setup-006" neutronStartScript)
+      (setupCommand "openstack-nova-setup-007" novaStartScript)
+      (setupCommand "openstack-designate-setup-008" designateStartScript)
+      (setupCommand "openstack-check-controller-100" checkControllerScript)
       python-openstackclient
       cinder
       designate
