@@ -314,6 +314,8 @@ in
 
   config = {
 
+    environment.variables = adminEnv;
+
     environment.systemPackages = [
       (setupCommand "openstack-database-cleanup-000" databaseCleanupScript)
       (setupCommand "openstack-database-setup-000" databaseSetupScript)
