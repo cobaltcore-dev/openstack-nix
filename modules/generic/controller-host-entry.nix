@@ -1,19 +1,18 @@
-{ lib, config, ... }:
-with lib;
+{ config, lib, ... }:
 {
-  options.openstack = {
-    controllerIP = mkOption {
-      type = types.str;
-      description = ''
-        IP address of the controller. Will be used to make a /etc/hosts entry
-        to make the controller available via "controller".
-      '';
-    };
-  };
+  imports = [ ./global-options.nix ];
 
   config = {
     networking.extraHosts = ''
-      ${config.openstack.controllerIP} controller controller.local
+      ${config.openstack.controllerIP} ${
+        lib.concatStringsSep " " (
+          lib.unique [
+            config.openstack.controllerHostname
+            "controller"
+            "controller.local"
+          ]
+        )
+      }
     '';
   };
 }

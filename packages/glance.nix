@@ -41,6 +41,11 @@ in
 python3Packages.buildPythonPackage (rec {
   pname = "glance";
   version = "29.0.0";
+  # Single-store tests must register their options independently of test order.
+  patches = [
+    ./patches/glance-single-store-test-options.patch
+  ];
+
   pyproject = true;
   build-system = [
     python3Packages.pbr

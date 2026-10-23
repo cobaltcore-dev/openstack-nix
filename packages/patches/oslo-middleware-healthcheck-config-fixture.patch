@@ -1,0 +1,14 @@
+diff --git a/oslo_middleware/tests/test_healthcheck.py b/oslo_middleware/tests/test_healthcheck.py
+--- a/oslo_middleware/tests/test_healthcheck.py
++++ b/oslo_middleware/tests/test_healthcheck.py
+@@ -31,6 +31,10 @@ from oslo_middleware.healthcheck import __main__
+ 
+ class HealthcheckMainTests(test_base.BaseTestCase):
+ 
++    def setUp(self):
++        super().setUp()
++        self.useFixture(config.Config())
++
+     def test_startup_response(self):
+         server = __main__.create_server(0)
+         th = threading.Thread(target=server.serve_forever)

@@ -27,6 +27,11 @@ python3Packages.buildPythonPackage rec {
   pname = "oslo.middleware";
   version = "6.3.0";
 
+  # The standalone server test otherwise leaks detailed=True to later tests.
+  patches = [
+    ./patches/oslo-middleware-healthcheck-config-fixture.patch
+  ];
+
   pyproject = true;
   build-system = [
     python3Packages.pbr
