@@ -155,8 +155,38 @@ let
     set -euxo pipefail
     keystone-manage --config-file ${config.keystone.config} bootstrap \
       --bootstrap-password admin \
-      --bootstrap-region-id RegionOne
-    openstack project create --domain default --description "Service Project" service
+      --bootstrap-region-id RegionOne \
+      --bootstrap-admin-url http://${config.openstack.controllerHostname}:5000/v3 \
+      --bootstrap-internal-url http://${config.openstack.controllerHostname}:5000/v3 \
+      --bootstrap-public-url http://${config.openstack.controllerHostname}:5000/v3
+
+    # The SQL catalog replaces the templated driver removed in Keystone 27.
+    # Reuse existing entries so manual setup can be rerun after an upgrade.
+    ensure_catalog_service() {
+      local name="$1" type="$2" url="$3" service_id endpoint_id interface
+      if ! service_id=$(openstack service show "$name" -f value -c id); then
+        service_id=$(openstack service create --name "$name" -f value -c id "$type")
+      fi
+      for interface in admin internal public; do
+        endpoint_id=$(openstack endpoint list --service "$service_id" \
+          --interface "$interface" --region RegionOne -f value -c ID)
+        if [ -z "$endpoint_id" ]; then
+          openstack endpoint create --region RegionOne "$service_id" "$interface" "$url"
+        else
+          openstack endpoint set --url "$url" "$endpoint_id"
+        fi
+      done
+    }
+
+    ensure_catalog_service nova compute http://${config.openstack.controllerHostname}:8774/v2.1
+    ensure_catalog_service glance image http://${config.openstack.controllerHostname}:9292
+    ensure_catalog_service neutron network http://${config.openstack.controllerHostname}:9696
+    ensure_catalog_service placement placement http://${config.openstack.controllerHostname}:8778
+    ensure_catalog_service cinderv3 volumev3 http://${config.openstack.controllerHostname}:8776/v3
+    ensure_catalog_service designate dns http://${config.openstack.controllerHostname}:9001/
+
+    openstack project show --domain default service >/dev/null || \
+      openstack project create --domain default --description "Service Project" service
     EOF
   '';
 
