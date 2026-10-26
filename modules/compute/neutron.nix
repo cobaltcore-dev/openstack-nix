@@ -3,6 +3,7 @@
   config,
   lib,
   pkgs,
+  utils,
   ...
 }:
 
@@ -10,6 +11,7 @@ with lib;
 
 let
   cfg = config.neutron;
+  providerDevice = "${utils.escapeSystemdPath "/sys/subsystem/net/devices/${cfg.providerInterface}"}.device";
   neutron_env = pkgs.python3.buildEnv.override {
     extraLibs = [ neutron ];
   };
@@ -25,7 +27,7 @@ let
     debug = false
     # File name for the paste.deploy config for api service (string value)
     api_paste_config = ${neutron}/etc/neutron/api-paste.ini
-    transport_url = rabbit://openstack:openstack@controller
+    transport_url = rabbit://openstack:openstack@${config.openstack.controllerHostname}
     log_dir = /var/log/neutron
 
     [agent]
@@ -50,6 +52,30 @@ let
     filterPath = "/etc/neutron/rootwrap.d";
     inherit utils_env;
   };
+
+  openvswitchPrepareScript = pkgs.writeShellScript "openvswitch-setup.sh" ''
+    export PATH=${
+      lib.makeBinPath [
+        pkgs.openvswitch
+      ]
+    }:$PATH
+
+    ovs-vsctl br-exists br-provider >/dev/null
+    status=$?
+
+    if [[ $status -eq 0 ]]; then
+      echo "br-provider already exists. No further setup tasks."
+    else
+      echo "br-provider didn't exist already. Proceed with basic setup."
+      set -euxo pipefail
+      ovs-vsctl add-br br-provider
+    fi
+    ovs-vsctl --may-exist add-port br-provider ${cfg.providerInterface}
+
+    # enable uplink provider interface
+    ip link set dev ${cfg.providerInterface} up
+  '';
+
 in
 {
   options.neutron = {
@@ -68,6 +94,13 @@ in
         The Neutron OpenVSwitch config.
       '';
     };
+    openvswitchPrepare = mkOption {
+      default = openvswitchPrepareScript;
+      description = ''
+        Default OpenVswitch prepare script of systemd unit: neutron-openvswitch-agent.service
+        This prepare script creates the basic openvswitch setup.
+      '';
+    };
     providerInterface = mkOption {
       default = "eth2";
       type = types.str;
@@ -78,7 +111,7 @@ in
     };
   };
 
-  config = mkIf cfg.enable {
+  config = {
     users.extraUsers.neutron = {
       group = "neutron";
       isSystemUser = true;
@@ -136,6 +169,14 @@ in
       after = [
         "network.target"
         "ovsdb.service"
+        "ovs-vswitchd.service"
+        providerDevice
+        "systemd-networkd.service"
+      ];
+      # Bridge setup needs both the switching daemon and the provider NIC.
+      requires = [
+        "ovs-vswitchd.service"
+        providerDevice
       ];
       wantedBy = [ "multi-user.target" ];
       path = with pkgs; [
@@ -150,14 +191,12 @@ in
         conntrack-tools
       ];
       serviceConfig = {
-        ExecStartPre = pkgs.writeShellScript "neutron-openvswitch-agent-pre.sh" ''
-          ${pkgs.openvswitch}/bin/ovs-vsctl add-br br-provider
-          ${pkgs.openvswitch}/bin/ovs-vsctl add-port br-provider ${cfg.providerInterface}
-        '';
+        ExecStartPre = "${cfg.openvswitchPrepare}";
         ExecStart = pkgs.writeShellScript "neutron-openvswitch-agent.sh" ''
           ${neutron}/bin/neutron-openvswitch-agent --config-file=${cfg.config} --config-file=${cfg.openvswitchConfig}
         '';
       };
+      enable = cfg.enable;
     };
   };
 }

@@ -106,7 +106,6 @@ pkgs.testers.nixosTest {
 
       start_all()
       controllerVM.wait_for_unit("glance-api.service")
-      controllerVM.wait_for_unit("placement-api.service")
       controllerVM.wait_for_unit("neutron-server.service")
       controllerVM.wait_for_unit("nova-scheduler.service")
       controllerVM.wait_for_unit("nova-conductor.service")
@@ -137,25 +136,22 @@ pkgs.testers.nixosTest {
       # namespace dedicated for the VM to ping it.
       assert retry_until_succeed(controllerVM, f"ip netns exec {net_ns} ping -c 1 {vm_ip}", 120)
 
-      # create volume with 4GB
-      controllerVM.execute("openstack volume create --size 4 test_vol")
-      # attach volume to VM
-      controllerVM.execute("openstack server add volume test_vm test_vol")
+      # Volume creation is asynchronous; wait until it is ready to attach.
+      controllerVM.succeed("openstack volume create --size 4 test_vol")
+      assert retry_until_succeed(
+          controllerVM,
+          "openstack volume show test_vol -f value -c status | grep -Fx available",
+          120,
+      ), "Volume test_vol did not become available"
 
-      _status, output = controllerVM.execute("openstack volume show test_vol")
-      print(f"openstack volume show test_vol: {output}")
-      time.sleep(3)
-      _status, output = controllerVM.execute("openstack volume show test_vol")
-      print(f"openstack volume show test_vol: {output}")
-      time.sleep(3)
-      _status, output = controllerVM.execute("openstack volume show test_vol")
-      print(f"openstack volume show test_vol: {output}")
-      time.sleep(3)
-      _status, output = controllerVM.execute("openstack volume show test_vol")
-      print(f"openstack volume show test_vol: {output}")
+      controllerVM.succeed("openstack server add volume test_vm test_vol")
 
-      # wait until volume is attached
-      assert retry_until_succeed(controllerVM, "openstack volume show test_vol -f value -c status | grep 'in-use'", 120)
+      # Attachment is asynchronous too.
+      assert retry_until_succeed(
+          controllerVM,
+          "openstack volume show test_vol -f value -c status | grep -Fx in-use",
+          120,
+      ), "Volume test_vol did not become attached"
 
       # add ssh host key to known_hosts
       retry_until_succeed(controllerVM, f"ip netns exec {net_ns} ssh-keyscan {vm_ip} > ~/.ssh/known_hosts", 60)

@@ -16,8 +16,8 @@ let
     auth_strategy = keystone
 
     [keystone_authtoken]
-    www_authenticate_uri  = http://controller:5000
-    auth_url = http://controller:5000
+    www_authenticate_uri  = http://${config.openstack.controllerHostname}:5000/v3
+    auth_url = http://${config.openstack.controllerHostname}:5000/v3
     auth_type = password
     project_domain_name = Default
     user_domain_name = Default
@@ -26,7 +26,7 @@ let
     password = placement
 
     [placement_database]
-    connection = mysql+pymysql://placement:placement@controller/placement
+    connection = mysql+pymysql://placement:placement@${config.openstack.controllerHostname}/placement
   '';
 in
 {
@@ -40,8 +40,17 @@ in
         The Placement config.
       '';
     };
+    env = mkOption {
+      type = types.listOf types.str;
+      default = [
+        "PYTHONWARNINGS=ignore::DeprecationWarning"
+      ];
+      description = ''
+        Environment variables passed to the placement uWSGI vassal.
+      '';
+    };
   };
-  config = mkIf cfg.enable {
+  config = {
 
     users.extraUsers.placement = {
       group = "placement";
@@ -55,34 +64,49 @@ in
     systemd.tmpfiles.settings = {
       "10-placement" = {
         "/etc/placement/placement.conf" = {
-          L = {
+          "L+" = {
             argument = "${cfg.config}";
           };
         };
       };
     };
 
-    systemd.services.placement-api = {
-      description = "OpenStack Placement API Daemon";
-      after = [
-        "placement.service"
-        "rabbitmq.service"
-        "mysql.service"
-        "network.target"
-      ];
-      path = [ placement ];
-      wantedBy = [ "multi-user.target" ];
-      serviceConfig = {
-        User = "placement";
-        Group = "placement";
-        ExecStart = pkgs.writeShellScript "placement-api.sh" ''
-          # Using the placement-api binary directly warns about that should only
-          # be done in development environments. The "correct" way is to use
-          # uwsgi, which is kinda tricky in nixos because we would have to start
-          # the keystone uwsgi service at first, and placement later. That
-          # cannot be expressed in the nixos config AFAIK.
-          placement-api --port 8778
-        '';
+    services.uwsgi = {
+      instance.vassals = optionalAttrs cfg.enable {
+        placement-api = {
+          type = "normal";
+          http-socket = "0.0.0.0:8778";
+          wsgi-file = "${placement}/bin/.placement-api-wrapped";
+          pyargv = "--config-file ${cfg.config}";
+
+          master = true;
+          processes = 4;
+          enable-threads = true;
+          thunder-lock = true;
+          lazy-apps = true;
+          die-on-term = true;
+          vacuum = true;
+          need-app = true;
+          buffer-size = 65535;
+
+          immediate-uid = "placement";
+          immediate-gid = "placement";
+          env = cfg.env;
+        }
+        // optionalAttrs (!config.openstack.manual_setup) {
+          # Keystone must start in the same emperor before Placement setup can
+          # finish. Wait only in this vassal, using a hook that works as non-root.
+          exec-asap = pkgs.writeShellScript "placement-api-wait-for-setup" ''
+            for ((attempt = 0; attempt < 300; attempt++)); do
+              if test -f /run/placement-setup/ready; then
+                exit 0
+              fi
+              ${pkgs.coreutils}/bin/sleep 1
+            done
+            echo "Timed out waiting for Placement database setup" >&2
+            exit 1
+          '';
+        };
       };
     };
   };
