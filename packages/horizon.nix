@@ -6,7 +6,6 @@
   django-appconf,
   django-compressor,
   django-debreach,
-  django-pyscss,
   enmerkar,
   futurist,
   gettext,
@@ -66,7 +65,6 @@ let
     pbr
     pycodestyle
     pymemcache
-    pyscss
     pytest
     pytest-django
     pytest-html
@@ -86,7 +84,7 @@ let
 in
 python3Packages.buildPythonPackage rec {
   pname = "horizon";
-  version = "25.1.0";
+  version = "25.2.0";
 
   pyproject = true;
   build-system = [
@@ -108,7 +106,6 @@ python3Packages.buildPythonPackage rec {
     django-appconf
     django-compressor
     django-debreach
-    django-pyscss
     futurist
     iso8601
     keystoneauth1
@@ -123,7 +120,6 @@ python3Packages.buildPythonPackage rec {
     oslo-utils
     osprofiler
     pymemcache
-    pyscss
     python-cinderclient
     python-glanceclient
     python-keystoneclient
@@ -203,6 +199,6 @@ python3Packages.buildPythonPackage rec {
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "sha256-w+NOvS9kFlXJMgU8V7NRO92t2jE1UaE5A5CItyHy/Dc=";
+    sha256 = "sha256-TjLNSPu6J04DGDUOXHTgjrx5z42u6RtS9RSQXsDPpyE=";
   };
 }

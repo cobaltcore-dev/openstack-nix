@@ -44,7 +44,7 @@ let
 in
 python3Packages.buildPythonPackage rec {
   pname = "neutron-lib";
-  version = "3.16.0";
+  version = "3.17.0";
 
   pyproject = true;
   build-system = [
@@ -106,6 +106,6 @@ python3Packages.buildPythonPackage rec {
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "sha256-dvqSqJfR/zwxOZRA1P4ASPpg+hXTRX0GA3dCIwDP/ZI=";
+    sha256 = "sha256-hSjK5Ix3safo1UCs1NaiZ9GeLQ6SmyEi/Ac5+NLtwrQ=";
   };
 }

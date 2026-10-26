@@ -27,7 +27,7 @@ let
 in
 python3Packages.buildPythonPackage rec {
   pname = "os-ken";
-  version = "2.11.2";
+  version = "3.0.0";
 
   pyproject = true;
   build-system = [
@@ -71,7 +71,8 @@ python3Packages.buildPythonPackage rec {
   '';
 
   src = fetchPypi {
-    inherit pname version;
-    sha256 = "sha256-zGB2+83OVCbNBElOHgViZ4SCXl/exLp1eVroDeEkIyA=";
+    pname = "os_ken";
+    inherit version;
+    sha256 = "sha256-w1pNBppsz9wW9Vn57CePadoCc5DoRV7sQU4BujR3NM0=";
   };
 }

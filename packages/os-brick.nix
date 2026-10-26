@@ -38,7 +38,7 @@ let
 in
 python3Packages.buildPythonPackage rec {
   pname = "os-brick";
-  version = "6.9.0";
+  version = "6.10.0";
 
   pyproject = true;
   build-system = [
@@ -94,6 +94,6 @@ python3Packages.buildPythonPackage rec {
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "sha256-lk7Me3wkkmpbbwkjhqLuO97mg+KU17kZDMlR1xFfGV8=";
+    sha256 = "sha256-g6TYHfOGjHy4bmehrMKKJoTwkXYXZqHnrnvb7MmzLyQ=";
   };
 }

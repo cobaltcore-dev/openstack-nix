@@ -30,7 +30,6 @@ let
     ldappool
     lxml
     oauthlib
-    passlib
     pbr
     py-scrypt
     pycodestyle
@@ -49,7 +48,7 @@ let
 in
 python3Packages.buildPythonPackage (rec {
   pname = "keystone";
-  version = "26.0.0";
+  version = "27.0.0";
   pyproject = true;
   build-system = [
     python3Packages.pbr
@@ -78,7 +77,6 @@ python3Packages.buildPythonPackage (rec {
     oslo-serialization
     oslo-upgradecheck
     osprofiler
-    passlib
     py-scrypt
     pymysql
     pysaml2
@@ -118,6 +116,6 @@ python3Packages.buildPythonPackage (rec {
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "sha256-dUFsKwu17C7eFsvGMuRA+Vsd7U/bBvixZrolwXGv1+k=";
+    sha256 = "sha256-j5Ri/L6Y49UeN/fhgjGD/ESwTDxAhYkjQpVyUckGQlI=";
   };
 })

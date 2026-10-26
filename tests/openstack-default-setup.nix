@@ -68,7 +68,7 @@ pkgs.testers.nixosTest {
           if status != 0:
             continue
           storage_nodes = json.loads(out)
-          if len(storage_nodes) == 2 and len(net_agents) == 4 and len(compute_nodes) == 1 and compute_nodes[0].get("Host","None") == "computeVM":
+          if len(storage_nodes) == 2 and len(net_agents) == 3 and len(compute_nodes) == 1 and compute_nodes[0].get("Host","None") == "computeVM":
             return True
         return False
 
@@ -105,6 +105,34 @@ pkgs.testers.nixosTest {
 
 
       start_all()
+      controllerVM.wait_for_unit("keystone-all.service")
+
+      with subtest("SQL service catalog survives repeated Keystone setup"):
+          expected_urls = {
+              "identity": "http://controller:5000/v3",
+              "compute": "http://controller:8774/v2.1",
+              "image": "http://controller:9292",
+              "network": "http://controller:9696",
+              "placement": "http://controller:8778",
+              "volumev3": "http://controller:8776/v3",
+              "dns": "http://controller:9001/",
+          }
+
+          def check_catalog():
+              catalog = json.loads(controllerVM.succeed("openstack catalog list -f json"))
+              assert {service["Type"] for service in catalog} == set(expected_urls), catalog
+              endpoints = json.loads(controllerVM.succeed("openstack endpoint list -f json"))
+              assert len(endpoints) == 21, endpoints
+              for service_type, url in expected_urls.items():
+                  service_endpoints = [e for e in endpoints if e["Service Type"] == service_type]
+                  assert {e["Interface"] for e in service_endpoints} == {"admin", "internal", "public"}
+                  assert all(e["URL"] == url and e["Region"] == "RegionOne" for e in service_endpoints)
+              return {e["ID"] for e in endpoints}
+
+          endpoint_ids = check_catalog()
+          controllerVM.succeed("openstack-keystone-setup-002")
+          assert check_catalog() == endpoint_ids
+
       controllerVM.wait_for_unit("glance-api.service")
       controllerVM.wait_for_unit("neutron-server.service")
       controllerVM.wait_for_unit("nova-scheduler.service")

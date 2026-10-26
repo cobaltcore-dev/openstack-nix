@@ -66,7 +66,7 @@ let
 in
 python3Packages.buildPythonPackage (rec {
   pname = "designate";
-  version = "19.1.0";
+  version = "20.0.0";
   pyproject = true;
   build-system = [
     python3Packages.pbr
@@ -151,6 +151,6 @@ python3Packages.buildPythonPackage (rec {
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "sha256-kqZJRM9WX8nXxEi+8KuBotwkIk8kVlpvDgp+3czDSeE=";
+    sha256 = "sha256-EWsflMYHKMaPC4my7j2vI50A64OKD5z9JutsotTNVg4=";
   };
 })

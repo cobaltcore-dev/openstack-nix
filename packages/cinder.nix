@@ -67,7 +67,7 @@ let
 in
 python3Packages.buildPythonPackage rec {
   pname = "cinder";
-  version = "25.0.0";
+  version = "26.0.0";
 
   pyproject = true;
   build-system = [
@@ -145,7 +145,7 @@ python3Packages.buildPythonPackage rec {
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "sha256-buuMVplVemxjPbMsOsFVVwsKsH6OYiKpv6FtKup5NsU=";
+    sha256 = "sha256-3W/9WD1lf37YjUUxPfVohore4dQ4Qj0vHuWzFzuWdy4=";
   };
 
 }

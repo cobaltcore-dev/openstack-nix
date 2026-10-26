@@ -6,27 +6,29 @@ let
   inherit (python3Packages)
     platformdirs
     cryptography
+    decorator
     dogpile-cache
+    iso8601
     jmespath
     jsonpatch
-    munch
-    netifaces
     openstackdocstheme
     os-service-types
     pbr
+    psutil
     pythonOlder
     pyyaml
     requestsexceptions
     setuptools
     sphinxHook
+    typing-extensions
     ;
 in
 python3Packages.buildPythonPackage rec {
   pname = "openstacksdk";
-  version = "4.0.0";
+  version = "4.4.0";
   pyproject = true;
 
-  disabled = pythonOlder "3.8";
+  disabled = pythonOlder "3.9";
 
   outputs = [
     "out"
@@ -35,7 +37,7 @@ python3Packages.buildPythonPackage rec {
 
   src = python3Packages.fetchPypi {
     inherit pname version;
-    hash = "sha256-54YN2WtwUxMJI8EdVx0lgCuWjx4xOIRct8rHxrMzv0s=";
+    hash = "sha256-FXQ3Vj1k8/b+7BeW+9hVLVYnczJGF3jE2+dtGCj9MeA=";
   };
 
   postPatch = ''
@@ -56,16 +58,18 @@ python3Packages.buildPythonPackage rec {
   dependencies = [
     platformdirs
     cryptography
+    decorator
     dogpile-cache
+    iso8601
     jmespath
     jsonpatch
     keystoneauth1
-    munch
-    netifaces
     os-service-types
     pbr
+    psutil
     requestsexceptions
     pyyaml
+    typing-extensions
   ];
 
   # Checks moved to 'passthru.tests' to workaround slowness

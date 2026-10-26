@@ -20,7 +20,7 @@ let
 in
 python3Packages.buildPythonPackage rec {
   pname = "ovsdbapp";
-  version = "2.9.0";
+  version = "2.11.0";
 
   pyproject = true;
   build-system = [
@@ -60,6 +60,6 @@ python3Packages.buildPythonPackage rec {
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "sha256-gEXFbAFe+ukmu5uejyLCQ1xI6heCCVaouHlAgYqoYH8=";
+    sha256 = "sha256-/eFAtNrHRj/L5y/bw0qunBNa+dlRDS/YruCzf1dW/Cs=";
   };
 }

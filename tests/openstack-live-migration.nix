@@ -212,7 +212,7 @@ pkgs.testers.nixosTest {
           if status != 0:
             continue
           compute_nodes = json.loads(out)
-          if len(net_agents) == 5 and len(compute_nodes) == 2:
+          if len(net_agents) == 4 and len(compute_nodes) == 2:
             return True
         return False
 

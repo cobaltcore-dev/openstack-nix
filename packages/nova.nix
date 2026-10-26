@@ -7,7 +7,6 @@
   keystoneauth1,
   keystonemiddleware,
   lib,
-  libxcrypt-legacy,
   microversion-parse,
   openssl,
   openstacksdk,
@@ -104,7 +103,7 @@ let
 in
 python3Packages.buildPythonPackage (rec {
   pname = "nova";
-  version = "30.0.0";
+  version = "31.0.0";
   pyproject = true;
   build-system = [
     python3Packages.pbr
@@ -116,20 +115,6 @@ python3Packages.buildPythonPackage (rec {
   nativeBuildInputs = [
     pbr
   ];
-
-  postPatch = ''
-    substituteInPlace nova/virt/disk/api.py \
-      --replace-fail "    import crypt" '    import ctypes
-    _libcrypt = ctypes.CDLL("${lib.getLib libxcrypt-legacy}/lib/libcrypt.so.1")
-    _libcrypt.crypt.argtypes = [ctypes.c_char_p, ctypes.c_char_p]
-    _libcrypt.crypt.restype = ctypes.c_char_p
-
-    class crypt:
-        @staticmethod
-        def crypt(word, salt):
-            result = _libcrypt.crypt(word.encode("utf-8"), salt.encode("utf-8"))
-            return result.decode("utf-8")'
-  '';
 
   propagatedBuildInputs = [
     (alembic.override { inherit sqlalchemy; })
@@ -237,6 +222,6 @@ python3Packages.buildPythonPackage (rec {
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "sha256-CvxHrKGalX/9FMFVX14Bm47sjgqQNgfVX6Odf2IMgqQ=";
+    sha256 = "sha256-TBO/1r5g7REMlzqL+UUydAunRr1NDhpBXpvytv71vCQ=";
   };
 })
