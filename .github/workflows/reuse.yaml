@@ -6,10 +6,15 @@ name: REUSE Compliance Check
 
 on: [push, pull_request]
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      with:
+        persist-credentials: false
     - name: REUSE Compliance Check
       uses: fsfe/reuse-action@bb774aa972c2a89ff34781233d275075cbddf542 # v5

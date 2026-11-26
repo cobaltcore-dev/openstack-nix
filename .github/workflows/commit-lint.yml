@@ -1,5 +1,8 @@
 name: Commit Lint
 on: [ pull_request ]
+permissions:
+  contents: read
+
 jobs:
   gitlint:
     name: Check commit messages
@@ -10,6 +13,7 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
+          persist-credentials: false
       - name: Set up Python 3.10
         uses: actions/setup-python@3542bca2639a428e1796aaa6a2ffef0c0f575566 # v3
         with:
